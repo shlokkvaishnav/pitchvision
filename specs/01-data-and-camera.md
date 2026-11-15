@@ -80,3 +80,30 @@ Then we score the mask against its own `is_detected`, with the same frames as be
 We use the same rules C1, C2 and C3. The reference is again the mask from the real corners of the match.
 
 If the replay also fails, we record the result. Spec 02 then uses the replay as the best available mask, and its report shows this limit.
+
+## Amendment A2 (2026-11-15)
+**Result of A1.** The replay relative to the ball also failed C1, C2 and C3 (agreement 66.5%, count error 5.7).
+It is worse than the trapezoid (74.6%). Thus, the ball position alone does not give the camera framing at each frame.
+
+**Why the rules change.** Rules C1 to C3 ask for frame-by-frame agreement with the real camera of the same match.
+The full-pitch data (Metrica, PFF) has no real camera. The model needs a mask that is realistic as a distribution:
+the right fraction of hidden players, the right gap lengths, and the right parts of the pitch.
+We keep C1 to C3 as reported numbers. They do not select the mask.
+
+**Candidates.** We set these before the test:
+1. `trapezoid`: the fit from the first run (near 35 m, far 40 m, smoothing 0.8).
+2. `replay_ball`: the replay of amendment A1.
+3. `replay_centroid`: the same replay, but the x coordinates are relative to the mean x of all players on the pitch, not the ball.
+   The camera frames the play. The player centroid can show the play better than the ball.
+
+**Test.** The same cross-match scheme as A1 (donor = next match ID), on all 20 SkillCorner matches, one frame per second.
+The real mask is `is_detected`.
+
+| Rule | Pass condition (pooled over the 20 matches) |
+|---|---|
+| Q1 Hidden fraction | Within ±3 percentage points of the real hidden fraction. |
+| Q2 Gap lengths | The Kolmogorov-Smirnov distance between the simulated and the real lengths of hidden runs is not more than 0.10. Run lengths come from the 10 Hz frames. |
+| Q3 Depth bands | For each band of y (y < −20 m, −20 m to 20 m, y > 20 m), the hidden fraction is within ±5 percentage points of the real one. |
+
+**Selection.** Spec 02 uses the candidate that passes Q1, Q2 and Q3. If more than one passes, we use the one with the highest C1 agreement.
+If no candidate passes, we use the candidate with the most passed rules (then the highest C1 agreement), and the reports state this limit.
