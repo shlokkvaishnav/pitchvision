@@ -13,22 +13,20 @@ from pathlib import Path
 import numpy as np
 
 from pitchvision import baselines as bl
-from pitchvision.camera import Footprint, camera_centre, visible_mask
+from pitchvision.camera import footprint_sequences, polygon_mask, replay
 from pitchvision.splits import assert_not_holdout
-from pitchvision.tracking import from_kloppy, load_skillcorner, resample
+from pitchvision.tracking import from_kloppy, load_skillcorner_cached, resample
 
 ROOT = Path(__file__).resolve().parents[1]
 FPS = 10.0
 BINS = {"lt_1s": (0, 1), "1_3s": (1, 3), "3_10s": (3, 10), "gt_10s": (10, np.inf)}
 
 
-def period_mask(tr, fp: Footprint) -> np.ndarray:
-    """Camera mask. The pan restarts at the start of each period."""
-    centre = np.empty(len(tr.period))
-    for p in np.unique(tr.period):
-        rows = tr.period == p
-        centre[rows] = camera_centre(tr.ball[rows, 0], fp, tr.pitch[0])
-    return visible_mask(tr.players, tr.ball[:, 0], fp, tr.pitch, centre=centre)
+def replay_mask(tr, donor) -> np.ndarray:
+    """Spec 02, amendment A1: the replay_ball mask with a SkillCorner donor match."""
+    keep = np.isin(donor.period, (1, 2))
+    seqs = footprint_sequences(donor.period[keep], donor.ball[keep, 0], donor.corners[keep])
+    return polygon_mask(tr.players, replay(seqs, tr.period, tr.ball[:, 0]))
 
 
 def evaluate(tr, visible) -> dict:
@@ -55,19 +53,16 @@ def evaluate(tr, visible) -> dict:
 def main() -> None:
     from kloppy import metrica
 
-    cam = json.loads((ROOT / "results" / "01-camera.json").read_text())
-    if not (cam["rules"]["C1_agreement_ge_0.85"] and cam["rules"]["C2_within_5pp_of_reference"]):
-        raise SystemExit("spec 01 C1 or C2 failed: write an amendment and use the real footprints (spec 02, section 4)")
-    p = cam["final_params_all_matches"]
-    fp = Footprint(p["near_width"], p["far_width"], p["pan_smoothing"])
+    sc_dirs = sorted(p for p in (ROOT / "data" / "raw" / "skillcorner").iterdir() if p.is_dir())
 
     games, pooled = {}, {}
-    for g in (1, 2, 3):
+    for g, donor_dir in zip((1, 2, 3), sc_dirs):
         mid = f"metrica-{g}"
         assert_not_holdout(mid)
         ds = metrica.load_open_data(match_id=g, coordinates="secondspectrum")
         tr = resample(from_kloppy(ds, mid), FPS)
-        res = evaluate(tr, period_mask(tr, fp))
+        res = evaluate(tr, replay_mask(tr, load_skillcorner_cached(donor_dir)))
+        res["donor"] = donor_dir.name
         for name, rec in res["baselines"].items():
             pooled.setdefault(name, []).append(rec.pop("_abs_errors"))
         games[mid] = res
@@ -78,8 +73,8 @@ def main() -> None:
     short = [games[m]["baselines"]["linear_interpolation"]["lt_1s"]["median"] for m in games]
 
     det = []
-    for folder in sorted((ROOT / "data" / "raw" / "skillcorner").iterdir()):
-        sc = load_skillcorner(folder / "tracking.jsonl", folder / "match.json")
+    for folder in sc_dirs:
+        sc = load_skillcorner_cached(folder)
         has = np.isfinite(sc.players).all(-1) & np.isin(sc.period, (1, 2))[:, None]
         det.append((~sc.detected[has]).mean())
 
@@ -87,7 +82,7 @@ def main() -> None:
     out = {
         "spec": "02-baselines",
         "commit": sha.stdout.strip(),
-        "mask": p,
+        "mask": "replay_ball (spec 01 A2, spec 02 A1); fails Q2 and Q3",
         "fps": FPS,
         "pooled_median_error_m": pooled_median,
         "B1_bar_for_R1": bar,
