@@ -47,3 +47,21 @@ Unit tests run on CPU with a small model. Training runs on a Kaggle GPU.
 
 ## 8. Output
 `results/03-masked-model.json`: the metrics, the rule results, the training settings and the git commit SHA.
+
+## Result (2026-11-16, Kaggle GPU, commit 426c57c)
+Training: 2,307 windows (Metrica games 1 and 2), 30 epochs, 843 s. The loss went down in all epochs.
+Validation: game 3, 1,395 windows, 1,318,094 hidden player cells.
+
+| Rule | Model | Bar | Result |
+|---|---|---|---|
+| M1 Imputation (median error) | 5.39 m | Kalman smoother 2.13 m on the same cells (pass needs ≤ 1.91 m) | Fail |
+| M2 Calibration (90% ellipses) | 88.4% | 85% to 95% | Pass |
+| M3 Forecast at 4.0 s (mean error) | 12.4 m | Constant velocity 8.6 m | Fail |
+
+**Interpretation (hypotheses for version B, not tested).**
+1. Context. The model sees 9 s. The Kalman smoother sees the full match. With the replay mask, 49% of cells are hidden,
+   and the median hidden run is 4.7 s. Thus, a player is often hidden for most of a window, and the model has little information about that player.
+2. Data. 2,307 training windows is small for a transformer with 4 blocks. The PFF data (64 matches) is not available yet.
+3. The model knows its uncertainty well (M2 passes), but its mean is not good enough.
+
+A version B needs a new spec, written before its run. The model weights are in `data/models/` (not in git).
