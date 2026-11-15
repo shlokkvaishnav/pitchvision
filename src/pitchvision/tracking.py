@@ -127,3 +127,33 @@ def load_skillcorner(tracking_path: str | Path, match_path: str | Path) -> Track
         detected=det,
         corners=corners,
     )
+
+
+def resample(tr: Tracking, fps: float) -> Tracking:
+    """Resample to a new frame rate with linear interpolation in time, inside each period.
+
+    A new frame gets NaN if one of the two source frames around it has NaN. Broadcast fields are not kept.
+    """
+    out_period, out_ball, out_players = [], [], []
+    for p in np.unique(tr.period):
+        rows = np.flatnonzero(tr.period == p)
+        src = np.arange(rows.size) / tr.fps
+        dst = np.arange(0.0, src[-1] + 1e-9, 1.0 / fps)
+        lo = np.clip(np.searchsorted(src, dst, side="right") - 1, 0, rows.size - 1)
+        hi = np.clip(lo + 1, 0, rows.size - 1)
+        w = np.where(hi > lo, (dst - src[lo]) * tr.fps, 0.0)
+        for arr, out in ((tr.ball[rows], out_ball), (tr.players[rows], out_players)):
+            a, b = arr[lo], arr[hi]
+            shape = (-1,) + (1,) * (arr.ndim - 1)
+            out.append(a + (b - a) * w.reshape(shape))  # NaN in a or b gives NaN
+        out_period.append(np.full(dst.size, p))
+    return Tracking(
+        match_id=tr.match_id,
+        fps=float(fps),
+        period=np.concatenate(out_period),
+        ball=np.concatenate(out_ball),
+        players=np.concatenate(out_players),
+        player_ids=tr.player_ids,
+        teams=tr.teams,
+        pitch=tr.pitch,
+    )

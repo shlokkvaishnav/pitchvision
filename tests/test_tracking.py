@@ -55,3 +55,17 @@ def test_load_skillcorner_fixture(tmp_path):
 def test_tracking_rejects_bad_shapes():
     with pytest.raises(ValueError):
         Tracking("m", 25.0, np.zeros(3), np.zeros((3, 2)), np.zeros((3, 2, 2)), ["a"], ["home"], (105.0, 68.0))
+
+
+def test_resample_interpolates_and_keeps_nan():
+    from pitchvision.tracking import resample
+
+    t = 6  # 0.0 to 0.2 s at 25 Hz
+    players = np.zeros((t, 1, 2))
+    players[:, 0, 0] = np.arange(t) * 1.0  # x = 25 m/s * time
+    players[5, 0, 1] = np.nan
+    tr = Tracking("m", 25.0, np.ones(t, int), np.zeros((t, 2)), players, ["a"], ["home"], (105.0, 68.0))
+    r = resample(tr, 10.0)
+    assert r.fps == 10.0 and r.players.shape == (3, 1, 2)
+    assert r.players[:, 0, 0].tolist() == pytest.approx([0.0, 2.5, 5.0])
+    assert np.isnan(r.players[2, 0, 1])
