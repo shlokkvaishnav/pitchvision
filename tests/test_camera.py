@@ -55,3 +55,16 @@ def test_polygon_mask_uses_the_real_footprint():
 def test_custom_pitch_length_moves_the_clip():
     c = camera_centre(np.array([60.0]), FP, pitch_length=120.0)
     assert c[0] == pytest.approx(60.0 - 25.0)
+
+
+def test_replay_moves_donor_footprints_with_the_target_ball():
+    from pitchvision.camera import footprint_sequences, replay
+
+    square = np.array([[-10.0, -30.0], [10.0, -30.0], [20.0, 39.0], [-20.0, 39.0]])
+    corners = np.stack([square + [5.0, 0.0], square + [6.0, 0.0], np.full((4, 2), np.nan)])  # frame 3 has no corners
+    donor = footprint_sequences(np.ones(3, int), np.array([5.0, 6.0, 7.0]), corners)
+    assert np.allclose(donor[1][0], square) and np.allclose(donor[1][2], square - [1.0, 0.0])  # ffill, then relative
+    out = replay(donor, np.array([1, 1, 1, 1]), np.array([0.0, 40.0, np.nan, 1.0]))
+    assert np.allclose(out[1], square + [40.0, 0.0])
+    assert np.allclose(out[2, :, 0], square[:, 0] - 1.0 + 40.0)  # target ball NaN: keep the last ball x
+    assert np.allclose(out[3], square + [1.0, 0.0])  # donor is shorter: repeat it

@@ -87,3 +87,41 @@ def polygon_mask(positions: np.ndarray, corners: np.ndarray) -> np.ndarray:
         inside = np.all(cross >= 0, axis=-1)
     valid = np.isfinite(positions).all(-1) & np.isfinite(corners).all((-1, -2))[:, None]
     return inside & valid
+
+
+def _ffill(a: np.ndarray) -> np.ndarray:
+    """Fill NaN rows (along axis 0) with the last finite row. Leading NaN rows take the first finite row."""
+    a = np.array(a, dtype=float, copy=True)
+    ok = np.isfinite(a.reshape(len(a), -1)).all(1)
+    if not ok.any():
+        raise ValueError("no finite rows")
+    idx = np.maximum.accumulate(np.where(ok, np.arange(len(a)), -1))
+    idx[idx < 0] = np.flatnonzero(ok)[0]
+    return a[idx]
+
+
+def footprint_sequences(period: np.ndarray, ball_x: np.ndarray, corners: np.ndarray) -> dict[int, np.ndarray]:
+    """Real footprints per period, with x relative to the ball (spec 01, amendment A1)."""
+    out = {}
+    for p in np.unique(period):
+        rows = period == p
+        if not np.isfinite(corners[rows]).all((1, 2)).any():
+            continue
+        c = _ffill(corners[rows])
+        b = _ffill(ball_x[rows][:, None])[:, 0]
+        c[..., 0] -= b[:, None]
+        out[int(p)] = c
+    return out
+
+
+def replay(donor: dict[int, np.ndarray], period: np.ndarray, ball_x: np.ndarray) -> np.ndarray:
+    """Footprints for a target match: the donor sequence of the same period, moved along x by the target ball."""
+    out = np.full((len(period), 4, 2), np.nan)
+    first = donor[min(donor)]
+    for p in np.unique(period):
+        rows = np.flatnonzero(period == p)
+        seq = donor.get(int(p), first)
+        c = seq[np.arange(rows.size) % len(seq)].copy()
+        c[..., 0] += _ffill(ball_x[rows][:, None])[:, 0][:, None]
+        out[rows] = c
+    return out
