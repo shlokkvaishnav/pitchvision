@@ -55,3 +55,13 @@ It failed Q2 (gap-length KS 0.225) and Q3 (it hides too many players near the ne
 - The mask is `replay_ball`. The donors are the SkillCorner matches in the sorted list of IDs: the first for Metrica game 1, the second for game 2, the third for game 3.
 - The rule check on spec 01 C1 and C2 is removed from the script.
 - The report gives the Q2 and Q3 failures as a limit of all results that use this mask.
+
+## Amendment A2 (2026-11-15)
+**Result of run 1** (kept in `results/02-baselines-run1.json`). B2 passed. The bar was `kalman_smoother` (pooled median 2.68 m).
+`formation_template` had a median error of 27 m, also on gaps shorter than 1 s.
+
+**Cause.** A defect in the baseline. The teams change ends at half-time (Metrica game 1: the home goalkeeper has a mean x of −39 m in period 1 and +43 m in period 2).
+The mean offset over the full match is thus near zero.
+
+**Change.** `formation_template` computes the offsets separately for each period (`formation_template_by_period`).
+This is a defect fix, not a change of method. All other baselines and the rules do not change. Run 2 replaces `results/02-baselines.json`.
