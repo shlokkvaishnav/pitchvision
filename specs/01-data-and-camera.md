@@ -58,3 +58,25 @@ If C1 or C2 fails, spec 02 uses the real SkillCorner footprints (replayed relati
 
 ## 6. Output
 `results/01-camera.json`: the fitted parameters, the scores per fold, the reference scores, and the git commit SHA.
+
+## Amendment A1 (2026-11-15)
+**Result of the first run.** The trapezoid failed C1, C2 and C3 (agreement 74.6%, reference 97.3%, count error 4.9).
+A look at the real footprints of match 1886347 shows two causes:
+- The near edge of the image is at y = −30 m (median), not at the near touchline. Thus, players near the near touchline are often not in the image.
+- The camera centre follows the ball (correlation 0.965), but it is often 14 m in front of or behind the ball.
+
+**Data.** SkillCorner open data now has 20 matches, not 10. The run used all 20. Each fold fits on 16 matches and scores on 4.
+
+**Decision.** We do not change the trapezoid after we saw the result. Section 5 gave the fallback: replay of the real footprints.
+
+**Replay method.**
+1. For each SkillCorner match and period, we keep the footprint sequence. The x coordinates are relative to the ball x. The y coordinates are absolute.
+   A frame with no corners keeps the corners of the frame before it.
+2. For a target match, the footprint at frame t is the donor footprint at frame t (repeated if the donor is shorter), moved along x by the target ball x.
+3. The donor is a different match. For the test below, the donor of a match is the next match in the sorted list of IDs.
+
+**Test of the replay.** For each of the 20 SkillCorner matches, we replay the footprints of its donor on its own ball path.
+Then we score the mask against its own `is_detected`, with the same frames as before (one frame per second, periods 1 and 2).
+We use the same rules C1, C2 and C3. The reference is again the mask from the real corners of the match.
+
+If the replay also fails, we record the result. Spec 02 then uses the replay as the best available mask, and its report shows this limit.
