@@ -36,7 +36,7 @@ def evaluate(tr, visible) -> dict:
         "hold_last": bl.hold_last(tr.players, visible),
         "constant_velocity": bl.constant_velocity(tr.players, visible, FPS),
         "linear_interpolation": bl.linear_interpolation(tr.players, visible),
-        "formation_template": bl.formation_template(tr.players, visible, tr.teams)[0],
+        "formation_template": bl.formation_template_by_period(tr.players, visible, tr.teams, tr.period),
         "kalman_smoother": bl.kalman_smoother(tr.players, visible, FPS),
     }
     out = {"hidden_fraction": float(hidden.sum() / np.isfinite(tr.players).all(-1).sum()), "baselines": {}}

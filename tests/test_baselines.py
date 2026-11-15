@@ -77,3 +77,18 @@ def test_gap_lengths():
 
     hidden = np.array([[False], [True], [True], [False], [True]])
     assert gap_lengths(hidden)[:, 0].tolist() == [0, 2, 2, 0, 1]
+
+
+def test_formation_by_period_handles_change_of_ends():
+    from pitchvision.baselines import formation_template_by_period
+
+    t = 40
+    base = _straight_line(t=t, n=3)
+    base[20:, :, 0] *= -1  # the team changes ends after frame 20
+    base[20:, 0, 1] += 0.0
+    vis = np.ones((t, 3), dtype=bool)
+    vis[5:15, 0] = False
+    vis[25:35, 0] = False
+    period = np.array([1] * 20 + [2] * 20)
+    est = formation_template_by_period(base, vis, ["home"] * 3, period)
+    assert errors(est, base, ~vis)["mean"] < 1.0

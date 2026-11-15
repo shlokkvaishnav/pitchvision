@@ -77,6 +77,15 @@ def linear_interpolation(positions: np.ndarray, visible: np.ndarray) -> np.ndarr
     return out
 
 
+def formation_template_by_period(positions: np.ndarray, visible: np.ndarray, teams: list[str], period: np.ndarray):
+    """formation_template with separate offsets for each period. Teams change ends at half-time."""
+    est = np.full(np.shape(positions), np.nan)
+    for p in np.unique(period):
+        rows = period == p
+        est[rows] = formation_template(positions[rows], visible[rows], teams)[0]
+    return est
+
+
 def formation_template(
     positions: np.ndarray, visible: np.ndarray, teams: list[str], offsets: np.ndarray | None = None
 ) -> tuple[np.ndarray, np.ndarray]:
