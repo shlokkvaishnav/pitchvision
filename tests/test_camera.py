@@ -41,3 +41,17 @@ def test_bad_footprint_raises():
         Footprint(near_width=50.0, far_width=30.0)
     with pytest.raises(ValueError):
         visible_mask(np.zeros((3, 2)), np.zeros(3), FP)
+
+
+def test_polygon_mask_uses_the_real_footprint():
+    from pitchvision.camera import polygon_mask
+
+    square = np.array([[[-10.0, -10.0], [10.0, -10.0], [10.0, 10.0], [-10.0, 10.0]]])
+    pos = np.array([[[0.0, 0.0], [11.0, 0.0], [np.nan, 0.0]]])
+    assert polygon_mask(pos, square).tolist() == [[True, False, False]]
+    assert not polygon_mask(pos, np.full((1, 4, 2), np.nan)).any()
+
+
+def test_custom_pitch_length_moves_the_clip():
+    c = camera_centre(np.array([60.0]), FP, pitch_length=120.0)
+    assert c[0] == pytest.approx(60.0 - 25.0)
