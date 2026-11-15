@@ -1,0 +1,315 @@
+{
+  "spec": "01-data-and-camera (A1 replay)",
+  "commit": "bdbeda3121305037bd783e174a965840528d17ef",
+  "rules": {
+    "agreement": 0.6647498443443743,
+    "reference_agreement": 0.9734671799337662,
+    "count_mae": 5.684172589164439,
+    "C1_agreement_ge_0.85": false,
+    "C2_within_5pp_of_reference": false,
+    "C3_count_mae_le_1.0": false,
+    "undetected_fraction": 0.4325530211670966
+  },
+  "matches": [
+    {
+      "match_id": "1874553",
+      "donor": "1886347",
+      "replay": {
+        "agreement": 0.717904468412943,
+        "count_mae": 4.910282485875706,
+        "n": 97350
+      },
+      "reference": {
+        "agreement": 0.9780893682588598,
+        "count_mae": 0.4024858757062147,
+        "n": 97350
+      },
+      "undetected_fraction": 0.4198151001540832
+    },
+    {
+      "match_id": "1886347",
+      "donor": "1899585",
+      "replay": {
+        "agreement": 0.7028092708028281,
+        "count_mae": 5.046249424758399,
+        "n": 95612
+      },
+      "reference": {
+        "agreement": 0.9761640798226164,
+        "count_mae": 0.4590427979751496,
+        "n": 95612
+      },
+      "undetected_fraction": 0.40764757561812326
+    },
+    {
+      "match_id": "1899585",
+      "donor": "1925299",
+      "replay": {
+        "agreement": 0.668647646283429,
+        "count_mae": 5.479970508724502,
+        "n": 89518
+      },
+      "reference": {
+        "agreement": 0.970910878259121,
+        "count_mae": 0.5524698943229295,
+        "n": 89518
+      },
+      "undetected_fraction": 0.44883710538662613
+    },
+    {
+      "match_id": "1925299",
+      "donor": "1927964",
+      "replay": {
+        "agreement": 0.6895914304673428,
+        "count_mae": 5.239416058394161,
+        "n": 105490
+      },
+      "reference": {
+        "agreement": 0.968783770973552,
+        "count_mae": 0.5532846715328467,
+        "n": 105490
+      },
+      "undetected_fraction": 0.4211394444971087
+    },
+    {
+      "match_id": "1927964",
+      "donor": "1953632",
+      "replay": {
+        "agreement": 0.6732776829961816,
+        "count_mae": 5.5180965147453085,
+        "n": 98472
+      },
+      "reference": {
+        "agreement": 0.9772828824437404,
+        "count_mae": 0.4206881143878463,
+        "n": 98472
+      },
+      "undetected_fraction": 0.38567308473474693
+    },
+    {
+      "match_id": "1953632",
+      "donor": "1959846",
+      "replay": {
+        "agreement": 0.6317685047193244,
+        "count_mae": 6.553734061930784,
+        "n": 96624
+      },
+      "reference": {
+        "agreement": 0.9750165590329525,
+        "count_mae": 0.4822404371584699,
+        "n": 96624
+      },
+      "undetected_fraction": 0.37780468620632557
+    },
+    {
+      "match_id": "1959846",
+      "donor": "1986691",
+      "replay": {
+        "agreement": 0.6582294635640448,
+        "count_mae": 5.796911558259242,
+        "n": 94028
+      },
+      "reference": {
+        "agreement": 0.9781022674097077,
+        "count_mae": 0.4326158165652784,
+        "n": 94028
+      },
+      "undetected_fraction": 0.430276087973795
+    },
+    {
+      "match_id": "1986691",
+      "donor": "1996435",
+      "replay": {
+        "agreement": 0.6617603612728961,
+        "count_mae": 5.865134633240483,
+        "n": 94776
+      },
+      "reference": {
+        "agreement": 0.9776947750485355,
+        "count_mae": 0.43175487465181056,
+        "n": 94776
+      },
+      "undetected_fraction": 0.41209799949354264
+    },
+    {
+      "match_id": "1996435",
+      "donor": "1996436",
+      "replay": {
+        "agreement": 0.6952123439261703,
+        "count_mae": 5.467845659163987,
+        "n": 95788
+      },
+      "reference": {
+        "agreement": 0.9792667139934021,
+        "count_mae": 0.39366100137804316,
+        "n": 95788
+      },
+      "undetected_fraction": 0.3422140560404226
+    },
+    {
+      "match_id": "1996436",
+      "donor": "2006229",
+      "replay": {
+        "agreement": 0.664267471557929,
+        "count_mae": 5.805897376364059,
+        "n": 94754
+      },
+      "reference": {
+        "agreement": 0.9767292145978006,
+        "count_mae": 0.4348734618063617,
+        "n": 94754
+      },
+      "undetected_fraction": 0.44722122548916143
+    },
+    {
+      "match_id": "2006229",
+      "donor": "2006363",
+      "replay": {
+        "agreement": 0.6049837441870036,
+        "count_mae": 7.1118153010411955,
+        "n": 97196
+      },
+      "reference": {
+        "agreement": 0.9730956006420017,
+        "count_mae": 0.5117700316885468,
+        "n": 97196
+      },
+      "undetected_fraction": 0.37220667517181777
+    },
+    {
+      "match_id": "2006363",
+      "donor": "2007448",
+      "replay": {
+        "agreement": 0.6711181715691299,
+        "count_mae": 5.160992108229989,
+        "n": 97570
+      },
+      "reference": {
+        "agreement": 0.9736496874039151,
+        "count_mae": 0.4989853438556934,
+        "n": 97570
+      },
+      "undetected_fraction": 0.4713641488162345
+    },
+    {
+      "match_id": "2007448",
+      "donor": "2007721",
+      "replay": {
+        "agreement": 0.707937355036023,
+        "count_mae": 4.917588620456085,
+        "n": 97438
+      },
+      "reference": {
+        "agreement": 0.9758205217676882,
+        "count_mae": 0.45698803341612104,
+        "n": 97438
+      },
+      "undetected_fraction": 0.46060058703996387
+    },
+    {
+      "match_id": "2007721",
+      "donor": "2010085",
+      "replay": {
+        "agreement": 0.6380227763597094,
+        "count_mae": 6.487904967602592,
+        "n": 101860
+      },
+      "reference": {
+        "agreement": 0.9758590221873159,
+        "count_mae": 0.46198704103671706,
+        "n": 101860
+      },
+      "undetected_fraction": 0.40386805419202826
+    },
+    {
+      "match_id": "2010085",
+      "donor": "2011166",
+      "replay": {
+        "agreement": 0.6917117584809217,
+        "count_mae": 4.901383703052932,
+        "n": 100166
+      },
+      "reference": {
+        "agreement": 0.97210630353613,
+        "count_mae": 0.5271249725455743,
+        "n": 100166
+      },
+      "undetected_fraction": 0.44679831479743626
+    },
+    {
+      "match_id": "2011166",
+      "donor": "2013725",
+      "replay": {
+        "agreement": 0.6549555006756442,
+        "count_mae": 5.569451563300872,
+        "n": 85844
+      },
+      "reference": {
+        "agreement": 0.9696193094450398,
+        "count_mae": 0.5525371604305485,
+        "n": 85844
+      },
+      "undetected_fraction": 0.47709799170588507
+    },
+    {
+      "match_id": "2013725",
+      "donor": "2015213",
+      "replay": {
+        "agreement": 0.6307878787878788,
+        "count_mae": 6.107111111111111,
+        "n": 99000
+      },
+      "reference": {
+        "agreement": 0.9652727272727273,
+        "count_mae": 0.6751111111111111,
+        "n": 99000
+      },
+      "undetected_fraction": 0.46116161616161616
+    },
+    {
+      "match_id": "2015213",
+      "donor": "2016236",
+      "replay": {
+        "agreement": 0.6357925287894391,
+        "count_mae": 6.032337796086509,
+        "n": 106810
+      },
+      "reference": {
+        "agreement": 0.9657054582904222,
+        "count_mae": 0.6440782698249228,
+        "n": 106810
+      },
+      "undetected_fraction": 0.47471210560808913
+    },
+    {
+      "match_id": "2016236",
+      "donor": "2017461",
+      "replay": {
+        "agreement": 0.6400401831023841,
+        "count_mae": 5.90954659375712,
+        "n": 96558
+      },
+      "reference": {
+        "agreement": 0.9738188446322418,
+        "count_mae": 0.4725449988607883,
+        "n": 96558
+      },
+      "undetected_fraction": 0.5087926427639347
+    },
+    {
+      "match_id": "2017461",
+      "donor": "1874553",
+      "replay": {
+        "agreement": 0.6565544082247868,
+        "count_mae": 5.801781737193764,
+        "n": 88902
+      },
+      "reference": {
+        "agreement": 0.9667948977525815,
+        "count_mae": 0.6458797327394209,
+        "n": 88902
+      },
+      "undetected_fraction": 0.4889091359024544
+    }
+  ]
+}
