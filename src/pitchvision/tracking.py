@@ -157,3 +157,41 @@ def resample(tr: Tracking, fps: float) -> Tracking:
         teams=tr.teams,
         pitch=tr.pitch,
     )
+
+
+def load_skillcorner_cached(folder: str | Path) -> Tracking:
+    """load_skillcorner with a .npz cache next to the raw files (parsing the JSON lines is slow)."""
+    folder = Path(folder)
+    cache = folder / "parsed.npz"
+    meta = folder / "parsed.json"
+    if cache.exists() and meta.exists():
+        z = np.load(cache)
+        m = json.loads(meta.read_text())
+        return Tracking(
+            m["match_id"],
+            m["fps"],
+            z["period"],
+            z["ball"],
+            z["players"],
+            m["player_ids"],
+            m["teams"],
+            tuple(m["pitch"]),
+            detected=z["detected"],
+            corners=z["corners"],
+        )
+    tr = load_skillcorner(folder / "tracking.jsonl", folder / "match.json")
+    np.savez_compressed(
+        cache, period=tr.period, ball=tr.ball, players=tr.players, detected=tr.detected, corners=tr.corners
+    )
+    meta.write_text(
+        json.dumps(
+            {
+                "match_id": tr.match_id,
+                "fps": tr.fps,
+                "player_ids": tr.player_ids,
+                "teams": tr.teams,
+                "pitch": list(tr.pitch),
+            }
+        )
+    )
+    return tr
