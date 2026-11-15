@@ -10,7 +10,8 @@ commits = glob.glob("/kaggle/input/**/COMMIT", recursive=True)
 if not commits:
     raise SystemExit("dataset pitchvision-src is not attached")
 base = os.path.dirname(commits[0])
-commit = open(commits[0]).read().strip()
+with open(commits[0]) as fh:
+    commit = fh.read().strip()
 # Kaggle unpacks a zip in a dataset into a folder of the same name. Accept both forms.
 if os.path.isdir(os.path.join(base, "pitchvision_src")):
     src = os.path.join(base, "pitchvision_src")
