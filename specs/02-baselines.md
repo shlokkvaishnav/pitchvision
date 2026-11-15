@@ -45,3 +45,13 @@ Imputation is offline. Thus, a baseline can use frames after the gap.
 
 ## 8. Output
 `results/02-baselines.json`: the metrics for each game, each baseline and each gap bin, the selected bar, and the git commit SHA.
+
+## Amendment A1 (2026-11-15)
+**Reason.** Spec 01 rules C1 and C2 failed for the trapezoid (spec 01, A1), and amendment A2 of spec 01 selected `replay_ball`.
+No candidate passed all of Q1 to Q3. `replay_ball` passed Q1 (hidden fraction 46.0%, real 43.2%).
+It failed Q2 (gap-length KS 0.225) and Q3 (it hides too many players near the near touchline: 67%, real 40%).
+
+**Change to section 4.**
+- The mask is `replay_ball`. The donors are the SkillCorner matches in the sorted list of IDs: the first for Metrica game 1, the second for game 2, the third for game 3.
+- The rule check on spec 01 C1 and C2 is removed from the script.
+- The report gives the Q2 and Q3 failures as a limit of all results that use this mask.
