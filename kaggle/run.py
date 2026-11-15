@@ -6,12 +6,17 @@ import subprocess
 import sys
 import zipfile
 
-zips = glob.glob("/kaggle/input/**/pitchvision_src.zip", recursive=True)
-if not zips:
+commits = glob.glob("/kaggle/input/**/COMMIT", recursive=True)
+if not commits:
     raise SystemExit("dataset pitchvision-src is not attached")
-src = "/kaggle/working/code"
-zipfile.ZipFile(zips[0]).extractall(src)
-commit = open(os.path.join(os.path.dirname(zips[0]), "COMMIT")).read().strip()
+base = os.path.dirname(commits[0])
+commit = open(commits[0]).read().strip()
+# Kaggle unpacks a zip in a dataset into a folder of the same name. Accept both forms.
+if os.path.isdir(os.path.join(base, "pitchvision_src")):
+    src = os.path.join(base, "pitchvision_src")
+else:
+    src = "/kaggle/working/code"
+    zipfile.ZipFile(os.path.join(base, "pitchvision_src.zip")).extractall(src)
 
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "kloppy"], check=True)
 env = dict(os.environ, PYTHONPATH=os.path.join(src, "src"), PITCHVISION_COMMIT=commit)

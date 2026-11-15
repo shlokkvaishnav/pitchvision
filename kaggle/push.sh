@@ -18,5 +18,9 @@ if "$K" datasets status shlokkvaishnav/pitchvision-src >/dev/null 2>&1; then
 else
   "$K" datasets create -p "$OUT"
 fi
-sleep 30
+for i in $(seq 1 30); do
+  "$K" datasets status shlokkvaishnav/pitchvision-src 2>/dev/null | grep -q ready && break
+  sleep 10
+done
+sleep 20
 "$K" kernels push -p "$ROOT/kaggle"
