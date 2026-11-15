@@ -157,3 +157,15 @@ def errors(estimate: np.ndarray, positions: np.ndarray, hidden: np.ndarray) -> d
     keep = hidden & np.isfinite(positions).all(-1) & np.isfinite(estimate).all(-1)
     e = np.linalg.norm(estimate[keep] - positions[keep], axis=-1)
     return {"median": float(np.median(e)), "mean": float(e.mean()), "p90": float(np.quantile(e, 0.9)), "n": int(e.size)}
+
+
+def gap_lengths(hidden: np.ndarray) -> np.ndarray:
+    """For each hidden player-frame, the length (in frames) of the hidden run that contains it. 0 if visible."""
+    t, n = hidden.shape
+    out = np.zeros((t, n), dtype=int)
+    for j in range(n):
+        h = hidden[:, j].astype(int)
+        edges = np.flatnonzero(np.diff(np.concatenate([[0], h, [0]])))
+        for start, stop in zip(edges[::2], edges[1::2]):
+            out[start:stop, j] = stop - start
+    return out

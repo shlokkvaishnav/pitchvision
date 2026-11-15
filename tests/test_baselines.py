@@ -70,3 +70,10 @@ def test_errors_ignore_missing_truth():
     est = np.array([[[3.0, 4.0]], [[0.0, 0.0]]])
     e = errors(est, pos, np.ones((2, 1), dtype=bool))
     assert e["n"] == 1 and e["median"] == pytest.approx(5.0)
+
+
+def test_gap_lengths():
+    from pitchvision.baselines import gap_lengths
+
+    hidden = np.array([[False], [True], [True], [False], [True]])
+    assert gap_lengths(hidden)[:, 0].tolist() == [0, 2, 2, 0, 1]
