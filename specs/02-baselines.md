@@ -65,3 +65,10 @@ The mean offset over the full match is thus near zero.
 
 **Change.** `formation_template` computes the offsets separately for each period (`formation_template_by_period`).
 This is a defect fix, not a change of method. All other baselines and the rules do not change. Run 2 replaces `results/02-baselines.json`.
+
+## Result note (2026-11-15, run 2)
+B2 passes (linear interpolation, gaps < 1 s: 0.03 m to 0.04 m). The bar for R1 is `kalman_smoother`, pooled median **2.68 m**.
+Pooled medians: kalman_smoother 2.68 m, linear_interpolation 3.33 m, hold_last 7.87 m, constant_velocity 8.18 m, formation_template 20.91 m.
+After the fix, `formation_template` is still weak (13 m on gaps < 1 s). This is a limit of the method, not a defect:
+the camera shows one part of the pitch, so the visible team-mates are a biased sample of the team.
+Metrica hidden fraction with the replay mask: 49.4%. SkillCorner real undetected fraction: 43.3%.
