@@ -1,0 +1,26 @@
+[project]
+name = "pitchvision"
+version = "0.1.0"
+description = "Fills in the football players that the TV camera does not show, then predicts what-if plays. One masked model."
+requires-python = ">=3.10"
+dependencies = ["numpy", "pandas", "scipy"]
+
+[project.optional-dependencies]
+data = ["kloppy"]
+ml = ["torch"]
+dev = ["pytest", "ruff", "hypothesis"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+src = ["src", "tests"]
