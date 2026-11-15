@@ -18,13 +18,14 @@ class Windows:
     visible: np.ndarray  # (B, L, 23) camera-visible; the ball is always True
     agent_type: np.ndarray  # (23,) HOME, AWAY or BALL
     start: np.ndarray  # (B,) first frame of each window in the match
+    cols: np.ndarray  # (B, 22) player column in the match for each of the 22 player slots
 
 
 def cut(tr: Tracking, visible: np.ndarray, length: int = 90, stride: int = 20) -> Windows:
     """Return the windows with exactly 11 players of each team present in all frames, in one period."""
     teams = np.asarray(tr.teams)
     present = np.isfinite(tr.players).all(-1)  # (T, N)
-    pos, vis, starts = [], [], []
+    pos, vis, starts, col_list = [], [], [], []
     t = len(tr.period)
     for s in range(0, t - length + 1, stride):
         rows = slice(s, s + length)
@@ -41,12 +42,14 @@ def cut(tr: Tracking, visible: np.ndarray, length: int = 90, stride: int = 20) -
         pos.append(p)
         vis.append(v)
         starts.append(s)
+        col_list.append(cols)
     if not pos:
-        return Windows(np.zeros((0, length, 23, 2)), np.zeros((0, length, 23), bool), _types(), np.zeros(0, int))
+        empty = np.zeros((0, 22), int)
+        return Windows(np.zeros((0, length, 23, 2)), np.zeros((0, length, 23), bool), _types(), np.zeros(0, int), empty)
     out = np.stack(pos)
     out[..., 0] /= HALF_LENGTH
     out[..., 1] /= HALF_WIDTH
-    return Windows(out, np.stack(vis), _types(), np.asarray(starts))
+    return Windows(out, np.stack(vis), _types(), np.asarray(starts), np.stack(col_list))
 
 
 def _types() -> np.ndarray:

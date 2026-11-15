@@ -76,3 +76,12 @@ def test_inside_ellipse():
     log_std = torch.zeros(3, 2)
     target = torch.tensor([[0.0, 0.0], [2.0, 0.0], [2.0, 1.2]])
     assert inside_ellipse(mean, log_std, target).tolist() == [True, True, False]
+
+
+def test_windows_remember_source_cells():
+    tr = _match()
+    tr.players[:, 11] = np.nan
+    w = cut(tr, np.ones((120, 24), dtype=bool), length=90, stride=10)
+    b, slot, t = 2, 5, 7
+    frame, col = w.start[b] + t, w.cols[b, slot]
+    assert np.allclose(w.pos[b, t, slot] * [52.5, 34.0], tr.players[frame, col])
