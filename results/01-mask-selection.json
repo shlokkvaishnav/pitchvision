@@ -1,0 +1,59 @@
+{
+  "spec": "01-data-and-camera (A2 mask selection)",
+  "commit": "9b5b3cadf2df57ddd44925cb3a094e201c4389a9",
+  "real": {
+    "hidden_fraction": 0.43218438327289194,
+    "band_hidden_fraction": {
+      "near_lt_-20": 0.399576737699704,
+      "middle": 0.4523785247300488,
+      "far_gt_20": 0.3195853626143466
+    },
+    "median_run_s": 4.7
+  },
+  "candidates": {
+    "trapezoid": {
+      "hidden_fraction": 0.30754736517523207,
+      "ks_run_lengths": 0.1092000641087641,
+      "band_hidden_fraction": {
+        "near_lt_-20": 0.2460475130281604,
+        "middle": 0.33234636635198084,
+        "far_gt_20": 0.19604851853793048
+      },
+      "C1_agreement": 0.7459395083971297,
+      "Q1": false,
+      "Q2": false,
+      "Q3": false,
+      "n_pass": 0
+    },
+    "replay_ball": {
+      "hidden_fraction": 0.4601286496923246,
+      "ks_run_lengths": 0.22493618156814327,
+      "band_hidden_fraction": {
+        "near_lt_-20": 0.6731889022092824,
+        "middle": 0.44506211161595716,
+        "far_gt_20": 0.30861592306482794
+      },
+      "C1_agreement": 0.6647498443443743,
+      "Q1": true,
+      "Q2": false,
+      "Q3": false,
+      "n_pass": 1
+    },
+    "replay_centroid": {
+      "hidden_fraction": 0.430215672253396,
+      "ks_run_lengths": 0.10958642048581246,
+      "band_hidden_fraction": {
+        "near_lt_-20": 0.5830466730278342,
+        "middle": 0.4127014197295122,
+        "far_gt_20": 0.3724439455380073
+      },
+      "C1_agreement": 0.5806394395156369,
+      "Q1": true,
+      "Q2": false,
+      "Q3": false,
+      "n_pass": 1
+    }
+  },
+  "selected": "replay_ball",
+  "selected_passes_all": false
+}
