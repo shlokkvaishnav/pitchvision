@@ -24,7 +24,7 @@ env = dict(os.environ, PYTHONPATH=os.path.join(src, "src"), PITCHVISION_COMMIT=c
 subprocess.run(
     [
         sys.executable,
-        os.path.join(src, "scripts", "train_masked.py"),
+        os.path.join(src, "scripts", "train_anchored.py"),
         "--out",
         "/kaggle/working/results",
         "--raw",
