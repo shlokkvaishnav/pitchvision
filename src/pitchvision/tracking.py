@@ -53,11 +53,20 @@ class Tracking:
         )
 
 
+NORMALISED_PITCH = (105.0, 68.0)  # kloppy uses this pitch when it converts normalised data to metres
+
+
 def from_kloppy(dataset, match_id: str) -> Tracking:
-    """Convert a kloppy TrackingDataset in metric, centred coordinates ("secondspectrum")."""
+    """Convert a kloppy TrackingDataset to metric, centred coordinates (x right, y up, origin at the centre spot).
+
+    Accepts centred metric data (for example coordinates="secondspectrum" or "sportec") or kloppy's normalised
+    0..1 data (coordinates=None, y down). The normalised path is fast: kloppy then does not convert each point
+    in Python. For normalised data, x_m = 105 x - 52.5 and y_m = 34 - 68 y, the same as kloppy's own conversion.
+    """
     dims = dataset.metadata.pitch_dimensions
-    if dims.x_dim.min >= 0 or dims.y_dim.min >= 0:
-        raise ValueError("load the dataset with centred metric coordinates, for example coordinates='secondspectrum'")
+    normalised = dims.x_dim.min == 0 and dims.x_dim.max == 1 and dims.y_dim.min == 0 and dims.y_dim.max == 1
+    if not normalised and (dims.x_dim.min >= 0 or dims.y_dim.min >= 0):
+        raise ValueError("load the dataset with centred metric coordinates or with coordinates=None")
     players = [p for team in dataset.metadata.teams for p in team.players]
     index = {p.player_id: i for i, p in enumerate(players)}
     t = len(dataset.frames)
@@ -71,6 +80,14 @@ def from_kloppy(dataset, match_id: str) -> Tracking:
         for player, data in frame.players_data.items():
             if data.coordinates is not None:
                 pos[k, index[player.player_id]] = data.coordinates.x, data.coordinates.y
+    if normalised:
+        length, width = NORMALISED_PITCH
+        for arr in (pos, ball):
+            arr[..., 0] = length * arr[..., 0] - length / 2
+            arr[..., 1] = width / 2 - width * arr[..., 1]
+        pitch = NORMALISED_PITCH
+    else:
+        pitch = (dims.pitch_length, dims.pitch_width)
     return Tracking(
         match_id=str(match_id),
         fps=float(dataset.metadata.frame_rate),
@@ -79,7 +96,7 @@ def from_kloppy(dataset, match_id: str) -> Tracking:
         players=pos,
         player_ids=[str(p.player_id) for p in players],
         teams=[p.team.ground.value for p in players],
-        pitch=(dims.pitch_length, dims.pitch_width),
+        pitch=pitch,
     )
 
 

@@ -69,3 +69,24 @@ def test_resample_interpolates_and_keeps_nan():
     assert r.fps == 10.0 and r.players.shape == (3, 1, 2)
     assert r.players[:, 0, 0].tolist() == pytest.approx([0.0, 2.5, 5.0])
     assert np.isnan(r.players[2, 0, 1])
+
+
+def test_from_kloppy_normalised_path_matches_kloppy_metric_convention():
+    from types import SimpleNamespace as NS
+
+    import numpy as np
+
+    from pitchvision.tracking import from_kloppy
+
+    dim = NS(min=0, max=1)
+    home = NS(ground=NS(value="home"))
+    p1 = NS(player_id="a", team=home)
+    home.players = [p1]
+    meta = NS(pitch_dimensions=NS(x_dim=dim, y_dim=dim), teams=[home], frame_rate=10)
+    frames = [
+        NS(period=NS(id=1), ball_coordinates=NS(x=0.5, y=0.5), players_data={p1: NS(coordinates=NS(x=1.0, y=0.0))})
+    ]
+    tr = from_kloppy(NS(metadata=meta, frames=frames), "m")
+    assert np.allclose(tr.ball[0], [0.0, 0.0])
+    assert np.allclose(tr.players[0, 0], [52.5, 34.0])  # right end, top touchline (y up)
+    assert tr.pitch == (105.0, 68.0)
