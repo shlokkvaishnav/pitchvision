@@ -69,4 +69,9 @@ A version B needs a new spec, written before its run. The model weights are in `
 ## Erratum (2026-11-16)
 The M3 comparison above is not on the same cells. The constant-velocity mean removed the cells where the baseline has no estimate
 (players hidden in all observed frames of the window), but the model mean kept them. See spec 04, amendment A1.
-The M3 result is corrected below when we have the score of version A on the same cells.
+
+**Corrected M3** (`scripts/rescore_03_m3.py`, `results/03-m3-same-cells.json`, the same weights). 73.9% of the cells at 4.0 s have a baseline estimate.
+| M3 Forecast at 4.0 s (mean error, same cells) | Model 7.42 m | Constant velocity 8.62 m | **Pass** |
+|---|---|---|---|
+
+On all cells, the model error is 12.4 m (the value above). Thus, version A passes M2 and M3, and it fails M1.

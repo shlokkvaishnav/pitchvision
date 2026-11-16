@@ -29,7 +29,7 @@
 <main>
   <h1>pitchvision</h1>
   <p class="lede">This project fills in the football players that the TV camera does not show. Then it predicts the play and answers "what if" questions.</p>
-  <div class="status"><b>Status:</b> 4 specs. The model gives correct uncertainty, but its positions are worse than a Kalman smoother. Version B learns a correction to the Kalman estimate.</div>
+  <div class="status"><b>Status:</b> 4 specs. The model gives correct uncertainty and beats constant velocity in the forecast, but its imputed positions are worse than a Kalman smoother. Version B learns a correction to the Kalman estimate.</div>
   <h2>How it works</h2>
   <ol>
     <li>The input is broadcast tracking data. Some players are missing.</li>
@@ -41,7 +41,7 @@
   <table>
     <tr><th>Camera mask</th><td>A replay of real SkillCorner camera footprints. It hides 49% of player cells. In real broadcast data, the median hidden run is 4.7 s.</td></tr>
     <tr><th>Best baseline</th><td>Kalman smoother on the full match: 2.13 m median error on hidden players.</td></tr>
-    <tr><th>Model A</th><td><b>Calibration passes:</b> 88.4% in the 90% regions. <b>Imputation fails:</b> 5.39 m. <b>Forecast fails:</b> 12.4 m at 4 s, against 8.6 m for constant velocity.</td></tr>
+    <tr><th>Model A</th><td><b>Calibration passes:</b> 88.4% in the 90% regions. <b>Imputation fails:</b> 5.39 m. <b>Forecast passes:</b> 7.42 m at 4 s, against 8.62 m for constant velocity on the same cells (corrected).</td></tr>
     <tr><th>Model B</th><td>Running. It starts from the Kalman estimate and learns a correction.</td></tr>
   </table>
   <h2>Method</h2>
