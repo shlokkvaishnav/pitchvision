@@ -1,0 +1,33 @@
+# Spec 04 — Masked model, version B (Kalman anchor)
+
+Status: We committed this file before the first training run.
+
+## 1. Objective
+Version A (spec 03) was worse than the Kalman smoother (5.39 m against 2.13 m). The 90% regions were correct (88.4%).
+Our hypothesis: a window of 9 s does not have sufficient information, because the median hidden run is 4.7 s.
+The Kalman smoother uses the full match. Version B gives the model the Kalman estimate as an input,
+and the model learns only a correction to it. When the correction is zero, the model is equal to the Kalman estimate.
+
+Only the input and the output head change. The windows, the tasks, the body of the model, the training settings
+and the data split of spec 03 stay the same.
+
+## 2. Anchor
+We run the Kalman filter of spec 02 (constant velocity, `accel_std` = 3, `obs_std` = 0.3) on the full match.
+The input is the camera-visible cells only. The ball is a 23rd track, and it is always visible.
+| Task | Anchor mean and standard deviation |
+|---|---|
+| Imputation | The RTS smoother (all visible cells of the match, before and after the window). |
+| Forecast | Causal: in the first 50 frames, the filter (cells up to that frame). In the last 40 frames, the prediction from the filter state at frame 50, with the speed clipped to 8 m/s. Thus, the anchor does not use the future. |
+
+The standard deviation is the square root of the position variance of the filter or smoother, on each axis.
+
+## 3. Model
+- Input per cell: as spec 03, plus the anchor position and the log of the anchor standard deviation (both normalised as the positions).
+- Output: mean = anchor + correction, and log standard deviation = log anchor standard deviation + correction.
+- The output layer starts at zero. Thus, before training, the model gives the anchor.
+
+## 4. Rules (validation game 3)
+The rules M1, M2 and M3 of spec 03, with the same bars. We also report the anchor alone (report only).
+
+## 5. Output
+`results/04-anchored-model.json`: the metrics, the anchor metrics, the rule results, the training settings and the git commit SHA.
