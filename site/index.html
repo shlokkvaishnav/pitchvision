@@ -42,6 +42,7 @@
     <tr><th>Camera mask</th><td>A replay of real SkillCorner camera footprints. It hides 49% of player cells. In real broadcast data, the median hidden run is 4.7 s.</td></tr>
     <tr><th>Best baseline</th><td>Kalman smoother on the full match: 2.13 m median error on hidden players.</td></tr>
     <tr><th>Model A</th><td><b>Calibration passes:</b> 88.4% in the 90% regions. <b>Imputation fails:</b> 5.39 m. <b>Forecast passes:</b> 7.42 m at 4 s, against 8.62 m for constant velocity on the same cells (corrected).</td></tr>
+    <tr><th>Model B + data</th><td>Running: 3 more training matches (IDSSE Bundesliga), early stopping and calibration. Tested on 2 new matches.</td></tr>
     <tr><th>Model B</th><td>It starts from the Kalman estimate and learns a correction. <b>Forecast passes:</b> 6.64 m at 4 s, 23% better than constant velocity. <b>Imputation fails:</b> 2.24 m against 2.13 m. <b>Calibration fails:</b> 84.1%.</td></tr>
   </table>
   <h2>Method</h2>
@@ -49,7 +50,7 @@
     <tr><th>Specs</th><td>We write a spec with pass/fail rules before each run. We keep failed results.</td></tr>
     <tr><th>Holdout</th><td>20% of the matches. The code locks them until the final spec.</td></tr>
   </table>
-  <footer>This site shows statistics only. Data: PFF FC World Cup 2022, Metrica Sports, SkillCorner open data.</footer>
+  <footer>This site shows statistics only. Data: Metrica Sports, SkillCorner open data, IDSSE (Bassek et al. 2025, CC BY 4.0).</footer>
 </main>
 </body>
 </html>
