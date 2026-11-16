@@ -56,7 +56,8 @@ On all cells, the forecast error at 4.0 s is 8.93 m (spec 03: 12.4 m).
 - **Forecast.** The correction is large and useful: 6.64 m against 9.38 m for the anchor, and 23% lower than constant velocity.
   Version A got 7.42 m on the same cells. Thus, the anchor helps the forecast.
 - **Imputation.** The correction makes the anchor a little worse (2.24 m against 2.13 m), and the ellipses become too small (84.1%).
-  The training loss goes down in all epochs, but the validation error goes up. This is overfitting on 2 matches.
+  Before training, the model is equal to the anchor. After training, it is worse than the anchor on game 3, but the training loss went down.
+  We did not log a validation curve. Our hypothesis is overfitting on 2 matches.
   In imputation, the Kalman smoother already uses the full match, so the model has little to add with 2,307 windows.
 
 **Consequence.** M1 fails. The "what if" stage stays blocked. The next lever is more data (PFF FC World Cup 2022, 64 matches).
