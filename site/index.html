@@ -3,55 +3,86 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>pitchvision</title>
-<meta name="description" content="Fills in the football players that the TV camera does not show, then predicts what-if plays.">
+<title>pitchvision — see the players the camera misses</title>
+<meta name="description" content="A TV camera shows only part of the pitch. pitchvision fills in the hidden football players, live in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f6f4f'/%3E%3Crect x='6' y='9' width='20' height='14' rx='1.5' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M16 9v14' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
 <style>
-  :root { --bg:#fbfaf7; --fg:#1d1d1b; --muted:#6b6a66; --line:#e4e1da; --accent:#1f6f50; --card:#ffffff; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#141513; --fg:#ecebe6; --muted:#9d9b94; --line:#2c2d2a; --accent:#5fbf94; --card:#1b1c1a; }
-  }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width:760px; margin:0 auto; padding:56px 16px 80px; }
-  h1 { font-size:2rem; letter-spacing:-0.02em; margin:0 0 8px; }
-  .lede { color:var(--muted); font-size:1.1rem; margin:0 0 32px; }
-  h2 { font-size:1.05rem; margin:36px 0 12px; }
-  .status { border:1px solid var(--line); background:var(--card); border-radius:10px; padding:14px 18px; }
-  .status b { color:var(--accent); }
-  ol { padding-left:20px; } li { margin:6px 0; }
-  table { width:100%; border-collapse:collapse; font-size:0.95rem; }
-  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
-  th { color:var(--muted); font-weight:500; width:34%; }
-  footer { margin-top:56px; color:var(--muted); font-size:0.85rem; }
+  :root { --pitch-a: #e4eee1; --pitch-b: #dce8d8; --pitch-line: #f8fbf6; --shade: rgba(23, 25, 31, .30); }
+  @media (prefers-color-scheme: dark) { :root { --pitch-a: #1a2a1f; --pitch-b: #182619; --pitch-line: #3a5643; --shade: rgba(0, 0, 0, .45); } }
+  .stage { position: relative; border-radius: 18px; overflow: hidden; border: 1px solid var(--rule); background: var(--pitch-a); }
+  .stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 105 / 68; }
+  .hud { position: absolute; left: 14px; top: 12px; display: flex; gap: 8px; flex-wrap: wrap; pointer-events: none; }
+  .pill { font: 600 .78rem/1 var(--sans); padding: .45rem .7rem; border-radius: 99px; background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(6px); box-shadow: 0 1px 4px rgba(0,0,0,.12); color: var(--ink); font-variant-numeric: tabular-nums; }
+  .pill b { color: var(--accent); }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem; margin: 1rem 0 .4rem; }
+  .bar .grow { flex: 1; }
+  .switch { display: inline-flex; align-items: center; gap: .55rem; font: 600 .88rem/1 var(--sans); cursor: pointer; user-select: none; }
+  .switch input { appearance: none; width: 38px; height: 22px; border-radius: 99px; background: var(--chip); position: relative; cursor: pointer; transition: background .2s; margin: 0; }
+  .switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--card); box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+  .switch input:checked { background: var(--accent); }
+  .switch input:checked::after { transform: translateX(16px); }
+  .legend { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; font-size: .85rem; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: .45rem; }
+  .legend svg { display: inline-block; width: auto; flex: none; }
+  .big { font: 600 clamp(3rem, 9vw, 4.6rem)/1 var(--serif); letter-spacing: -.03em; }
+  .two { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); gap: 2rem; align-items: center; }
+  @media (max-width: 52rem) { .two { grid-template-columns: 1fr; } }
+  .status { font-size: .8rem; color: var(--muted); margin-top: .4rem; min-height: 1.2em; }
 </style>
 </head>
 <body>
-<main>
-  <h1>pitchvision</h1>
-  <p class="lede">This project fills in the football players that the TV camera does not show. Then it predicts the play and answers "what if" questions.</p>
-  <div class="status"><b>Status:</b> 4 specs. The forecast passes: 23% better than constant velocity. The imputation is still not better than a Kalman smoother. The next step needs more data.</div>
-  <p><a href="demo.html"><b>Try the hidden players demo →</b></a> The model runs in your browser.</p>
-  <h2>How it works</h2>
-  <ol>
-    <li>The input is broadcast tracking data. Some players are missing.</li>
-    <li>The model fills in the missing players. It gives an uncertainty for each player.</li>
-    <li>The model predicts the next seconds of play: the real play and "what if" plays.</li>
-    <li>The difference in threat between the two plays gives the value of a decision.</li>
-  </ol>
-  <h2>Results (Metrica game 3, validation)</h2>
-  <table>
-    <tr><th>Camera mask</th><td>A replay of real SkillCorner camera footprints. It hides 49% of player cells. In real broadcast data, the median hidden run is 4.7 s.</td></tr>
-    <tr><th>Best baseline</th><td>Kalman smoother on the full match: 2.13 m median error on hidden players.</td></tr>
-    <tr><th>Model A</th><td><b>Calibration passes:</b> 88.4% in the 90% regions. <b>Imputation fails:</b> 5.39 m. <b>Forecast passes:</b> 7.42 m at 4 s, against 8.62 m for constant velocity on the same cells (corrected).</td></tr>
-    <tr><th>Model B + data</th><td>Running: 3 more training matches (IDSSE Bundesliga), early stopping and calibration. Tested on 2 new matches.</td></tr>
-    <tr><th>Model B</th><td>It starts from the Kalman estimate and learns a correction. <b>Forecast passes:</b> 6.64 m at 4 s, 23% better than constant velocity. <b>Imputation fails:</b> 2.24 m against 2.13 m. <b>Calibration fails:</b> 84.1%.</td></tr>
-  </table>
-  <h2>Method</h2>
-  <table>
-    <tr><th>Specs</th><td>We write a spec with pass/fail rules before each run. We keep failed results.</td></tr>
-    <tr><th>Holdout</th><td>20% of the matches. The code locks them until the final spec.</td></tr>
-  </table>
-  <footer>This site shows statistics only. Data: Metrica Sports, SkillCorner open data, IDSSE (Bassek et al. 2025, CC BY 4.0).</footer>
-</main>
+<div class="wrap">
+  <nav class="top">
+    <span class="brand">pitchvision</span>
+    <a href="https://github.com/shlokkvaishnav/pitchvision"><svg class="icon" viewBox="0 0 16 16"><use href="assets/icons/github.svg#gh"/></svg>Code &amp; method</a>
+  </nav>
+
+  <header class="hero">
+    <div class="kicker">Football tracking · live in your browser</div>
+    <h1>See the players the camera misses.</h1>
+    <p class="sub">A TV camera shows only part of the pitch. The shaded area is off-camera. pitchvision fills in every hidden player, with a region for where they probably are.</p>
+  </header>
+
+  <section>
+    <div class="stage">
+      <canvas id="pitch" role="img" aria-label="A football pitch: visible players, the camera view, and estimates for hidden players"></canvas>
+      <div class="hud"><span class="pill"><b id="nHidden">–</b> of 22 players off-camera</span><span class="pill" id="clock">0.0 s</span></div>
+    </div>
+    <div class="bar">
+      <button class="btn primary" id="play" aria-label="Play or pause">Pause</button>
+      <div class="seg" id="clips" role="group" aria-label="Clip"></div>
+      <span class="grow"></span>
+      <label class="switch"><input type="checkbox" id="truth"> Reveal where they really were</label>
+    </div>
+    <div class="legend">
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="var(--accent)"/></svg>On camera</span>
+      <span><svg width="22" height="14"><ellipse cx="11" cy="7" rx="10" ry="6" fill="var(--accent)" opacity=".2"/><circle cx="11" cy="7" r="4.5" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>Hidden: estimate and 90% region</span>
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="3" fill="var(--ink)"/></svg>Ball</span>
+    </div>
+    <div class="status" id="status">Loading the model…</div>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <p class="cap">Four steps, all of them in this page.</p>
+    <div class="panel"><svg id="flow" role="img" aria-label="From the broadcast frame to filled-in players"></svg></div>
+  </section>
+
+  <section>
+    <h2>The camera hides more than you think</h2>
+    <div class="two">
+      <div><div class="big" id="share">–</div><p class="cap">of all player positions are off-camera in this match.</p></div>
+      <div class="panel"><svg id="gaps" role="img" aria-label="How long players stay hidden"></svg></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Tracking data: IDSSE, Bassek et al., <i>Scientific Data</i> 12, 195 (2025), CC BY 4.0. Camera views: SkillCorner open data. The model runs with onnxruntime-web.</p>
+    <p><a href="https://github.com/shlokkvaishnav/pitchvision">github.com/shlokkvaishnav/pitchvision</a></p>
+  </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>

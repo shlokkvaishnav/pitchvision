@@ -23,6 +23,7 @@ import train_more as tm
 
 from pitchvision.anchor import SCALE
 from pitchvision.model import AnchoredModel
+from pitchvision.prep import replay_corners, skillcorner_match
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "site" / "demo"
@@ -55,7 +56,8 @@ def main() -> None:
     model.load_state_dict(torch.load(args.weights, map_location="cpu"))
     model.eval()
 
-    _tr, _vis, w = tm.load_match(MATCH, tm.donors()[MATCH], Path(args.raw))
+    tr, vis_mask, w = tm.load_match(MATCH, tm.donors()[MATCH], Path(args.raw))
+    camera = replay_corners(tr, skillcorner_match(tm.donors()[MATCH], Path(args.raw)))  # (T, 4, 2) metres
     picks = [len(w.pos) // 4, len(w.pos) // 2, 3 * len(w.pos) // 4]
     types = torch.as_tensor(w.agent_type)
     clips = []
@@ -69,6 +71,7 @@ def main() -> None:
         clips.append(
             {
                 "start_s": round(float(w.start[i] / tm.FPS), 1),
+                "camera_m": r(camera[w.start[i] : w.start[i] + w.pos.shape[1]], 2),
                 "truth_m": r(w.pos[i] * SCALE, 2),
                 "visible": w.visible[i].astype(int).tolist(),
                 "anchor_mean": r(w.imp_mean[i], 5),
@@ -90,8 +93,13 @@ def main() -> None:
         output_names=["mean", "log_std"], opset_version=17, dynamo=False,
     )  # fmt: skip
     sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True)
+    audit = json.loads((ROOT / "results" / "06-baseline-audit.json").read_text())["pooled"]
+    hidden = ~vis_mask & np.isfinite(tr.players).all(-1)
+    present = np.isfinite(tr.players).all(-1)
     meta = {
         "match": MATCH,
+        "hidden_share": round(float(hidden.sum() / present.sum()), 4),  # player positions off-camera, this match
+        "hidden_gap_bins": audit["bin_fraction"],  # share of hidden positions by gap length, 8 matches (spec 06)
         "weights": args.tag,
         "fps": tm.FPS,
         "scale_m": SCALE.tolist(),
