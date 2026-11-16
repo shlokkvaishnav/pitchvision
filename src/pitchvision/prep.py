@@ -43,12 +43,17 @@ def skillcorner_match(match_id: str, raw_dir: Path) -> Tracking:
     return load_skillcorner_cached(folder)
 
 
-def replay_mask(tr: Tracking, donor: Tracking) -> np.ndarray:
-    """The replay_ball mask with a SkillCorner donor match (periods 1 and 2 of the donor)."""
+def replay_corners(tr: Tracking, donor: Tracking) -> np.ndarray:
+    """The camera footprint (T, 4, 2) of the replay_ball mask with a SkillCorner donor (periods 1 and 2)."""
     _, corners = broadcast_fields(donor)
     keep = np.isin(donor.period, (1, 2))
     seqs = footprint_sequences(donor.period[keep], donor.ball[keep, 0], corners[keep])
-    return polygon_mask(tr.players, replay(seqs, tr.period, tr.ball[:, 0]))
+    return replay(seqs, tr.period, tr.ball[:, 0])
+
+
+def replay_mask(tr: Tracking, donor: Tracking) -> np.ndarray:
+    """The replay_ball mask with a SkillCorner donor match (periods 1 and 2 of the donor)."""
+    return polygon_mask(tr.players, replay_corners(tr, donor))
 
 
 def metrica_game(game: int) -> Tracking:
