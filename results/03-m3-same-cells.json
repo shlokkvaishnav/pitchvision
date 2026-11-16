@@ -1,0 +1,9 @@
+{
+  "spec": "03-masked-model erratum (spec 04 A1)",
+  "commit": "724b11a239f6dea78cc136f59cfa0294eaafa4cd",
+  "m3_cell_fraction": 0.739426523297491,
+  "forecast_4s_mean_m": 7.417180623137385,
+  "constant_velocity_4s_mean_m": 8.617249279721879,
+  "forecast_4s_mean_all_cells_m": 12.387388440395746,
+  "M3_pass": true
+}
