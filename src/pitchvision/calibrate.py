@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from .camera import Footprint, camera_centre, polygon_mask
-from .tracking import Tracking
+from .tracking import Tracking, broadcast_fields
 
 NEAR_GRID = np.arange(20.0, 70.0 + 1e-9, 5.0)
 FAR_GRID = np.arange(40.0, 110.0 + 1e-9, 5.0)
@@ -29,10 +29,10 @@ class Prepared:
 
 
 def prepare(tr: Tracking, score_every: int, smoothing_grid=SMOOTHING_GRID) -> Prepared:
-    if tr.detected is None or tr.corners is None:
-        raise ValueError("calibration needs broadcast data with detected flags and corners")
+    broadcast_fields(tr)  # calibration needs broadcast data with detected flags and corners
     keep = np.isin(tr.period, (1, 2))
     tr = tr.select(np.flatnonzero(keep))
+    detected, corners = broadcast_fields(tr)
     rows = np.arange(0, len(tr.period), score_every)
     length, width = tr.pitch
     x, y = tr.players[rows, :, 0], tr.players[rows, :, 1]
@@ -46,8 +46,8 @@ def prepare(tr: Tracking, score_every: int, smoothing_grid=SMOOTHING_GRID) -> Pr
         half_length=length / 2,
         depth=np.clip((y + width / 2) / width, 0.0, 1.0),
         valid=valid,
-        detected=tr.detected[rows] & valid,
-        reference=polygon_mask(tr.players[rows], tr.corners[rows]),
+        detected=detected[rows] & valid,
+        reference=polygon_mask(tr.players[rows], corners[rows]),
     )
 
 
@@ -74,6 +74,8 @@ def fit(matches: list[Prepared]) -> tuple[float, float, float]:
                 hits = sum(int(((_mask(m, near, far, a) == m.detected) & m.valid).sum()) for m in matches)
                 if hits > best_hits:
                     best, best_hits = (float(near), float(far), float(a)), hits
+    if best is None:
+        raise ValueError("no candidate footprint")
     return best
 
 
