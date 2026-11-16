@@ -43,3 +43,8 @@ We also report: the selected epoch, the scale factor, the anchor alone, and all 
 
 ## 5. Compute and output
 Training on a Kaggle GPU. `results/05-more-data.json`: the metrics, the rule results, the settings and the git commit SHA.
+
+## Note (2026-11-16, after spec 06)
+Spec 06 found a stronger classical bar for imputation: a cubic spline (pooled median 2.48 m against 2.92 m for the
+Kalman smoother on the full matches). The rules of this spec stay as written. But a model that passes M1 here must
+also beat the spline before we say that it beats the classical baselines.
