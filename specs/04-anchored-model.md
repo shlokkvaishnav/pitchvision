@@ -62,3 +62,8 @@ On all cells, the forecast error at 4.0 s is 8.93 m (spec 03: 12.4 m).
 
 **Consequence.** M1 fails. The "what if" stage stays blocked. The next lever is more data (PFF FC World Cup 2022, 64 matches).
 We do not tune version B on game 3, because each new try on the same validation game increases the risk of a fit to it.
+
+## Note (2026-11-16, after spec 06)
+Spec 06 found a stronger classical bar for imputation: a cubic spline (pooled median 2.48 m against 2.92 m for the
+Kalman smoother on the full matches). The rules of this spec stay as written. But a model that passes M1 here must
+also beat the spline before we say that it beats the classical baselines.

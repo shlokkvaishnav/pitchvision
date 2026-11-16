@@ -75,3 +75,8 @@ The M3 comparison above is not on the same cells. The constant-velocity mean rem
 |---|---|---|---|
 
 On all cells, the model error is 12.4 m (the value above). Thus, version A passes M2 and M3, and it fails M1.
+
+## Note (2026-11-16, after spec 06)
+Spec 06 found a stronger classical bar for imputation: a cubic spline (pooled median 2.48 m against 2.92 m for the
+Kalman smoother on the full matches). The rules of this spec stay as written. But a model that passes M1 here must
+also beat the spline before we say that it beats the classical baselines.
