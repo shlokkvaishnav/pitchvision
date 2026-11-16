@@ -21,3 +21,10 @@ def test_holdout_is_locked():
 
 def test_int_and_str_ids_agree():
     assert is_holdout(3812) == is_holdout("3812")
+
+
+def test_idsse_holdout_matches_are_not_in_the_dev_list():
+    from pitchvision.prep import IDSSE_DEV
+
+    assert not any(is_holdout(f"idsse-{m}") for m in IDSSE_DEV)
+    assert is_holdout("idsse-J03WN1") and is_holdout("idsse-J03WOH")

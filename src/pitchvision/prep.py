@@ -49,3 +49,16 @@ def metrica_game(game: int) -> Tracking:
     assert_not_holdout(match_id)
     ds = metrica.load_open_data(match_id=game, coordinates="secondspectrum")
     return resample(from_kloppy(ds, match_id), FPS)
+
+
+IDSSE_DEV = ("J03WMX", "J03WOY", "J03WPY", "J03WQQ", "J03WR9")  # spec 05: the development matches, sorted
+
+
+def idsse_match(match: str) -> Tracking:
+    """One IDSSE match (Bassek et al. 2025, CC BY 4.0), resampled to 10 Hz. Refuses holdout matches."""
+    from kloppy import sportec
+
+    match_id = f"idsse-{match}"
+    assert_not_holdout(match_id)
+    ds = sportec.load_open_tracking_data(match, coordinates="secondspectrum")
+    return resample(from_kloppy(ds, match_id), FPS)

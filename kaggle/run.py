@@ -1,4 +1,4 @@
-"""Kaggle kernel for spec 04. It unpacks the pitchvision code from the private dataset and runs the training."""
+"""Kaggle kernel for spec 05. It unpacks the pitchvision code from the private dataset and runs the training."""
 
 import glob
 import os
@@ -24,7 +24,7 @@ env = dict(os.environ, PYTHONPATH=os.path.join(src, "src"), PITCHVISION_COMMIT=c
 subprocess.run(
     [
         sys.executable,
-        os.path.join(src, "scripts", "train_anchored.py"),
+        os.path.join(src, "scripts", "train_more.py"),
         "--out",
         "/kaggle/working/results",
         "--raw",
