@@ -77,3 +77,22 @@ def inside_ellipse(mean, log_std, target, scale=(1.0, 1.0), q: float = CHI2_2DOF
     s = torch.tensor(scale, dtype=mean.dtype, device=mean.device)
     z = ((target - mean) * s) / (torch.exp(log_std) * s)
     return z.pow(2).sum(-1) <= q
+
+
+class AnchoredModel(MaskedModel):
+    """Version B (specs/04-anchored-model.md): the output is a correction to a Kalman anchor."""
+
+    def __init__(self, length: int = 90, dim: int = 128, heads: int = 4, depth: int = 4, dropout: float = 0.0):
+        super().__init__(length, dim, heads, depth, dropout)
+        self.inp = nn.Linear(7, dim)  # x, y (zero if hidden), observed flag, anchor x, y, anchor log-std x, y
+        nn.init.zeros_(self.head.weight)
+        nn.init.zeros_(self.head.bias)
+
+    def forward(self, pos, observed, agent_type, anchor_mean, anchor_log_std):
+        obs = observed.unsqueeze(-1).float()
+        x = torch.cat([torch.nan_to_num(pos) * obs, obs, anchor_mean, anchor_log_std], dim=-1)
+        h = self.inp(x) + self.agent_type(agent_type)[None, None] + self.time[: pos.shape[1]][None, :, None]
+        for block in self.blocks:
+            h = block(h)
+        out = self.head(self.norm(h))
+        return anchor_mean + out[..., :2], (anchor_log_std + out[..., 2:]).clamp(-7.0, 3.0)

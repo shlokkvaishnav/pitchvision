@@ -7,6 +7,7 @@ They use only the visible positions. Imputation is offline: a baseline can use f
 from __future__ import annotations
 
 import warnings
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -122,17 +123,28 @@ def formation_template(
     return est, offsets
 
 
-def kalman_smoother(
+@dataclass
+class KalmanResult:
+    """Constant-velocity Kalman output. State per player and axis: [position, velocity]."""
+
+    filt_x: np.ndarray  # (T, N, 2 axes, 2)
+    filt_p: np.ndarray  # (T, N, 2 axes, 2, 2)
+    smooth_x: np.ndarray
+    smooth_p: np.ndarray
+    f: np.ndarray  # (2, 2) transition for one frame
+    q: np.ndarray  # (2, 2) process noise for one frame
+
+
+def kalman(
     positions: np.ndarray, visible: np.ndarray, fps: float, accel_std: float = 3.0, obs_std: float = 0.3
-) -> np.ndarray:
-    """Rauch-Tung-Striebel smoother with a constant-velocity model, run on all players at once."""
+) -> KalmanResult:
+    """Kalman filter and Rauch-Tung-Striebel smoother, run on all players at once. The two axes are independent."""
     obs = _observed(positions, visible)
     t, n, _ = obs.shape
     dt = 1.0 / fps
     f = np.array([[1, dt], [0, 1]])
     q = accel_std**2 * np.array([[dt**4 / 4, dt**3 / 2], [dt**3 / 2, dt**2]])
     r = obs_std**2
-    # state per player and axis: [position, velocity]; the two axes are independent
     xs = np.zeros((t, n, 2, 2))
     ps = np.zeros((t, n, 2, 2, 2))
     xp_all = np.zeros_like(xs)
@@ -154,11 +166,19 @@ def kalman_smoother(
         update = gain[..., :, None] * pp[..., 0, None, :]
         p = pp - np.where(has[..., None, None], update, 0.0)
         xs[k], ps[k] = x, p
-    out = xs.copy()
+    out, out_p = xs.copy(), ps.copy()
     for k in range(t - 2, -1, -1):
         c = np.einsum("naij,kj,nakl->nail", ps[k], f, np.linalg.inv(pp_all[k + 1]))
         out[k] = xs[k] + np.einsum("naij,naj->nai", c, out[k + 1] - xp_all[k + 1])
-    return out[..., 0]
+        out_p[k] = ps[k] + np.einsum("naij,najk,nalk->nail", c, out_p[k + 1] - pp_all[k + 1], c)
+    return KalmanResult(xs, ps, out, out_p, f, q)
+
+
+def kalman_smoother(
+    positions: np.ndarray, visible: np.ndarray, fps: float, accel_std: float = 3.0, obs_std: float = 0.3
+) -> np.ndarray:
+    """Rauch-Tung-Striebel smoother with a constant-velocity model, run on all players at once."""
+    return kalman(positions, visible, fps, accel_std, obs_std).smooth_x[..., 0]
 
 
 def errors(estimate: np.ndarray, positions: np.ndarray, hidden: np.ndarray) -> dict[str, float]:

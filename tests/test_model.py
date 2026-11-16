@@ -85,3 +85,45 @@ def test_windows_remember_source_cells():
     b, slot, t = 2, 5, 7
     frame, col = w.start[b] + t, w.cols[b, slot]
     assert np.allclose(w.pos[b, t, slot] * [52.5, 34.0], tr.players[frame, col])
+
+
+def test_anchored_model_starts_at_the_anchor():
+    import torch
+
+    from pitchvision.model import AnchoredModel
+
+    m = AnchoredModel(length=12, dim=16, heads=2, depth=1)
+    b, length, a = 2, 12, 23
+    pos = torch.randn(b, length, a, 2)
+    obs = torch.rand(b, length, a) > 0.5
+    types = torch.tensor([0] * 11 + [1] * 11 + [2])
+    am, al = torch.randn(b, length, a, 2), torch.full((b, length, a, 2), -3.0)
+    mu, ls = m(pos, obs, types, am, al)
+    assert torch.equal(mu, am)
+    assert torch.equal(ls, al)
+
+
+def test_forecast_anchor_does_not_use_the_future():
+    import numpy as np
+
+    from pitchvision.anchor import forecast_anchor, imputation_anchor
+    from pitchvision.baselines import kalman
+    from pitchvision.windows import Windows
+
+    t, n = 60, 22
+    rng = np.random.default_rng(0)
+    pos = np.cumsum(rng.normal(0, 0.1, (t, n + 1, 2)), axis=0)
+    vis = np.ones((t, n + 1), bool)
+    w = Windows(
+        np.zeros((1, 30, 23, 2)), np.ones((1, 30, 23), bool), np.zeros(23, int), np.array([10]), np.arange(22)[None]
+    )
+    k1 = kalman(pos, vis, 10.0)
+    later = pos.copy()
+    later[30:] += 50.0  # change only frames after the observed part of the window (10 + 30 - 10 = 30)
+    k2 = kalman(later, vis, 10.0)
+    f1, _ = forecast_anchor(k1, w, n, horizon=10)
+    f2, _ = forecast_anchor(k2, w, n, horizon=10)
+    assert np.allclose(f1, f2)
+    i1, _ = imputation_anchor(k1, w, n)
+    i2, _ = imputation_anchor(k2, w, n)
+    assert not np.allclose(i1, i2)  # the smoother uses the future, by design
