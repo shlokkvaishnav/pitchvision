@@ -7,7 +7,7 @@
   "is_private": true,
   "enable_gpu": false,
   "enable_internet": true,
-  "dataset_sources": ["shlokkvaishnav/pitchvision-src"],
+  "dataset_sources": ["shlokkvaishnav/pitchvision-src-cpu"],
   "competition_sources": [],
   "kernel_sources": []
 }
