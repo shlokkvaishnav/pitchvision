@@ -33,6 +33,7 @@ Read the charter: [specs/00-charter.md](specs/00-charter.md).
 | [02](specs/02-baselines.md) | Baselines on Metrica games 1 to 3 | The Kalman smoother is the bar: 2.68 m median error. Linear interpolation 3.33 m. |
 | [03](specs/03-masked-model.md) | Masked model version A | **Calibration passes** (88.4% in the 90% regions). **Imputation fails** (5.39 m against 2.13 m for the Kalman smoother). **Forecast passes** (7.42 m against 8.62 m for constant velocity at 4 s, on the same cells, after an erratum). |
 | [04](specs/04-anchored-model.md) | Masked model version B: a learned correction to the Kalman estimate | **Forecast passes** (6.64 m against 8.62 m, 23% better). **Imputation fails** (2.24 m against 2.13 m). **Calibration fails** (84.1%, the bar is 85%). |
+| [05](specs/05-more-data.md) | Model B with 3 more training matches (IDSSE), early stopping and calibration. Tested on 2 new matches. | Running |
 
 The "what if" stage starts only after the imputation passes.
 
@@ -43,5 +44,5 @@ make check   # lint and tests
 ```
 
 ## Data
-PFF FC World Cup 2022, Metrica Sports sample data, and SkillCorner open data.
+Metrica Sports sample data, SkillCorner open data, and the IDSSE Bundesliga data (Bassek et al., Scientific Data 2025, CC BY 4.0). PFF FC World Cup 2022 when we get access.
 Do not commit raw data. The site shows statistics only.
