@@ -26,15 +26,15 @@ Imputation hides players. Forecast hides future time steps. Thus, one model can 
 
 Read the charter: [specs/00-charter.md](specs/00-charter.md).
 
-## Milestones
-| Milestone | Content | Status |
+## Results (development data)
+| Spec | Test | Result |
 |---|---|---|
-| M0 | Charter, holdout lock, camera mask, CI, site | Done |
-| M1 | Data loaders (kloppy), camera mask calibration on SkillCorner data | Next |
-| M2 | Baselines: constant velocity, Kalman smoother, formation template | |
-| M3 | Masked generative model (imputation and forecast) | |
-| M4 | "What if" values and the pipeline stability test | |
-| M5 | Final holdout run and report | |
+| [01](specs/01-data-and-camera.md) | A camera mask that hides players as a real broadcast does (SkillCorner, 20 matches) | **Fail** on the pre-registered rules. We use the best candidate: a replay of real camera footprints. It hides 49% of player cells. |
+| [02](specs/02-baselines.md) | Baselines on Metrica games 1 to 3 | The Kalman smoother is the bar: 2.68 m median error. Linear interpolation 3.33 m. |
+| [03](specs/03-masked-model.md) | Masked model version A | **Calibration passes** (88.4% in the 90% regions). **Imputation fails** (5.39 m against 2.13 m for the Kalman smoother). **Forecast fails** (12.4 m against 8.6 m at 4 s). |
+| [04](specs/04-anchored-model.md) | Masked model version B: a learned correction to the Kalman estimate | Running |
+
+The "what if" stage starts only after the imputation passes.
 
 ## Quick start
 ```bash
