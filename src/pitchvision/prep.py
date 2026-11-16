@@ -47,7 +47,7 @@ def metrica_game(game: int) -> Tracking:
 
     match_id = f"metrica-{game}"
     assert_not_holdout(match_id)
-    ds = metrica.load_open_data(match_id=game, coordinates="secondspectrum")
+    ds = metrica.load_open_data(match_id=game, coordinates=None)  # normalised: fast path of from_kloppy
     return resample(from_kloppy(ds, match_id), FPS)
 
 
@@ -60,5 +60,5 @@ def idsse_match(match: str) -> Tracking:
 
     match_id = f"idsse-{match}"
     assert_not_holdout(match_id)
-    ds = sportec.load_open_tracking_data(match, coordinates="secondspectrum")
+    ds = sportec.load_open_tracking_data(match, coordinates="sportec")  # native: centred metres
     return resample(from_kloppy(ds, match_id), FPS)
