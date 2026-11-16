@@ -31,3 +31,11 @@ The rules M1, M2 and M3 of spec 03, with the same bars. We also report the ancho
 
 ## 5. Output
 `results/04-anchored-model.json`: the metrics, the anchor metrics, the rule results, the training settings and the git commit SHA.
+
+## Amendment A1 (2026-11-16, before the training run)
+A CPU smoke test (1 epoch, 16 windows) showed two problems. We found them before the training run.
+1. **M3 cells.** The constant-velocity baseline has no estimate for a player that is hidden in all observed frames of the window
+   (26% of the cells at 4.0 s). The mean of spec 03 removed these cells for the baseline only. Thus, the two errors were not on the same cells.
+   From now on, M3 uses only the cells where the baseline has an estimate, for the model and for the baseline. We also report the error of the model on all cells.
+2. **Anchor drift.** For a player that is hidden for a long time, the Kalman prediction moves far from the pitch (mean error 45 m at 4.0 s on these cells).
+   We clip the anchor mean to the pitch plus a margin of 5% (−1.05 to 1.05 after normalisation).
