@@ -44,6 +44,8 @@ class AxialBlock(nn.Module):
 
 
 class MaskedModel(nn.Module):
+    time: torch.Tensor  # registered buffer (sinusoidal time embedding)
+
     def __init__(self, length: int = 90, dim: int = 128, heads: int = 4, depth: int = 4, dropout: float = 0.0):
         super().__init__()
         self.inp = nn.Linear(3, dim)  # x, y (zero if hidden), observed flag

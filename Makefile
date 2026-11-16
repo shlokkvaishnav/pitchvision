@@ -5,6 +5,7 @@ test:
 	.venv/bin/pytest -q
 lint:
 	.venv/bin/ruff check src tests scripts
+	.venv/bin/mypy src
 format:
 	.venv/bin/ruff format src tests
 # Do this before each push. A failed CI run sends an email.

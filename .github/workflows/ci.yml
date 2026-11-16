@@ -13,4 +13,5 @@ jobs:
           python-version: "3.12"
       - run: pip install -e ".[dev,ml]" --extra-index-url https://download.pytorch.org/whl/cpu
       - run: ruff check src tests scripts
+      - run: mypy src
       - run: pytest -q

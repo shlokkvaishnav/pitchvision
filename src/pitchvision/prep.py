@@ -10,7 +10,15 @@ import numpy as np
 
 from .camera import footprint_sequences, polygon_mask, replay
 from .splits import assert_not_holdout
-from .tracking import SKILLCORNER_MEDIA, SKILLCORNER_RAW, Tracking, from_kloppy, load_skillcorner_cached, resample
+from .tracking import (
+    SKILLCORNER_MEDIA,
+    SKILLCORNER_RAW,
+    Tracking,
+    broadcast_fields,
+    from_kloppy,
+    load_skillcorner_cached,
+    resample,
+)
 
 MATCHES_URL = "https://raw.githubusercontent.com/SkillCorner/opendata/master/data/matches.json"
 FPS = 10.0
@@ -37,8 +45,9 @@ def skillcorner_match(match_id: str, raw_dir: Path) -> Tracking:
 
 def replay_mask(tr: Tracking, donor: Tracking) -> np.ndarray:
     """The replay_ball mask with a SkillCorner donor match (periods 1 and 2 of the donor)."""
+    _, corners = broadcast_fields(donor)
     keep = np.isin(donor.period, (1, 2))
-    seqs = footprint_sequences(donor.period[keep], donor.ball[keep, 0], donor.corners[keep])
+    seqs = footprint_sequences(donor.period[keep], donor.ball[keep, 0], corners[keep])
     return polygon_mask(tr.players, replay(seqs, tr.period, tr.ball[:, 0]))
 
 

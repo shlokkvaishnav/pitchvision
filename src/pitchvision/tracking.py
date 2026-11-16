@@ -56,6 +56,13 @@ class Tracking:
 NORMALISED_PITCH = (105.0, 68.0)  # kloppy uses this pitch when it converts normalised data to metres
 
 
+def broadcast_fields(tr: Tracking) -> tuple[np.ndarray, np.ndarray]:
+    """Return (detected, corners). Raise ValueError if the match is not broadcast data."""
+    if tr.detected is None or tr.corners is None:
+        raise ValueError(f"{tr.match_id} has no broadcast fields (detected, corners)")
+    return tr.detected, tr.corners
+
+
 def from_kloppy(dataset, match_id: str) -> Tracking:
     """Convert a kloppy TrackingDataset to metric, centred coordinates (x right, y up, origin at the centre spot).
 
@@ -151,7 +158,9 @@ def resample(tr: Tracking, fps: float) -> Tracking:
 
     A new frame gets NaN if one of the two source frames around it has NaN. Broadcast fields are not kept.
     """
-    out_period, out_ball, out_players = [], [], []
+    out_period: list[np.ndarray] = []
+    out_ball: list[np.ndarray] = []
+    out_players: list[np.ndarray] = []
     for p in np.unique(tr.period):
         rows = np.flatnonzero(tr.period == p)
         src = np.arange(rows.size) / tr.fps
@@ -197,9 +206,8 @@ def load_skillcorner_cached(folder: str | Path) -> Tracking:
             corners=z["corners"],
         )
     tr = load_skillcorner(folder / "tracking.jsonl", folder / "match.json")
-    np.savez_compressed(
-        cache, period=tr.period, ball=tr.ball, players=tr.players, detected=tr.detected, corners=tr.corners
-    )
+    detected, corners = broadcast_fields(tr)
+    np.savez_compressed(cache, period=tr.period, ball=tr.ball, players=tr.players, detected=detected, corners=corners)
     meta.write_text(
         json.dumps(
             {
