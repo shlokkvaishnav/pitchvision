@@ -65,3 +65,8 @@ Validation: game 3, 1,395 windows, 1,318,094 hidden player cells.
 3. The model knows its uncertainty well (M2 passes), but its mean is not good enough.
 
 A version B needs a new spec, written before its run. The model weights are in `data/models/` (not in git).
+
+## Erratum (2026-11-16)
+The M3 comparison above is not on the same cells. The constant-velocity mean removed the cells where the baseline has no estimate
+(players hidden in all observed frames of the window), but the model mean kept them. See spec 04, amendment A1.
+The M3 result is corrected below when we have the score of version A on the same cells.
