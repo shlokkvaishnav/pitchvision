@@ -29,7 +29,7 @@
 <main>
   <h1>pitchvision</h1>
   <p class="lede">This project fills in the football players that the TV camera does not show. Then it predicts the play and answers "what if" questions.</p>
-  <div class="status"><b>Status:</b> M0 is done. The charter, the holdout lock and the camera mask are ready. There are no results yet.</div>
+  <div class="status"><b>Status:</b> 4 specs. The model gives correct uncertainty, but its positions are worse than a Kalman smoother. Version B learns a correction to the Kalman estimate.</div>
   <h2>How it works</h2>
   <ol>
     <li>The input is broadcast tracking data. Some players are missing.</li>
@@ -37,12 +37,17 @@
     <li>The model predicts the next seconds of play: the real play and "what if" plays.</li>
     <li>The difference in threat between the two plays gives the value of a decision.</li>
   </ol>
-  <h2>Tests</h2>
+  <h2>Results (Metrica game 3, validation)</h2>
   <table>
-    <tr><th>Holdout</th><td>20% of the matches. They are locked until the final spec.</td></tr>
-    <tr><th>Imputation</th><td>The error on hidden players must be at least 10% lower than the best baseline.</td></tr>
-    <tr><th>Calibration</th><td>The 90% regions must contain the true position for 85% to 95% of cases.</td></tr>
-    <tr><th>Pipeline</th><td>The "what if" answers must stay the same when the input is imputed.</td></tr>
+    <tr><th>Camera mask</th><td>A replay of real SkillCorner camera footprints. It hides 49% of player cells. In real broadcast data, the median hidden run is 4.7 s.</td></tr>
+    <tr><th>Best baseline</th><td>Kalman smoother on the full match: 2.13 m median error on hidden players.</td></tr>
+    <tr><th>Model A</th><td><b>Calibration passes:</b> 88.4% in the 90% regions. <b>Imputation fails:</b> 5.39 m. <b>Forecast fails:</b> 12.4 m at 4 s, against 8.6 m for constant velocity.</td></tr>
+    <tr><th>Model B</th><td>Running. It starts from the Kalman estimate and learns a correction.</td></tr>
+  </table>
+  <h2>Method</h2>
+  <table>
+    <tr><th>Specs</th><td>We write a spec with pass/fail rules before each run. We keep failed results.</td></tr>
+    <tr><th>Holdout</th><td>20% of the matches. The code locks them until the final spec.</td></tr>
   </table>
   <footer>This site shows statistics only. Data: PFF FC World Cup 2022, Metrica Sports, SkillCorner open data.</footer>
 </main>
