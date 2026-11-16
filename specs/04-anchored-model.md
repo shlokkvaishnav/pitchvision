@@ -39,3 +39,25 @@ A CPU smoke test (1 epoch, 16 windows) showed two problems. We found them before
    From now on, M3 uses only the cells where the baseline has an estimate, for the model and for the baseline. We also report the error of the model on all cells.
 2. **Anchor drift.** For a player that is hidden for a long time, the Kalman prediction moves far from the pitch (mean error 45 m at 4.0 s on these cells).
    We clip the anchor mean to the pitch plus a margin of 5% (−1.05 to 1.05 after normalisation).
+
+## Result (2026-11-16, Kaggle GPU, commit 0e8ad5e)
+Training: 2,307 windows, 30 epochs, 817 s. The loss went down from −1.71 to −2.34.
+Validation: game 3, 1,395 windows, 1,318,094 hidden player cells.
+
+| Rule | Model B | Anchor alone | Bar | Result |
+|---|---|---|---|---|
+| M1 Imputation (median error) | 2.24 m | 2.13 m | ≤ 1.91 m (0.9 × Kalman 2.13 m) | Fail |
+| M2 Calibration (90% ellipses) | 84.1% | 87.2% | 85% to 95% | Fail |
+| M3 Forecast at 4.0 s (mean error, same cells, 73.9%) | **6.64 m** | 9.38 m | below 8.62 m (constant velocity) | **Pass** |
+
+On all cells, the forecast error at 4.0 s is 8.93 m (spec 03: 12.4 m).
+
+**Interpretation.**
+- **Forecast.** The correction is large and useful: 6.64 m against 9.38 m for the anchor, and 23% lower than constant velocity.
+  Version A got 7.42 m on the same cells. Thus, the anchor helps the forecast.
+- **Imputation.** The correction makes the anchor a little worse (2.24 m against 2.13 m), and the ellipses become too small (84.1%).
+  The training loss goes down in all epochs, but the validation error goes up. This is overfitting on 2 matches.
+  In imputation, the Kalman smoother already uses the full match, so the model has little to add with 2,307 windows.
+
+**Consequence.** M1 fails. The "what if" stage stays blocked. The next lever is more data (PFF FC World Cup 2022, 64 matches).
+We do not tune version B on game 3, because each new try on the same validation game increases the risk of a fit to it.
