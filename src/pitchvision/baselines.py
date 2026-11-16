@@ -198,3 +198,65 @@ def gap_lengths(hidden: np.ndarray) -> np.ndarray:
         for start, stop in zip(edges[::2], edges[1::2]):
             out[start:stop, j] = stop - start
     return out
+
+
+def by_period(fn, positions: np.ndarray, visible: np.ndarray, period: np.ndarray, **kw) -> np.ndarray:
+    """Run an imputation baseline on each period alone. Teams change ends at half-time."""
+    out = np.full(np.shape(positions), np.nan)
+    for p in np.unique(period):
+        rows = period == p
+        out[rows] = fn(positions[rows], visible[rows], **kw)
+    return out
+
+
+def cubic_spline(positions: np.ndarray, visible: np.ndarray) -> np.ndarray:
+    """Natural cubic spline through the visible frames of each player. Hold outside the first and last visible frame."""
+    from scipy.interpolate import CubicSpline
+
+    obs = _observed(positions, visible)
+    t, n, _ = obs.shape
+    out = np.full_like(obs, np.nan)
+    frames = np.arange(t)
+    for j in range(n):
+        seen = np.flatnonzero(visible[:, j] & np.isfinite(obs[:, j]).all(-1))
+        if seen.size == 0:
+            continue
+        if seen.size < 3:
+            for d in range(2):
+                out[:, j, d] = np.interp(frames, seen, obs[seen, j, d])
+            continue
+        inside = (frames >= seen[0]) & (frames <= seen[-1])
+        cs = CubicSpline(seen, obs[seen, j], bc_type="natural", axis=0)
+        out[inside, j] = cs(frames[inside])
+        out[frames < seen[0], j] = obs[seen[0], j]
+        out[frames > seen[-1], j] = obs[seen[-1], j]
+    return out
+
+
+def constant_velocity_smooth(
+    positions: np.ndarray, visible: np.ndarray, fps: float, max_speed: float = 8.0, steps: int = 4
+) -> np.ndarray:
+    """Constant velocity with the mean velocity over the last `steps` + 1 consecutive visible frames (causal)."""
+    obs = _observed(positions, visible)
+    out = hold_last(positions, visible)
+    t, n, _ = obs.shape
+    dt = 1.0 / fps
+    for j in range(n):
+        v = np.zeros(2)
+        run = 0  # consecutive visible frames up to now
+        last = None
+        for k in range(t):
+            if visible[k, j]:
+                run = run + 1 if last == k - 1 else 1
+                if run >= 2:
+                    s = min(steps, run - 1)
+                    v = (obs[k, j] - obs[k - s, j]) / (s * dt)
+                    speed = np.linalg.norm(v)
+                    if speed > max_speed:
+                        v *= max_speed / speed
+                else:
+                    v = np.zeros(2)
+                last = k
+            elif last is not None:
+                out[k, j] = obs[last, j] + v * (k - last) * dt
+    return out

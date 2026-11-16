@@ -1,6 +1,6 @@
 #!/bin/sh
 # Pack the code at HEAD into the private dataset shlokkvaishnav/pitchvision-src, then push the kernel.
-# Usage: sh kaggle/push.sh "version message"
+# Usage: [KDIR=kaggle/audit] sh kaggle/push.sh "version message"
 set -eu
 K="${KAGGLE:-$HOME/.cache/kaggle-cli/bin/kaggle}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -23,4 +23,4 @@ for i in $(seq 1 30); do
   sleep 10
 done
 sleep 20
-"$K" kernels push -p "$ROOT/kaggle"
+"$K" kernels push -p "${KDIR:-$ROOT/kaggle}"
