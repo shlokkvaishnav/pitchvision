@@ -80,7 +80,12 @@ def test_from_kloppy_normalised_path_matches_kloppy_metric_convention():
 
     dim = NS(min=0, max=1)
     home = NS(ground=NS(value="home"))
-    p1 = NS(player_id="a", team=home)
+
+    class Player:  # hashable, as kloppy players are
+        player_id = "a"
+        team = home
+
+    p1 = Player()
     home.players = [p1]
     meta = NS(pitch_dimensions=NS(x_dim=dim, y_dim=dim), teams=[home], frame_rate=10)
     frames = [
