@@ -92,3 +92,32 @@ def test_formation_by_period_handles_change_of_ends():
     period = np.array([1] * 20 + [2] * 20)
     est = formation_template_by_period(base, vis, ["home"] * 3, period)
     assert errors(est, base, ~vis)["mean"] < 1.0
+
+
+def test_cubic_spline_is_exact_on_a_parabola_inside_the_gap():
+    import numpy as np
+
+    from pitchvision.baselines import cubic_spline
+
+    t = np.arange(40, dtype=float)
+    pos = np.stack([0.01 * t**2, 0.5 * t], -1)[:, None, :]
+    vis = np.ones((40, 1), bool)
+    vis[15:25] = False
+    est = cubic_spline(pos, vis)
+    assert np.abs(est[15:25] - pos[15:25]).max() < 0.05
+
+
+def test_smooth_constant_velocity_averages_noise():
+    import numpy as np
+
+    from pitchvision.baselines import constant_velocity, constant_velocity_smooth
+
+    rng = np.random.default_rng(0)
+    t = np.arange(60, dtype=float)
+    truth = np.stack([0.5 * t, np.zeros_like(t)], -1)[:, None, :]  # 5 m/s at 10 Hz
+    noisy = truth + rng.normal(0, 0.1, truth.shape)
+    vis = np.ones((60, 1), bool)
+    vis[40:] = False
+    e_last = np.abs(constant_velocity(noisy, vis, 10.0)[-1] - truth[-1]).sum()
+    e_smooth = np.abs(constant_velocity_smooth(noisy, vis, 10.0)[-1] - truth[-1]).sum()
+    assert e_smooth < e_last
