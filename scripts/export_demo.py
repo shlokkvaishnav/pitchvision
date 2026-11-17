@@ -12,18 +12,15 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
-import sys
 from pathlib import Path
 
 import numpy as np
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import train_more as tm
-
 from pitchvision.anchor import SCALE
+from pitchvision.dataset import donors, load_match
 from pitchvision.model import AnchoredModel
-from pitchvision.prep import replay_corners, skillcorner_match
+from pitchvision.prep import FPS, replay_corners, skillcorner_match
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "site" / "demo"
@@ -57,8 +54,8 @@ def main() -> None:
     model.load_state_dict(torch.load(args.weights, map_location="cpu"))
     model.eval()
 
-    tr, vis_mask, w = tm.load_match(MATCH, tm.donors()[MATCH], Path(args.raw))
-    camera = replay_corners(tr, skillcorner_match(tm.donors()[MATCH], Path(args.raw)))  # (T, 4, 2) metres
+    tr, vis_mask, w = load_match(MATCH, donors()[MATCH], Path(args.raw))
+    camera = replay_corners(tr, skillcorner_match(donors()[MATCH], Path(args.raw)))  # (T, 4, 2) metres
     picks = [len(w.pos) // 4, len(w.pos) // 2, 3 * len(w.pos) // 4]
     types = torch.as_tensor(w.agent_type)
     clips = []
@@ -72,7 +69,7 @@ def main() -> None:
             mu, ls = model(torch.nan_to_num(pos) * obs[..., None], obs, types, am, al)
         clips.append(
             {
-                "start_s": round(float(w.start[i] / tm.FPS), 1),
+                "start_s": round(float(w.start[i] / FPS), 1),
                 "camera_m": r(camera[w.start[i] : w.start[i] + w.pos.shape[1]], 2),
                 "truth_m": r(w.pos[i] * SCALE, 2),
                 "visible": w.visible[i].astype(int).tolist(),
@@ -103,7 +100,7 @@ def main() -> None:
         "hidden_share": round(float(hidden.sum() / present.sum()), 4),  # player positions off-camera, this match
         "hidden_gap_bins": audit["bin_fraction"],  # share of hidden positions by gap length, 8 matches (spec 06)
         "weights": args.tag,
-        "fps": tm.FPS,
+        "fps": FPS,
         "scale_m": SCALE.tolist(),
         "std_scale": args.std_scale,  # the page multiplies the model std by this factor (python_log_std excludes it)
         "agent_type": w.agent_type.tolist(),

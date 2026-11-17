@@ -1,4 +1,4 @@
-"""Masked model, version A: factorized transformer with a Gaussian output (specs/03-masked-model.md)."""
+"""Masked model, version A: factorized transformer with a Gaussian output (docs/specs/03-masked-model.md)."""
 
 from __future__ import annotations
 
@@ -82,7 +82,7 @@ def inside_ellipse(mean, log_std, target, scale=(1.0, 1.0), q: float = CHI2_2DOF
 
 
 class AnchoredModel(MaskedModel):
-    """Version B (specs/04-anchored-model.md): the output is a correction to a Kalman anchor."""
+    """Version B (docs/specs/04-anchored-model.md): the output is a correction to a Kalman anchor."""
 
     def __init__(self, length: int = 90, dim: int = 128, heads: int = 4, depth: int = 4, dropout: float = 0.0):
         super().__init__(length, dim, heads, depth, dropout)
@@ -98,3 +98,22 @@ class AnchoredModel(MaskedModel):
             h = block(h)
         out = self.head(self.norm(h))
         return anchor_mean + out[..., :2], (anchor_log_std + out[..., 2:]).clamp(-7.0, 3.0)
+
+
+@torch.no_grad()
+def predict_windows(model, pos, obs, types, anchor_mean, anchor_log_std, device, batch: int = 64):
+    """Run an AnchoredModel over windows in batches. Arrays in, arrays out: (mean, log_std), normalised units."""
+    import numpy as np
+
+    def t(a):
+        return torch.as_tensor(a, dtype=torch.float32, device=device)
+
+    model.eval()
+    mus, lss = [], []
+    ty = torch.as_tensor(types, device=device)
+    for i in range(0, len(pos), batch):
+        s = slice(i, i + batch)
+        mu, ls = model(t(pos[s]), torch.as_tensor(obs[s], device=device), ty, t(anchor_mean[s]), t(anchor_log_std[s]))
+        mus.append(mu.cpu().numpy())
+        lss.append(ls.cpu().numpy())
+    return np.concatenate(mus), np.concatenate(lss)

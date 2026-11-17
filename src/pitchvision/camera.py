@@ -1,4 +1,4 @@
-"""Simulated broadcast camera view (see specs/00-charter.md, section 5).
+"""Simulated broadcast camera view (see docs/specs/00-charter.md, section 5).
 
 Coordinates are in metres. The origin is the centre spot.
 x runs along the length of the pitch. y runs across the width.
