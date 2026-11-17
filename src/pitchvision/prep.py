@@ -68,11 +68,14 @@ def metrica_game(game: int) -> Tracking:
 IDSSE_DEV = ("J03WMX", "J03WOY", "J03WPY", "J03WQQ", "J03WR9")  # spec 05: the development matches, sorted
 
 
-def idsse_match(match: str) -> Tracking:
-    """One IDSSE match (Bassek et al. 2025, CC BY 4.0), resampled to 10 Hz. Refuses holdout matches."""
+def idsse_match(match: str, *, allow_holdout: bool = False) -> Tracking:
+    """One IDSSE match (Bassek et al. 2025, CC BY 4.0), resampled to 10 Hz.
+
+    Refuses holdout matches. Only the final spec (07) sets allow_holdout.
+    """
     from kloppy import sportec
 
     match_id = f"idsse-{match}"
-    assert_not_holdout(match_id)
+    assert_not_holdout(match_id, allow_holdout=allow_holdout)
     ds = sportec.load_open_tracking_data(match, coordinates="sportec")  # native: centred metres
     return resample(from_kloppy(ds, match_id), FPS)
