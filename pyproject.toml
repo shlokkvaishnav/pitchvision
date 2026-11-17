@@ -1,7 +1,7 @@
 [project]
 name = "pitchvision"
 version = "0.1.0"
-description = "Football tracking model. It finds the players that a TV broadcast does not show, with a region for where each one probably is, and predicts all 22 players 4 seconds ahead."
+description = "See the players the TV camera misses. Reconstructs off-screen footballers from broadcast tracking data and forecasts their next moves, live in your browser."
 requires-python = ">=3.10"
 dependencies = ["numpy", "pandas", "scipy"]
 
