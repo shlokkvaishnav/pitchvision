@@ -1,0 +1,21 @@
+{
+  "spec": "05-more-data note (spline bar of spec 06)",
+  "commit": "494d688196613a012a39c81d72817fa48b23e579",
+  "test_matches": [
+    "idsse-J03WQQ",
+    "idsse-J03WR9"
+  ],
+  "cell_fraction": 1.0,
+  "median_m": {
+    "model": 2.4332880445600775,
+    "kalman": 3.272867917932004,
+    "spline": 2.819318028204159
+  },
+  "mean_m": {
+    "model": 4.581579189764628,
+    "kalman": 9.663107477179022,
+    "spline": 11.240603977407572
+  },
+  "model_beats_spline_median": true,
+  "model_beats_spline_mean": true
+}
