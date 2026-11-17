@@ -48,3 +48,37 @@ Training on a Kaggle GPU. `results/05-more-data.json`: the metrics, the rule res
 Spec 06 found a stronger classical bar for imputation: a cubic spline (pooled median 2.48 m against 2.92 m for the
 Kalman smoother on the full matches). The rules of this spec stay as written. But a model that passes M1 here must
 also beat the spline before we say that it beats the classical baselines.
+
+## Result (2026-11-17, Kaggle GPU, commit 22e0208)
+Training: 11,873 windows (5 matches), 30 epochs, 3,997 s. Best epoch on the tuning match: 26. Scale factor s = 1.175.
+Test: IDSSE J03WQQ and J03WR9, 4,679 windows, 4,554,291 hidden player cells.
+
+| Rule | Model | Anchor alone | Bar | Result |
+|---|---|---|---|---|
+| M1 Imputation (median error) | **2.43 m** | 3.25 m | ≤ 2.95 m (0.9 × Kalman 3.27 m) | **Pass** (ratio 0.74) |
+| M2 Calibration (90% ellipses, after s) | **92.1%** | 88.8% | 85% to 95% | **Pass** |
+| M3 Forecast at 4.0 s (mean error, same cells, 68.3%) | **5.17 m** | 7.44 m | below 6.94 m (constant velocity) | **Pass** |
+
+Tuning match (Metrica 3): imputation 1.94 m (Kalman 2.13 m), coverage 88.9%, forecast 6.29 m (constant velocity 8.62 m).
+On all test cells, the forecast error at 4.0 s is 7.38 m.
+
+**Spline bar (note of 2026-11-16).** `scripts/rescore_05_spline.py` scores the model, the Kalman smoother and the cubic spline
+of spec 06 on the same test cells (CPU; the model median is the same as on the GPU, 2.433 m). `results/05-spline-same-cells.json`:
+
+| Same test cells | Median | Mean |
+|---|---|---|
+| Model | **2.43 m** | **4.58 m** |
+| Cubic spline | 2.82 m | 11.24 m |
+| Kalman smoother | 3.27 m | 9.66 m |
+
+The model is 14% lower than the spline on the median and 59% lower on the mean. Thus, it also beats the strongest classical bar.
+
+**Interpretation.**
+- **The hypothesis of spec 04 is supported.** With 5 training matches instead of 2, the tuning error goes down after epoch 12,
+  and it goes below the anchor (epoch 0). In spec 04, training made the model worse than the anchor.
+- **Long gaps.** The large drop of the mean (11.24 m to 4.58 m) shows that the model removes most of the large errors of the
+  spline and the Kalman smoother in long gaps.
+- **Limits.** Two test matches from one league. The windows overlap (stride 2 s), thus one cell can count more than once
+  (the same for all methods). The holdout matches (J03WN1, J03WOH) are not used yet.
+
+**Consequence.** The imputation passes on new matches. The demo on the site now uses these weights, with the scale factor.
