@@ -1,0 +1,105 @@
+{
+  "spec": "07-holdout (dry run, development match, does not count)",
+  "commit": "2ff97c3d6b70792a6d5283d8e33f83acfbf3ed6a",
+  "weights": "data/models/05-more-data.pt",
+  "std_scale": 1.1747,
+  "donors": {
+    "J03WQQ": "1959846"
+  },
+  "pooled": {
+    "n_hidden_cells": 1640899,
+    "imputation_cell_fraction": 1.0,
+    "imputation_median_m": {
+      "model": 1.947203361573533,
+      "constant_velocity": 8.18183964642195,
+      "linear": 3.3143294978180604,
+      "spline": 1.973999516918104,
+      "kalman": 2.375107709481499,
+      "formation_template": 20.525896675184168
+    },
+    "imputation_mean_m": {
+      "model": 3.6341582108505315,
+      "constant_velocity": 23.52813601601879,
+      "linear": 5.5605508334690485,
+      "spline": 5.8998138908954,
+      "kalman": 6.8582711564567065,
+      "formation_template": 21.73218440222195
+    },
+    "best_imputation_baseline": "spline",
+    "coverage_90": 0.9198494240047681,
+    "forecast_cell_fraction": 0.7272727272727273,
+    "forecast_4s_mean_m": {
+      "cv_last": 7.365406631124917,
+      "cv_smooth": 7.677893870654788,
+      "stationary": 8.037321252365233,
+      "kalman_filter": 7.870864909954239,
+      "model": 5.39633414488061
+    },
+    "best_forecast_baseline": "cv_last",
+    "implausible_fraction": {
+      "model": 0.3430405716330913,
+      "truth": 0.00039433991205644746
+    },
+    "report_only_smoothed_forecast": {
+      "forecast_4s_mean_m": 5.390110927922868,
+      "implausible_fraction": 0.016107219552101443
+    },
+    "rules": {
+      "R1_ratio": 0.9864254498975732,
+      "R1_pass": false,
+      "R2_pass": true,
+      "R3a_pass": true,
+      "R3b_pass": false,
+      "R4": "not tested: the what-if stage was not built"
+    }
+  },
+  "per_match": {
+    "idsse-J03WQQ": {
+      "n_hidden_cells": 1640899,
+      "imputation_cell_fraction": 1.0,
+      "imputation_median_m": {
+        "model": 1.947203361573533,
+        "constant_velocity": 8.18183964642195,
+        "linear": 3.3143294978180604,
+        "spline": 1.973999516918104,
+        "kalman": 2.375107709481499,
+        "formation_template": 20.525896675184168
+      },
+      "imputation_mean_m": {
+        "model": 3.6341582108505315,
+        "constant_velocity": 23.52813601601879,
+        "linear": 5.5605508334690485,
+        "spline": 5.8998138908954,
+        "kalman": 6.8582711564567065,
+        "formation_template": 21.73218440222195
+      },
+      "best_imputation_baseline": "spline",
+      "coverage_90": 0.9198494240047681,
+      "forecast_cell_fraction": 0.7272727272727273,
+      "forecast_4s_mean_m": {
+        "cv_last": 7.365406631124917,
+        "cv_smooth": 7.677893870654788,
+        "stationary": 8.037321252365233,
+        "kalman_filter": 7.870864909954239,
+        "model": 5.39633414488061
+      },
+      "best_forecast_baseline": "cv_last",
+      "implausible_fraction": {
+        "model": 0.3430405716330913,
+        "truth": 0.00039433991205644746
+      },
+      "report_only_smoothed_forecast": {
+        "forecast_4s_mean_m": 5.390110927922868,
+        "implausible_fraction": 0.016107219552101443
+      },
+      "rules": {
+        "R1_ratio": 0.9864254498975732,
+        "R1_pass": false,
+        "R2_pass": true,
+        "R3a_pass": true,
+        "R3b_pass": false,
+        "R4": "not tested: the what-if stage was not built"
+      }
+    }
+  }
+}

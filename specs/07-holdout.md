@@ -29,3 +29,10 @@ We also report the mean imputation error of every method, and all numbers per ma
 1. A dry run of the script on development match `idsse-J03WQQ` checks the code. It does not count.
 2. One run on the two holdout matches. The result goes to `results/07-holdout.json` with the git commit.
 3. Whatever the result, we keep it and report it. No second run on the holdout.
+
+## Amendment A1 (2026-11-17, after the dry run, before any holdout match was loaded)
+The dry run on development match J03WQQ found that the forecast mean wobbles by about 14 cm from frame to frame.
+Speeds are fine, but at 10 Hz this gives accelerations above 10 m/s² in about 30% of forecast frames (true positions: 0.03%).
+The rules do not change. We add one **report-only** number: R3a and R3b again after a fixed 9-frame moving average
+over time on the forecast (no learned parameters). On J03WQQ (full dry run) it lowered the flagged fraction from 34.3% to 1.6% and the 4 s error from 5.40 m to 5.39 m.
+We chose the 9 frames on J03WQQ only.
