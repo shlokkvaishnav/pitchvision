@@ -35,13 +35,14 @@ flowchart LR
 ## Results
 Final test on 2 Bundesliga matches that were locked in code until the end (IDSSE, 2.9 million hidden player positions).
 The model, its settings and the pass/fail rules were committed before the run, and it was run once.
+Intervals: block bootstrap over 5-minute stretches of play ([spec 08](docs/specs/08-seeds-and-intervals.md)).
 
 | | pitchvision | Best classical method | Result |
 |---|---|---|---|
-| Hidden players, median error | **2.70 m** | 3.28 m (cubic spline); Kalman smoother 3.81 m | 18% lower |
+| Hidden players, median error | **2.70 m** | 3.28 m (cubic spline); Kalman smoother 3.81 m | 18% lower (95% CI 13 to 22%) |
 | Hidden players, mean error | **4.78 m** | 9.32 m (spline) | Far fewer large misses in long gaps |
 | 90% regions contain the truth | **92.4%** | — | Calibrated |
-| 4 s forecast, mean error | **5.18 m** | 6.97 m (constant velocity) | 26% lower, on the 66% of positions where constant velocity can guess |
+| 4 s forecast, mean error | **5.18 m** | 6.97 m (constant velocity) | 1.8 m lower (95% CI 1.6 to 2.0 m), on the 66% of positions where constant velocity can guess |
 
 What does not work:
 - **Jerky forecasts.** The forecast wobbles frame to frame. A moving average fixes most of it at no cost in accuracy.

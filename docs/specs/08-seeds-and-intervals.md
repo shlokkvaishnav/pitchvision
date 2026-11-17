@@ -24,3 +24,21 @@ This spec measures how much the results move (A) with the training seed and (B) 
 
 ## 4. Output
 `results/08-seeds.json` (part A) and `results/08-intervals.json` (part B), with the git commit.
+
+## Result, part B (2026-11-17)
+95% block-bootstrap intervals (5-minute blocks, 2,000 resamples). The point estimates equal the spec 05 and spec 07
+results (medians to the 1 cm histogram bin).
+
+| | Spec 05 test (2 matches, 32 blocks) | Spec 07 locked (2 matches, 21 blocks) |
+|---|---|---|
+| Model median error | 2.44 m [2.18, 2.78] | 2.71 m [2.40, 3.07] |
+| Spline median error | 2.82 m [2.37, 3.43] | 3.28 m [2.80, 3.90] |
+| Ratio model / spline | 0.87 [0.80, 0.93] | 0.83 [0.78, 0.87] |
+| 90% coverage | 92.1% [91.4, 92.7] | 92.4% [91.5, 93.2] |
+| Forecast at 4 s, model | 5.17 m [4.97, 5.38] | 5.18 m [4.89, 5.47] |
+| Forecast at 4 s, cv_last | 6.94 m [6.56, 7.29] | 6.97 m [6.47, 7.48] |
+| Difference (model − cv_last) | −1.76 m [−1.94, −1.59] | −1.79 m [−2.02, −1.56] |
+
+**Interpretation.** On both test sets, the whole interval of the error ratio is below 1, and the whole interval of the
+forecast difference is below 0. Coverage stays inside 85 to 95%. The intervals describe variation over match minutes
+within these 4 matches. They do not cover variation between leagues or seasons.
