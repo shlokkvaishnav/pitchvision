@@ -36,3 +36,31 @@ Speeds are fine, but at 10 Hz this gives accelerations above 10 m/s² in about 3
 The rules do not change. We add one **report-only** number: R3a and R3b again after a fixed 9-frame moving average
 over time on the forecast (no learned parameters). On J03WQQ (full dry run) it lowered the flagged fraction from 34.3% to 1.6% and the 4 s error from 5.40 m to 5.39 m.
 We chose the 9 frames on J03WQQ only.
+
+## Result (2026-11-17, CPU, commit d6b2f1a) — the one holdout run
+2 matches, 2,911 windows, 2,931,610 hidden player cells. All baselines have an estimate on every cell.
+
+| Rule | Model | Best baseline | Bar | Result |
+|---|---|---|---|---|
+| R1 Imputation (median error) | **2.70 m** | spline 3.28 m | ≤ 2.95 m (0.9 × spline) | **Pass** (ratio 0.82) |
+| R2 Calibration (90% ellipses) | **92.4%** | — | 85% to 95% | **Pass** |
+| R3a Forecast at 4.0 s (mean error, 66.5% of cells) | **5.18 m** | cv_last 6.97 m | lower | **Pass** |
+| R3b Plausible motion (forecast frames flagged) | 38.2% | true positions 0.07% | not more than truth | **Fail** |
+| R4 Pipeline stability | — | — | — | Not tested |
+
+Mean imputation error: model 4.78 m, linear 6.93 m, spline 9.32 m, Kalman 9.86 m.
+Report only (A1): with the 9-frame moving average, the flagged fraction is 2.3% and the 4 s error is 5.18 m.
+
+| Per match | Windows | Model median | Spline median | Coverage | Forecast (model / cv_last) |
+|---|---|---|---|---|---|
+| J03WN1 | 208 | 2.27 m | 2.30 m | 92.6% | 4.73 / 6.09 m |
+| J03WOH | 2,703 | 2.73 m | 3.36 m | 92.3% | 5.22 / 7.05 m |
+
+**Interpretation.**
+- **Imputation and calibration hold on unseen matches.** The margin over the spline (18%) is larger than on the spec 05 test matches (14%).
+- **The pooled result is mostly one match.** In J03WN1 the away team has 10 players for about 92% of the match (a red card).
+  The windows need 11 players per team, so only 208 windows qualify. On that match the model is only 1% better than the spline.
+  The model cannot handle a team with fewer than 11 players.
+- **The forecast is accurate but not smooth.** The mean wobbles from frame to frame, so the raw forecast fails the motion rule.
+  A fixed moving average removes most of it without a loss of accuracy, but it is still above the rate of real players.
+- **Limits.** 2 holdout matches, one league, one training seed. The holdout is now used. No more tests on it.
