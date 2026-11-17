@@ -1,4 +1,4 @@
-"""Kalman anchor for masked model version B (specs/04-anchored-model.md, section 2)."""
+"""Kalman anchor for masked model version B (docs/specs/04-anchored-model.md, section 2)."""
 
 from __future__ import annotations
 

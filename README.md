@@ -1,24 +1,26 @@
 # pitchvision
 
-**See the players the camera misses.** A TV broadcast of a football match shows only a part of the pitch.
-pitchvision gives the position of each hidden player, with a 90% region for where the player probably is.
-It also predicts where each player will be in the next 4 seconds.
+**See the players the camera misses.** A TV broadcast of a football match shows only part of the pitch, so tracking data
+built from broadcast footage has holes: about half of all player positions are off-screen at any moment.
+pitchvision fills them in. For every hidden player it gives a position and a 90% region for where they probably are,
+and it predicts where all 22 players will be 4 seconds later.
 
-**Live:** <https://shlokkvaishnav.github.io/pitchvision/> — the model runs in your browser.
+It works on player-tracking data (x, y positions), not on video pixels.
+
+**Live:** <https://shlokkvaishnav.github.io/pitchvision/>: the model runs in your browser on real Bundesliga clips.
 
 [![The pitchvision site](docs/site.png)](https://shlokkvaishnav.github.io/pitchvision/)
 
-## What it does
-- **Imputation.** For each hidden player, the model gives a position and an uncertainty (a 2-D Gaussian).
-- **Forecast.** The same model predicts the positions of all 22 players 4 seconds ahead.
-- **Realistic camera masks.** Which players are hidden comes from real broadcast camera views (SkillCorner), laid onto full-pitch tracking data. Not random masks.
-  In our data, about half of the player positions are off-camera, and 74% of the hidden time is in gaps of 9.6 s or more.
-- **A web page with no server.** The model is exported to ONNX. The page runs it with onnxruntime-web on real match clips.
-
-## How the model works
-A Kalman smoother gives a first estimate from the motion of each player before and after the gap.
-A transformer looks at all 22 players and the ball together, and it learns a correction to that estimate.
-The last layer starts at zero, thus before training the model is equal to the Kalman estimate.
+## How it works
+1. **Realistic gaps.** We take full-pitch tracking data (every player, 10 Hz) and hide whoever a real broadcast camera
+   would not show. The camera views come from SkillCorner's open broadcast data. Most of the hidden time (74%) is in gaps
+   of 9.6 seconds or more, which is what makes the problem hard.
+2. **Classical first guess.** A Kalman smoother runs over the whole match and gives each hidden player an estimate and a variance.
+3. **Learned correction.** An axial transformer (attention across time and across the 22 players and the ball) corrects that
+   estimate using where everyone else is. Its last layer starts at zero, so before training it equals the Kalman estimate
+   and it can only learn to improve on it.
+4. **Calibrated uncertainty.** One scale factor on the predicted spread, fitted on a separate match, makes the 90% regions honest.
+5. **In the browser.** The model is exported to ONNX (4 MB) and runs with onnxruntime-web. No server.
 
 ```mermaid
 flowchart LR
@@ -30,47 +32,60 @@ flowchart LR
   C --> O[ONNX export] --> W[site/<br/>onnxruntime-web]
 ```
 
-## What works and what does not
-Final test: 2 locked Bundesliga matches that were never loaded during development (IDSSE, 2.9 million hidden player positions).
-The model, its settings and the rules were fixed and committed before the run. It was run once.
+## Results
+Final test on 2 Bundesliga matches that were locked in code until the end (IDSSE, 2.9 million hidden player positions).
+The model, its settings and the pass/fail rules were committed before the run, and it was run once.
 
-| Part | Result on the locked matches |
-|---|---|
-| Imputation | **Works.** Median error 2.70 m, against 3.28 m for the best classical method (cubic spline) and 3.81 m for a Kalman smoother. Mean error 4.78 m, against 9.32 m for the spline. |
-| Uncertainty | **Works.** The 90% regions contain the true position 92.4% of the time. |
-| Forecast at 4 s | **Works.** Mean error 5.18 m, against 6.97 m for constant velocity (on the 66% of positions where constant velocity can make a guess). |
-| Smooth motion | **Fails.** The forecast wobbles frame to frame. A simple moving average removes most of it at no cost in accuracy, but it's still jerkier than real players. |
-| Red cards | **Not handled.** The model needs 11 v 11. One locked match had a red card, so only 7% of it could be tested; on that part the model only tied the spline. |
-| With 2 training matches | **Did not work.** The model was worse than the Kalman smoother. With 5 matches it is better. |
-| "What if" plays | **Not built.** |
+| | pitchvision | Best classical method | Result |
+|---|---|---|---|
+| Hidden players, median error | **2.70 m** | 3.28 m (cubic spline); Kalman smoother 3.81 m | 18% lower |
+| Hidden players, mean error | **4.78 m** | 9.32 m (spline) | Far fewer large misses in long gaps |
+| 90% regions contain the truth | **92.4%** | — | Calibrated |
+| 4 s forecast, mean error | **5.18 m** | 6.97 m (constant velocity) | 26% lower, on the 66% of positions where constant velocity can guess |
 
-Caveats: the input is tracking data with broadcast camera views laid on top as masks; there is no video detection.
-Two test matches from one league and one training seed is a small sample.
-Every experiment has a plan with pass/fail rules written before the run, in [`specs/`](specs/). Failed tests stay in.
+What does not work:
+- **Jerky forecasts.** The forecast wobbles frame to frame. A moving average fixes most of it at no cost in accuracy.
+- **Red cards.** The model needs 11 v 11. One locked match had a red card, so only 7% of it could be scored, and there
+  the model only tied the spline.
+- **Small data.** 5 training matches. With 2, the model was worse than the Kalman smoother.
+- **The "what if" plays** in the original plan were not built.
+
+**How it was tested, every experiment (including the failures), related work and limitations: [docs/method.md](docs/method.md).**
+
+## Related work
+The closest prior work is DeepMind and Liverpool FC's Graph Imputer (Omidshafiei et al., *Scientific Reports*, 2022,
+[doi:10.1038/s41598-022-12547-0](https://doi.org/10.1038/s41598-022-12547-0)), which imputes off-screen players with
+variational LSTMs and graph networks on 105 matches. pitchvision takes a different route: a classical estimate plus a learned
+correction, checked uncertainty, open data only, and a locked test against the strongest classical baseline we could find.
+We did not run Graph Imputer, so we make no claim about which is more accurate. More in [docs/method.md](docs/method.md#related-work).
 
 ## Engineering
-- **The browser and Python agree.** A Node test runs the ONNX model in onnxruntime-web and compares it with PyTorch on the demo clips (difference < 1e-4).
+- **Python and the browser agree.** A Node test runs the ONNX model in onnxruntime-web and compares it with PyTorch on the demo clips (max difference < 1e-4).
+- **Reproducible.** `make reproduce` downloads the released weights (pinned SHA-256), rebuilds every evaluation result and the demo
+  on CPU, and compares them with the committed files. Dependencies are pinned in `requirements.lock`.
+- **Locked test set in code.** The loaders refuse the held-out matches unless the final spec asks for them.
 - **Fast data loading.** A vectorised path for kloppy loads one IDSSE match in 7 s instead of 121 s.
-- **GPU training on Kaggle.** Each run has its own kernel and its own source dataset. Results are JSON files with the git commit.
-- **Checks on each push:** ruff (lint), mypy (types), pytest, Node tests. CI runs only on push, never on a schedule.
-- **No raw data in the repository.** The site uses 3 short clips of open IDSSE data (CC BY 4.0), with attribution.
+- **GPU training on Kaggle**, one kernel and one code snapshot per run. Every result is a JSON file with its git commit.
+- **Checks on each push:** ruff, mypy, pytest and the Node test. No scheduled CI.
 
 ## Quick start
 ```bash
-make install        # Python 3.10+, creates .venv
+make install        # Python 3.12, creates .venv with pinned versions
 npm ci              # onnxruntime-web, for the browser parity test
 make check          # lint, types, tests
+make reproduce      # released weights -> all evaluation results + demo, compared with the committed files
 ```
-Train: `PYTHONPATH=src python scripts/train_more.py --out results` (a GPU is recommended; about 1 hour on a Kaggle GPU).
+Training: `PYTHONPATH=src python scripts/train_more.py --out results` (about 1 hour on a Kaggle GPU; see `kaggle/`).
 
 ## Layout
 | Path | Content |
 |---|---|
-| `src/pitchvision/` | Data loaders, camera masks, baselines (Kalman, spline), windows, model, calibration |
-| `scripts/` | One script per experiment, plus the demo export |
-| `kaggle/` | Kaggle kernels for GPU and CPU runs |
-| `specs/` | The plan and the result of each experiment |
-| `results/` | The result of each experiment (JSON, with the git commit) |
+| `src/pitchvision/` | Data loading, camera masks, baselines (Kalman, spline), model, training loop, metrics |
+| `scripts/` | One script per experiment, plus the demo export and the reproduce checks |
+| `kaggle/` | Kaggle kernels for the GPU and CPU runs |
+| `docs/method.md` | How it was tested, all results, related work, limitations |
+| `docs/specs/` | The written plan and result of each experiment |
+| `results/` | One JSON file per experiment, with the git commit |
 | `site/` | The web page (HTML, CSS, JavaScript, no framework) |
 
 ## Data and credits

@@ -8,6 +8,7 @@ dependencies = ["numpy", "pandas", "scipy"]
 [project.optional-dependencies]
 data = ["kloppy"]
 ml = ["torch"]
+export = ["onnx"]
 dev = ["pytest", "ruff", "hypothesis", "mypy", "pandas-stubs"]
 
 [build-system]

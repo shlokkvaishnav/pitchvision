@@ -1,4 +1,4 @@
-"""Fit the trapezoid camera mask on SkillCorner broadcast data (see specs/01-data-and-camera.md, section 4)."""
+"""Fit the trapezoid camera mask on SkillCorner broadcast data (see docs/specs/01-data-and-camera.md, section 4)."""
 
 from __future__ import annotations
 

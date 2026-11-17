@@ -1,4 +1,4 @@
-"""Standard tracking format and loaders (see specs/01-data-and-camera.md)."""
+"""Standard tracking format and loaders (see docs/specs/01-data-and-camera.md)."""
 
 from __future__ import annotations
 

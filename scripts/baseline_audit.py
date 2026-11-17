@@ -8,24 +8,20 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import train_more as tm
-
 from pitchvision import baselines as bl
-from pitchvision.anchor import SCALE
+from pitchvision.dataset import donors, load_match
+from pitchvision.metrics import FORECASTERS, forecast_baselines
 from pitchvision.model import CHI2_2DOF_90
-from pitchvision.prep import FPS
+from pitchvision.prep import FPS, IDSSE_DEV
 
-MATCHES = ["metrica-1", "metrica-2", "metrica-3", *[f"idsse-{m}" for m in tm.IDSSE_DEV]]
+MATCHES = ["metrica-1", "metrica-2", "metrica-3", *[f"idsse-{m}" for m in IDSSE_DEV]]
 BINS_S = [0, 1, 3, 6, 9.6, np.inf]
 BIN_NAMES = ["<1s", "1-3s", "3-6s", "6-9.6s", ">=9.6s"]
 IMPUTERS = ("linear", "spline", "kalman")
-FORECASTERS = ("cv_last", "cv_smooth", "stationary", "kalman_filter")
 
 
 def imputation_parts(tr, vis) -> dict[str, np.ndarray]:
@@ -47,21 +43,6 @@ def imputation_parts(tr, vis) -> dict[str, np.ndarray]:
         out[name] = np.linalg.norm(e[hidden] - tr.players[hidden], axis=-1)
     z2 = (((kal_mean - tr.players) / kal_std) ** 2).sum(-1)
     out["kalman_inside"] = (z2[hidden] <= CHI2_2DOF_90).astype(float)
-    return out
-
-
-def forecast_parts(w) -> dict[str, np.ndarray]:
-    obs = w.visible.copy()
-    obs[:, -tm.HORIZON :, :] = False
-    pos_m = w.pos[:, :, :22] * SCALE
-    truth = pos_m[:, -1]
-    out = {}
-    for name, fn in (("cv_last", bl.constant_velocity), ("cv_smooth", bl.constant_velocity_smooth)):
-        est = np.stack([fn(pos_m[b], obs[b, :, :22], FPS)[-1] for b in range(len(w.pos))])
-        out[name] = np.linalg.norm(est - truth, axis=-1).ravel()
-    st = np.stack([bl.hold_last(pos_m[b], obs[b, :, :22])[-1] for b in range(len(w.pos))])
-    out["stationary"] = np.linalg.norm(st - truth, axis=-1).ravel()
-    out["kalman_filter"] = np.linalg.norm(w.fc_mean[:, -1, :22] * SCALE - truth, axis=-1).ravel()
     return out
 
 
@@ -98,11 +79,11 @@ def main() -> None:
     ap.add_argument("--only", nargs="*", default=None, help="smoke test only: a subset of matches")
     ap.add_argument("--commit", default=os.environ.get("PITCHVISION_COMMIT", "unknown"))
     args = ap.parse_args()
-    dn = tm.donors()
+    dn = donors()
     per, imp_all, fc_all = {}, [], []
     for m in args.only or MATCHES:
-        tr, vis, w = tm.load_match(m, dn[m], Path(args.raw))
-        imp, fc = imputation_parts(tr, vis), forecast_parts(w)
+        tr, vis, w = load_match(m, dn[m], Path(args.raw))
+        imp, fc = imputation_parts(tr, vis), forecast_baselines(w)
         per[m] = summarise([imp], [fc])
         imp_all.append(imp)
         fc_all.append(fc)

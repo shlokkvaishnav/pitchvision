@@ -1,4 +1,4 @@
-"""Match-level splits and the holdout lock (see specs/00-charter.md, section 4)."""
+"""Match-level splits and the holdout lock (see docs/specs/00-charter.md, section 4)."""
 
 from __future__ import annotations
 

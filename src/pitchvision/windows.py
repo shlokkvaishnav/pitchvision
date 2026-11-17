@@ -1,4 +1,4 @@
-"""Cut a match into fixed windows of 22 players + ball (see specs/03-masked-model.md, section 2)."""
+"""Cut a match into fixed windows of 22 players + ball (see docs/specs/03-masked-model.md, section 2)."""
 
 from __future__ import annotations
 
@@ -19,6 +19,11 @@ class Windows:
     agent_type: np.ndarray  # (23,) HOME, AWAY or BALL
     start: np.ndarray  # (B,) first frame of each window in the match
     cols: np.ndarray  # (B, 22) player column in the match for each of the 22 player slots
+    # Kalman anchors (set by pitchvision.dataset.load_match): mean and log std, normalised, (B, L, 23, 2)
+    imp_mean: np.ndarray | None = None
+    imp_ls: np.ndarray | None = None
+    fc_mean: np.ndarray | None = None
+    fc_ls: np.ndarray | None = None
 
 
 def cut(tr: Tracking, visible: np.ndarray, length: int = 90, stride: int = 20) -> Windows:
