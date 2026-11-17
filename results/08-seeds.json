@@ -1,0 +1,80 @@
+{
+  "spec": "08-seeds-and-intervals (part A)",
+  "test_matches": [
+    "J03WQQ",
+    "J03WR9"
+  ],
+  "seeds": {
+    "0": {
+      "imputation_median_m": 2.433287702856387,
+      "kalman_same_cells_median_m": 3.272867917932007,
+      "coverage_90": 0.9207845963290444,
+      "forecast_4s_mean_m": 5.171722236962668,
+      "constant_velocity_4s_mean_m": 6.936189768345605,
+      "ratio_vs_kalman": 0.7434726251934674,
+      "best_epoch": 26,
+      "scale_factor": 1.1747250515039753,
+      "all_rules_pass": true
+    },
+    "1": {
+      "imputation_median_m": 2.404471649161463,
+      "kalman_same_cells_median_m": 3.272867917932007,
+      "coverage_90": 0.9188773839879797,
+      "forecast_4s_mean_m": 5.169622250305735,
+      "constant_velocity_4s_mean_m": 6.936189768345605,
+      "ratio_vs_kalman": 0.7346680982716685,
+      "best_epoch": 30,
+      "scale_factor": 1.1810564803510695,
+      "all_rules_pass": true
+    },
+    "2": {
+      "imputation_median_m": 2.3698591760698706,
+      "kalman_same_cells_median_m": 3.272867917932007,
+      "coverage_90": 0.9172962377678545,
+      "forecast_4s_mean_m": 5.13923506519127,
+      "constant_velocity_4s_mean_m": 6.936189768345605,
+      "ratio_vs_kalman": 0.7240925193117139,
+      "best_epoch": 29,
+      "scale_factor": 1.161017509499363,
+      "all_rules_pass": true
+    }
+  },
+  "summary": {
+    "imputation_median_m": {
+      "mean": 2.4025395093625734,
+      "min": 2.3698591760698706,
+      "max": 2.433287702856387
+    },
+    "kalman_same_cells_median_m": {
+      "mean": 3.272867917932007,
+      "min": 3.272867917932007,
+      "max": 3.272867917932007
+    },
+    "coverage_90": {
+      "mean": 0.9189860726949596,
+      "min": 0.9172962377678545,
+      "max": 0.9207845963290444
+    },
+    "forecast_4s_mean_m": {
+      "mean": 5.160193184153225,
+      "min": 5.13923506519127,
+      "max": 5.171722236962668
+    },
+    "constant_velocity_4s_mean_m": {
+      "mean": 6.936189768345604,
+      "min": 6.936189768345605,
+      "max": 6.936189768345605
+    },
+    "ratio_vs_kalman": {
+      "mean": 0.7340777475922833,
+      "min": 0.7240925193117139,
+      "max": 0.7434726251934674
+    },
+    "scale_factor": {
+      "mean": 1.1722663471181358,
+      "min": 1.161017509499363,
+      "max": 1.1810564803510695
+    }
+  },
+  "commit": "f9fdd67c925b5d4cb58da9b7257dcf4030a7fd1a"
+}

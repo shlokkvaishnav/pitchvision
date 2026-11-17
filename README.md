@@ -35,7 +35,8 @@ flowchart LR
 ## Results
 Final test on 2 Bundesliga matches that were locked in code until the end (IDSSE, 2.9 million hidden player positions).
 The model, its settings and the pass/fail rules were committed before the run, and it was run once.
-Intervals: block bootstrap over 5-minute stretches of play ([spec 08](docs/specs/08-seeds-and-intervals.md)).
+Intervals: block bootstrap over 5-minute stretches of play. Retraining with 2 other seeds moves the numbers by at most
+0.06 m, and all 3 seeds pass ([spec 08](docs/specs/08-seeds-and-intervals.md)).
 
 | | pitchvision | Best classical method | Result |
 |---|---|---|---|

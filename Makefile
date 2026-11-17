@@ -29,5 +29,6 @@ reproduce: weights
 	$(PY) scripts/holdout.py --dry-run
 	$(PY) scripts/holdout.py
 	$(PY) scripts/intervals.py
+	$(PY) scripts/seeds_summary.py
 	$(PY) scripts/export_demo.py --weights data/models/05-more-data.pt --tag spec05 --std-scale 1.1747
 	$(PY) scripts/compare_results.py --tol 1e-6

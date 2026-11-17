@@ -33,6 +33,7 @@ This page is the one place to read how pitchvision was tested. The detailed plan
 | [06](specs/06-baseline-audit.md) | Are our baselines strong enough? | A cubic spline beats the Kalman smoother (2.48 m vs 2.92 m): it becomes the bar. 74% of hidden time is in gaps of 9.6 s or more. |
 | [05](specs/05-more-data.md) | Version B with 5 training matches, early stopping, calibration | **All pass** on 2 unseen matches: 2.43 m (spline 2.82 m), 92.1% coverage, forecast 5.17 m vs 6.94 m. |
 | [07](specs/07-holdout.md) | Final test on the 2 locked matches | Imputation **passes** (2.70 m vs spline 3.28 m). Uncertainty **passes** (92.4%). Forecast error **passes** (5.18 m vs 6.97 m). Smooth motion **fails**. |
+| [08](specs/08-seeds-and-intervals.md) | How much do the results move with the seed and with the sample? | 3 seeds: median error 2.37 to 2.43 m, all pass. 95% intervals: error ratio vs spline 0.78 to 0.87 on the locked matches. |
 
 ## Related work
 - **Graph Imputer** (Omidshafiei et al., "Multiagent off-screen behavior prediction in football", *Scientific Reports*, 2022,
@@ -48,7 +49,8 @@ This page is the one place to read how pitchvision was tested. The detailed plan
   long gaps, as we found in spec 06.
 
 ## Known limitations
-- **Small data.** 5 training matches, 2 test matches and 2 locked matches, from 2 sources. One training seed for the headline model.
+- **Small data.** 5 training matches, 2 test matches and 2 locked matches, from 2 sources. Results vary little with the training seed (3 seeds, [spec 08](specs/08-seeds-and-intervals.md)), but
+  only one seed was run on the locked matches.
   4.6 million hidden positions sounds large, but the independent units are matches.
 - **Overlapping windows.** Windows overlap (2 s stride), so a hidden position can be scored more than once. This is the same for every method.
 - **Forecast numbers use a subset.** The forecast is compared with constant velocity on the 66 to 68% of positions where constant

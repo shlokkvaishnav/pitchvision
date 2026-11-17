@@ -42,3 +42,22 @@ results (medians to the 1 cm histogram bin).
 **Interpretation.** On both test sets, the whole interval of the error ratio is below 1, and the whole interval of the
 forecast difference is below 0. Coverage stays inside 85 to 95%. The intervals describe variation over match minutes
 within these 4 matches. They do not cover variation between leagues or seasons.
+
+## Result, part A (2026-11-17)
+The spec 05 setup trained 3 times (seeds 0, 1, 2), each evaluated on the spec 05 test matches (J03WQQ, J03WR9).
+Seed 0 is the model on the site. Seeds 1 and 2 ran on Kaggle (one kernel, commit 75b90cc); raw outputs are in
+`results/08-seeds/`.
+
+| | Seed 0 | Seed 1 | Seed 2 | Mean | Baseline |
+|---|---|---|---|---|---|
+| Imputation median error | 2.43 m | 2.40 m | 2.37 m | 2.40 m | Kalman 3.27 m |
+| Ratio to Kalman | 0.74 | 0.73 | 0.72 | 0.73 | — |
+| 90% coverage | 92.1% | 91.9% | 91.7% | 91.9% | — |
+| Forecast at 4 s, mean error | 5.17 m | 5.17 m | 5.14 m | 5.16 m | constant velocity 6.94 m |
+| Best epoch | 26 | 30 | 29 | | |
+| Std scale factor | 1.175 | 1.181 | 1.161 | 1.172 | |
+
+**Interpretation.** All 3 seeds pass all spec 05 rules. The spread over seeds (0.06 m in median imputation error, 0.03 m
+in forecast error, 0.4 points in coverage) is much smaller than the gap to the baselines and smaller than the part B
+intervals. The site model (seed 0) is the weakest of the 3 on imputation, so the headline numbers are not a lucky seed.
+Seeds 1 and 2 had their best tuning score in the last 2 epochs, so 30 epochs may be slightly short; this was not changed.
