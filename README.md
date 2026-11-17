@@ -11,7 +11,7 @@ It also predicts where each player will be in the next 4 seconds.
 ## What it does
 - **Imputation.** For each hidden player, the model gives a position and an uncertainty (a 2-D Gaussian).
 - **Forecast.** The same model predicts the positions of all 22 players 4 seconds ahead.
-- **Real camera masks.** The hidden players come from real broadcast camera views (SkillCorner), not from random masks.
+- **Realistic camera masks.** Which players are hidden comes from real broadcast camera views (SkillCorner), laid onto full-pitch tracking data. Not random masks.
   In our data, about half of the player positions are off-camera, and 74% of the hidden time is in gaps of 9.6 s or more.
 - **A web page with no server.** The model is exported to ONNX. The page runs it with onnxruntime-web on real match clips.
 
@@ -31,18 +31,22 @@ flowchart LR
 ```
 
 ## What works and what does not
-Test: 2 Bundesliga matches that no model saw (IDSSE, 4.6 million hidden player positions).
+Final test: 2 locked Bundesliga matches that were never loaded during development (IDSSE, 2.9 million hidden player positions).
+The model, its settings and the rules were fixed and committed before the run. It was run once.
 
-| Part | Result |
+| Part | Result on the locked matches |
 |---|---|
-| Imputation | **Works.** Median error 2.43 m. Cubic spline 2.82 m, Kalman smoother 3.27 m. Mean error 4.58 m, against 11.24 m for the spline. |
-| Uncertainty | **Works.** The 90% regions contain the true position for 92.1% of hidden positions. |
-| Forecast at 4 s | **Works.** Mean error 5.17 m. Constant velocity 6.94 m. |
-| With 2 training matches | **Did not work.** The model was worse than the Kalman smoother. With 5 matches, it is better. |
+| Imputation | **Works.** Median error 2.70 m, against 3.28 m for the best classical method (cubic spline) and 3.81 m for a Kalman smoother. Mean error 4.78 m, against 9.32 m for the spline. |
+| Uncertainty | **Works.** The 90% regions contain the true position 92.4% of the time. |
+| Forecast at 4 s | **Works.** Mean error 5.18 m, against 6.97 m for constant velocity (on the 66% of positions where constant velocity can make a guess). |
+| Smooth motion | **Fails.** The forecast wobbles frame to frame. A simple moving average removes most of it at no cost in accuracy, but it's still jerkier than real players. |
+| Red cards | **Not handled.** The model needs 11 v 11. One locked match had a red card, so only 7% of it could be tested; on that part the model only tied the spline. |
+| With 2 training matches | **Did not work.** The model was worse than the Kalman smoother. With 5 matches it is better. |
 | "What if" plays | **Not built.** |
 
-Each experiment has a written plan with pass/fail rules before the run, in [`specs/`](specs/).
-Failed tests and corrections stay in the repository. The holdout matches are locked: the code refuses to load them.
+Caveats: the input is tracking data with broadcast camera views laid on top as masks; there is no video detection.
+Two test matches from one league and one training seed is a small sample.
+Every experiment has a plan with pass/fail rules written before the run, in [`specs/`](specs/). Failed tests stay in.
 
 ## Engineering
 - **The browser and Python agree.** A Node test runs the ONNX model in onnxruntime-web and compares it with PyTorch on the demo clips (difference < 1e-4).
