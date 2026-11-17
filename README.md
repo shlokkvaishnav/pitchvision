@@ -1,48 +1,77 @@
 # pitchvision
 
-pitchvision fills in the football players that the TV camera does not show.
-Then it predicts the play, and it answers "what if" questions.
-One masked generative model does both tasks.
+**See the players the camera misses.** A TV broadcast of a football match shows only a part of the pitch.
+pitchvision gives the position of each hidden player, with a 90% region for where the player probably is.
+It also predicts where each player will be in the next 4 seconds.
 
-## Why
-Broadcast tracking data is cheap, and it is available for many matches.
-But the camera shows only a part of the pitch. Thus, many players are missing.
-Full-pitch tracking data is expensive, and most of it is not open.
+**Live:** <https://shlokkvaishnav.github.io/pitchvision/> — the model runs in your browser.
 
-## How it works
-1. The input is broadcast tracking data. Some players are missing.
-2. The model fills in the missing players. It gives an uncertainty for each player.
-3. The model predicts the next seconds of play: the real play and "what if" plays.
-4. The difference in threat between the two plays gives the value of a decision.
+[![The pitchvision site](docs/site.png)](https://shlokkvaishnav.github.io/pitchvision/)
 
-The model fills in cells of a table of players × time steps.
-Imputation hides players. Forecast hides future time steps. Thus, one model can learn both tasks.
+## What it does
+- **Imputation.** For each hidden player, the model gives a position and an uncertainty (a 2-D Gaussian).
+- **Forecast.** The same model predicts the positions of all 22 players 4 seconds ahead.
+- **Real camera masks.** The hidden players come from real broadcast camera views (SkillCorner), not from random masks.
+  In our data, about half of the player positions are off-camera, and 74% of the hidden time is in gaps of 9.6 s or more.
+- **A web page with no server.** The model is exported to ONNX. The page runs it with onnxruntime-web on real match clips.
 
-## Method
-- We write a spec before each experiment. Each spec has pass/fail rules with numbers.
-- 20% of the matches are a locked holdout. The code enforces the lock.
-- We keep failed results, and we report them.
-- We test the full pipeline: do the "what if" answers stay the same when the input is imputed?
+## How the model works
+A Kalman smoother gives a first estimate from the motion of each player before and after the gap.
+A transformer looks at all 22 players and the ball together, and it learns a correction to that estimate.
+The last layer starts at zero, thus before training the model is equal to the Kalman estimate.
 
-Read the charter: [specs/00-charter.md](specs/00-charter.md).
+```mermaid
+flowchart LR
+  T[Tracking data<br/>Metrica, IDSSE] --> M[Camera mask<br/>SkillCorner views]
+  M --> K[Kalman smoother<br/>first estimate + variance]
+  K --> X[Transformer<br/>correction, all 22 players]
+  M --> X
+  X --> C[Std scale<br/>fitted on a tuning match]
+  C --> O[ONNX export] --> W[site/<br/>onnxruntime-web]
+```
 
-## Results (development data)
-| Spec | Test | Result |
-|---|---|---|
-| [01](specs/01-data-and-camera.md) | A camera mask that hides players as a real broadcast does (SkillCorner, 20 matches) | **Fail** on the pre-registered rules. We use the best candidate: a replay of real camera footprints. It hides 49% of player cells. |
-| [02](specs/02-baselines.md) | Baselines on Metrica games 1 to 3 | The Kalman smoother is the bar: 2.68 m median error. Linear interpolation 3.33 m. |
-| [03](specs/03-masked-model.md) | Masked model version A | **Calibration passes** (88.4% in the 90% regions). **Imputation fails** (5.39 m against 2.13 m for the Kalman smoother). **Forecast passes** (7.42 m against 8.62 m for constant velocity at 4 s, on the same cells, after an erratum). |
-| [04](specs/04-anchored-model.md) | Masked model version B: a learned correction to the Kalman estimate | **Forecast passes** (6.64 m against 8.62 m, 23% better). **Imputation fails** (2.24 m against 2.13 m). **Calibration fails** (84.1%, the bar is 85%). |
-| [05](specs/05-more-data.md) | Model B with 3 more training matches (IDSSE), early stopping and calibration. Tested on 2 new matches. | Running |
+## What works and what does not
+Test: 2 Bundesliga matches that no model saw (IDSSE, 4.6 million hidden player positions).
 
-The "what if" stage starts only after the imputation passes.
+| Part | Result |
+|---|---|
+| Imputation | **Works.** Median error 2.43 m. Cubic spline 2.82 m, Kalman smoother 3.27 m. Mean error 4.58 m, against 11.24 m for the spline. |
+| Uncertainty | **Works.** The 90% regions contain the true position for 92.1% of hidden positions. |
+| Forecast at 4 s | **Works.** Mean error 5.17 m. Constant velocity 6.94 m. |
+| With 2 training matches | **Did not work.** The model was worse than the Kalman smoother. With 5 matches, it is better. |
+| "What if" plays | **Not built.** |
+
+Each experiment has a written plan with pass/fail rules before the run, in [`specs/`](specs/).
+Failed tests and corrections stay in the repository. The holdout matches are locked: the code refuses to load them.
+
+## Engineering
+- **The browser and Python agree.** A Node test runs the ONNX model in onnxruntime-web and compares it with PyTorch on the demo clips (difference < 1e-4).
+- **Fast data loading.** A vectorised path for kloppy loads one IDSSE match in 7 s instead of 121 s.
+- **GPU training on Kaggle.** Each run has its own kernel and its own source dataset. Results are JSON files with the git commit.
+- **Checks on each push:** ruff (lint), mypy (types), pytest, Node tests. CI runs only on push, never on a schedule.
+- **No raw data in the repository.** The site uses 3 short clips of open IDSSE data (CC BY 4.0), with attribution.
 
 ## Quick start
 ```bash
-make install
-make check   # lint and tests
+make install        # Python 3.10+, creates .venv
+npm ci              # onnxruntime-web, for the browser parity test
+make check          # lint, types, tests
 ```
+Train: `PYTHONPATH=src python scripts/train_more.py --out results` (a GPU is recommended; about 1 hour on a Kaggle GPU).
 
-## Data
-Metrica Sports sample data, SkillCorner open data, and the IDSSE Bundesliga data (Bassek et al., Scientific Data 2025, CC BY 4.0). PFF FC World Cup 2022 when we get access.
-Do not commit raw data. The site shows statistics only.
+## Layout
+| Path | Content |
+|---|---|
+| `src/pitchvision/` | Data loaders, camera masks, baselines (Kalman, spline), windows, model, calibration |
+| `scripts/` | One script per experiment, plus the demo export |
+| `kaggle/` | Kaggle kernels for GPU and CPU runs |
+| `specs/` | The plan and the result of each experiment |
+| `results/` | The result of each experiment (JSON, with the git commit) |
+| `site/` | The web page (HTML, CSS, JavaScript, no framework) |
+
+## Data and credits
+- IDSSE Bundesliga tracking data: Bassek et al., Scientific Data 12, 195 (2025), CC BY 4.0.
+- [Metrica Sports sample data](https://github.com/metrica-sports/sample-data).
+- [SkillCorner open data](https://github.com/SkillCorner/opendata): broadcast camera views for the masks.
+- [kloppy](https://github.com/PySport/kloppy) for data loading.
+- Fonts: Literata and Instrument Sans (SIL Open Font License), in `site/assets/licenses/`.

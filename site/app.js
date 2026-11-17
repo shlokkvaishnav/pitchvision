@@ -57,8 +57,8 @@ function draw() {
     hiddenCount++;
     const i = (frame * A + a) * 2;
     const mx = pred.mean[i] * meta.scale_m[0], my = pred.mean[i + 1] * meta.scale_m[1];
-    const rx = Math.sqrt(CHI2_90) * Math.exp(pred.logStd[i]) * meta.scale_m[0];
-    const ry = Math.sqrt(CHI2_90) * Math.exp(pred.logStd[i + 1]) * meta.scale_m[1];
+    const rx = Math.sqrt(CHI2_90) * (meta.std_scale ?? 1) * Math.exp(pred.logStd[i]) * meta.scale_m[0];
+    const ry = Math.sqrt(CHI2_90) * (meta.std_scale ?? 1) * Math.exp(pred.logStd[i + 1]) * meta.scale_m[1];
     const c = team(a);
     g.globalAlpha = 0.16; g.fillStyle = c;
     g.beginPath(); g.ellipse(X(mx), Y(my), Math.max(rx * s, 4 * k), Math.max(ry * s, 4 * k), 0, 0, 2 * Math.PI); g.fill();

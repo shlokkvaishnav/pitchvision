@@ -1,6 +1,6 @@
 """Export the in-browser demo: the anchored model as ONNX and three clips of IDSSE match J03WQQ.
 
-Usage: PYTHONPATH=src python scripts/export_demo.py --weights data/models/04-anchored-model.pt --tag spec04
+Usage: PYTHONPATH=src python scripts/export_demo.py --weights data/models/05-more-data.pt --tag spec05 --std-scale 1.1747
 Writes site/demo/model.onnx and site/demo/clips.json.
 
 Clips: the windows at 1/4, 1/2 and 3/4 of the match (a fixed rule, no selection by result).
@@ -50,6 +50,7 @@ def main() -> None:
     ap.add_argument("--weights", required=True)
     ap.add_argument("--tag", required=True)
     ap.add_argument("--raw", default="data/raw/skillcorner")
+    ap.add_argument("--std-scale", type=float, default=1.0, help="calibration factor of the spec (05: results JSON)")
     args = ap.parse_args()
 
     model = AnchoredModel(length=90, dim=128, heads=4, depth=4)
@@ -62,10 +63,11 @@ def main() -> None:
     types = torch.as_tensor(w.agent_type)
     clips = []
     for i in picks:
-        pos = torch.as_tensor(w.pos[i : i + 1], dtype=torch.float32)
+        # the reference uses the same rounded inputs as the page gets from clips.json
+        pos = torch.as_tensor(np.round(w.pos[i : i + 1] * SCALE, 2) / SCALE, dtype=torch.float32)
         obs = torch.as_tensor(w.visible[i : i + 1])
-        am = torch.as_tensor(w.imp_mean[i : i + 1], dtype=torch.float32)
-        al = torch.as_tensor(w.imp_ls[i : i + 1], dtype=torch.float32)
+        am = torch.as_tensor(np.round(w.imp_mean[i : i + 1], 5), dtype=torch.float32)
+        al = torch.as_tensor(np.round(w.imp_ls[i : i + 1], 5), dtype=torch.float32)
         with torch.no_grad():
             mu, ls = model(torch.nan_to_num(pos) * obs[..., None], obs, types, am, al)
         clips.append(
@@ -103,6 +105,7 @@ def main() -> None:
         "weights": args.tag,
         "fps": tm.FPS,
         "scale_m": SCALE.tolist(),
+        "std_scale": args.std_scale,  # the page multiplies the model std by this factor (python_log_std excludes it)
         "agent_type": w.agent_type.tolist(),
         "attribution": "IDSSE data: Bassek et al., Scientific Data 12, 195 (2025), CC BY 4.0. "
         "Camera masks from SkillCorner open data.",
