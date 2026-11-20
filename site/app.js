@@ -168,7 +168,8 @@ function drawGaps() {
 async function main() {
   sizeCanvas();
   try {
-    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
+    // same version as the ort.min.js tag in index.html (and package.json, for the Node tests)
+    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.1/dist/";
     [meta, session] = await Promise.all([
       fetch("demo/clips.json").then((r) => r.json()),
       ort.InferenceSession.create("demo/model.onnx", { executionProviders: ["wasm"] }),
