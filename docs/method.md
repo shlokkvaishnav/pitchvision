@@ -34,6 +34,7 @@ This page is the one place to read how pitchvision was tested. The detailed plan
 | [05](specs/05-more-data.md) | Version B with 5 training matches, early stopping, calibration | **All pass** on 2 unseen matches: 2.43 m (spline 2.82 m), 92.1% coverage, forecast 5.17 m vs 6.94 m. |
 | [07](specs/07-holdout.md) | Final test on the 2 locked matches | Imputation **passes** (2.70 m vs spline 3.28 m). Uncertainty **passes** (92.4%). Forecast error **passes** (5.18 m vs 6.97 m). Smooth motion **fails**. |
 | [08](specs/08-seeds-and-intervals.md) | How much do the results move with the seed and with the sample? | 3 seeds: median error 2.37 to 2.43 m, all pass. 95% intervals: error ratio vs spline 0.78 to 0.87 on the locked matches. |
+| [09](specs/09-camera-stress.md) | Exploratory, spec 05 test matches: what if the camera zooms, lags or cuts away? | No rule. Tighter view (0.7x) is hardest: 3.77 m (Kalman 5.53 m), coverage 89.5%. Pan lag up to 2 s: +0.11 m. Coverage by gap length and role stays at 90.8 to 94.9%. |
 
 ## Related work
 - **Graph Imputer** (Omidshafiei et al., "Multiagent off-screen behavior prediction in football", *Scientific Reports*, 2022,
@@ -49,6 +50,8 @@ This page is the one place to read how pitchvision was tested. The detailed plan
   long gaps, as we found in spec 06.
 
 ## Known limitations
+- **The locked result is mostly one match.** J03WOH gives 2.76 million of the 2.93 million scored positions; on J03WN1
+  (red card, 7% scorable) the model only tied the spline (2.27 vs 2.30 m).
 - **Small data.** 5 training matches, 2 test matches and 2 locked matches, from 2 sources. Results vary little with the training seed (3 seeds, [spec 08](specs/08-seeds-and-intervals.md)), but
   only one seed was run on the locked matches.
   4.6 million hidden positions sounds large, but the independent units are matches.
@@ -59,5 +62,6 @@ This page is the one place to read how pitchvision was tested. The detailed plan
   A 9-frame moving average removes most of it at no cost in accuracy.
 - **11 v 11 only.** Windows need 11 players per team. A red card removes most of a match (one locked match lost 93% of its windows).
 - **Transplanted camera views.** The camera views come from other matches, following the ball. A real broadcast of the same match
-  would also cut to replays and close-ups.
+  would also cut to replays and close-ups. Spec 09 tests simple versions of zoom, pan lag and replay cuts on the spec 05
+  test matches (exploratory, not on the locked matches).
 - **The "what if" stage of the charter was not built.**

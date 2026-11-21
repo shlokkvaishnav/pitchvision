@@ -20,7 +20,8 @@ It works on player-tracking data (x, y positions), not on video pixels.
    estimate using where everyone else is. Its last layer starts at zero, so before training it equals the Kalman estimate
    and it can only learn to improve on it.
 4. **Calibrated uncertainty.** One scale factor on the predicted spread, fitted on a separate match, makes the 90% regions honest.
-5. **In the browser.** The model is exported to ONNX (4 MB) and runs with onnxruntime-web. No server.
+5. **In the browser.** The Kalman smoother is ported to plain JavaScript, and the model is exported to ONNX (4 MB) and
+   runs with onnxruntime-web. Both run in the page on the demo clips. No server.
 
 ```mermaid
 flowchart LR
@@ -35,6 +36,8 @@ flowchart LR
 ## Results
 Final test on 2 Bundesliga matches that were locked in code until the end (IDSSE, 2.9 million hidden player positions).
 The model, its settings and the pass/fail rules were committed before the run, and it was run once.
+The pooled numbers are mostly one match: J03WOH gives 2.76 million of the 2.93 million scored positions (94%), because a
+red card left little of J03WN1 that could be scored (see below).
 Intervals: block bootstrap over 5-minute stretches of play. Retraining with 2 other seeds moves the numbers by at most
 0.06 m, and all 3 seeds pass ([spec 08](docs/specs/08-seeds-and-intervals.md)).
 
@@ -62,7 +65,9 @@ correction, checked uncertainty, open data only, and a locked test against the s
 We did not run Graph Imputer, so we make no claim about which is more accurate. More in [docs/method.md](docs/method.md#related-work).
 
 ## Engineering
-- **Python and the browser agree.** A Node test runs the ONNX model in onnxruntime-web and compares it with PyTorch on the demo clips (max difference < 1e-4).
+- **Python and the browser agree.** Two Node tests on the demo clips: the JavaScript Kalman smoother against the Python one
+  (max difference < 1e-6 m on means and m² on variances, float64), and the whole page pipeline (JavaScript Kalman, then
+  ONNX in onnxruntime-web) against Python Kalman and PyTorch (max difference < 1e-4).
 - **Reproducible.** `make reproduce` downloads the released weights (pinned SHA-256), rebuilds every evaluation result and the demo
   on CPU, and compares them with the committed files. Dependencies are pinned in `requirements.lock`.
 - **Locked test set in code.** The loaders refuse the held-out matches unless the final spec asks for them.
@@ -73,7 +78,7 @@ We did not run Graph Imputer, so we make no claim about which is more accurate. 
 ## Quick start
 ```bash
 make install        # Python 3.12, creates .venv with pinned versions
-npm ci              # onnxruntime-web, for the browser parity test
+npm ci              # onnxruntime-web, for the browser parity tests
 make check          # lint, types, tests
 make reproduce      # released weights -> all evaluation results + demo, compared with the committed files
 ```
