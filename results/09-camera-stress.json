@@ -1,0 +1,1898 @@
+{
+  "spec": "09-camera-stress (exploratory, no rule)",
+  "commit": "8abfdaa185ecbe161f0a8b171a8e7515bc9210e2",
+  "matches": [
+    "idsse-J03WQQ",
+    "idsse-J03WR9"
+  ],
+  "std_scale": 1.1747,
+  "cut_every_s": 60.0,
+  "conditions": {
+    "none": {
+      "kind": "none",
+      "value": 0.0
+    },
+    "zoom_0.7": {
+      "kind": "zoom",
+      "value": 0.7
+    },
+    "zoom_0.85": {
+      "kind": "zoom",
+      "value": 0.85
+    },
+    "zoom_1.15": {
+      "kind": "zoom",
+      "value": 1.15
+    },
+    "zoom_1.3": {
+      "kind": "zoom",
+      "value": 1.3
+    },
+    "lag_0.5s": {
+      "kind": "lag",
+      "value": 0.5
+    },
+    "lag_1s": {
+      "kind": "lag",
+      "value": 1.0
+    },
+    "lag_2s": {
+      "kind": "lag",
+      "value": 2.0
+    },
+    "cut_2s": {
+      "kind": "cut",
+      "value": 2.0
+    },
+    "cut_4s": {
+      "kind": "cut",
+      "value": 4.0
+    },
+    "cut_8s": {
+      "kind": "cut",
+      "value": 8.0
+    },
+    "cut_4s_ball": {
+      "kind": "cut_ball",
+      "value": 4.0
+    }
+  },
+  "results": {
+    "none": {
+      "hidden_share": 0.48797021800710466,
+      "pooled": {
+        "n_cells": 4554291,
+        "model_median_m": 2.4332880445600775,
+        "model_mean_m": 4.581579189764628,
+        "kalman_median_m": 3.272867917932004,
+        "kalman_mean_m": 9.663107477179022,
+        "spline_median_m": 2.819318028204159,
+        "spline_mean_m": 11.240603977407572,
+        "model_over_kalman_median": 0.7434727295984422,
+        "coverage_90_model": 0.9207799852929908,
+        "coverage_90_kalman": 0.888275474711651
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 41711,
+          "model_median_m": 0.07951849844495013,
+          "model_mean_m": 0.1134181321284809,
+          "kalman_median_m": 0.059813060378672636,
+          "kalman_mean_m": 0.09480617313064113,
+          "spline_median_m": 0.012279830080384947,
+          "spline_mean_m": 0.025453303379399016,
+          "model_over_kalman_median": 1.32945042339455,
+          "coverage_90_model": 0.9491740787801779,
+          "coverage_90_kalman": 0.9694564982858239
+        },
+        "1-3s": {
+          "n_cells": 235393,
+          "model_median_m": 0.16730942093857404,
+          "model_mean_m": 0.2647921920748282,
+          "kalman_median_m": 0.15596245679750323,
+          "kalman_mean_m": 0.2537532150868855,
+          "spline_median_m": 0.06095126833457912,
+          "spline_mean_m": 0.1140509638572371,
+          "model_over_kalman_median": 1.0727544588234035,
+          "coverage_90_model": 0.9146916008547408,
+          "coverage_90_kalman": 0.9248320893144656
+        },
+        "3-6s": {
+          "n_cells": 394779,
+          "model_median_m": 0.45752010498330503,
+          "model_mean_m": 0.7267625607674807,
+          "kalman_median_m": 0.4504517225294003,
+          "kalman_mean_m": 0.7242807512358113,
+          "spline_median_m": 0.257242411765716,
+          "spline_mean_m": 0.4699203938824774,
+          "model_over_kalman_median": 1.0156917647338852,
+          "coverage_90_model": 0.9078877042598518,
+          "coverage_90_kalman": 0.8765891802755466
+        },
+        "6-9.6s": {
+          "n_cells": 447279,
+          "model_median_m": 0.9393759630149009,
+          "model_mean_m": 1.4403284606630027,
+          "kalman_median_m": 0.9709340340912229,
+          "kalman_mean_m": 1.5433832200883375,
+          "spline_median_m": 0.6995651810803698,
+          "spline_mean_m": 1.1881965023979169,
+          "model_over_kalman_median": 0.9674972037561133,
+          "coverage_90_model": 0.9241726081483816,
+          "coverage_90_kalman": 0.8439519852262235
+        },
+        ">=9.6s": {
+          "n_cells": 3435129,
+          "model_median_m": 3.676934450551076,
+          "model_mean_m": 5.783667683810402,
+          "kalman_median_m": 5.798212420419635,
+          "kalman_mean_m": 12.50860258537968,
+          "spline_median_m": 5.2795980263571805,
+          "spline_mean_m": 14.685941343404115,
+          "model_over_kalman_median": 0.634149662679134,
+          "coverage_90_model": 0.9218923073922406,
+          "coverage_90_kalman": 0.8918989650752562
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 584937,
+          "model_median_m": 2.824283111484013,
+          "model_mean_m": 4.36041568839621,
+          "kalman_median_m": 7.36321927963714,
+          "kalman_mean_m": 13.336029836199149,
+          "spline_median_m": 6.965022582767658,
+          "spline_mean_m": 11.160595821006932,
+          "model_over_kalman_median": 0.38356634567362685,
+          "coverage_90_model": 0.9172013396314475,
+          "coverage_90_kalman": 0.9686051660264268
+        },
+        "defender": {
+          "n_cells": 1364699,
+          "model_median_m": 2.66593863855347,
+          "model_mean_m": 4.980167184315452,
+          "kalman_median_m": 3.540347375924283,
+          "kalman_mean_m": 10.215683363090918,
+          "spline_median_m": 3.09906296373244,
+          "spline_mean_m": 10.476842626143409,
+          "model_over_kalman_median": 0.7530161183286344,
+          "coverage_90_model": 0.9287615803924528,
+          "coverage_90_kalman": 0.8924576042042971
+        },
+        "midfielder": {
+          "n_cells": 1462751,
+          "model_median_m": 2.3604363426579384,
+          "model_mean_m": 4.593741704585936,
+          "kalman_median_m": 2.8060298547908307,
+          "kalman_mean_m": 9.385483689038367,
+          "spline_median_m": 2.339033569383615,
+          "spline_mean_m": 15.348061445979805,
+          "model_over_kalman_median": 0.8412014357680068,
+          "coverage_90_model": 0.9225131276615091,
+          "coverage_90_kalman": 0.8776421961085653
+        },
+        "forward": {
+          "n_cells": 642406,
+          "model_median_m": 2.189184035093435,
+          "model_mean_m": 4.498769190354627,
+          "kalman_median_m": 2.555664191524307,
+          "kalman_mean_m": 8.731377553470638,
+          "spline_median_m": 2.090832623540047,
+          "spline_mean_m": 8.084519748114337,
+          "model_over_kalman_median": 0.8566008172567118,
+          "coverage_90_model": 0.9129039890661046,
+          "coverage_90_kalman": 0.8691217080786917
+        },
+        "unknown": {
+          "n_cells": 499498,
+          "model_median_m": 1.8398524487814616,
+          "model_mean_m": 3.8224590074776543,
+          "kalman_median_m": 2.0640528691654754,
+          "kalman_mean_m": 5.863523539405711,
+          "spline_median_m": 1.6529466385945286,
+          "spline_mean_m": 5.4515998354114545,
+          "model_over_kalman_median": 0.8913785476460876,
+          "coverage_90_model": 0.908217850722125,
+          "coverage_90_kalman": 0.8385519061137382
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.009158615468357204,
+        "1-3s": 0.051685981418403,
+        "3-6s": 0.0866828667733353,
+        "6-9.6s": 0.09821045690756255,
+        ">=9.6s": 0.7542620794323419
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.12843645695894268,
+        "defender": 0.2996512519731392,
+        "midfielder": 0.3211808380272583,
+        "forward": 0.14105510605273136,
+        "unknown": 0.10967634698792852
+      }
+    },
+    "zoom_0.7": {
+      "hidden_share": 0.6704832044333765,
+      "pooled": {
+        "n_cells": 6257015,
+        "model_median_m": 3.772339482165758,
+        "model_mean_m": 6.631645820693008,
+        "kalman_median_m": 5.528326088204707,
+        "kalman_mean_m": 13.657523303848054,
+        "spline_median_m": 4.995694510495389,
+        "spline_mean_m": 13.377794166494098,
+        "model_over_kalman_median": 0.6823655880600928,
+        "coverage_90_model": 0.8945423656487957,
+        "coverage_90_kalman": 0.8842392099107961
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 41322,
+          "model_median_m": 0.07954504518435754,
+          "model_mean_m": 0.11141378963078867,
+          "kalman_median_m": 0.058804475143223414,
+          "kalman_mean_m": 0.09423143600416858,
+          "spline_median_m": 0.012482868651209053,
+          "spline_mean_m": 0.02078960162631967,
+          "model_over_kalman_median": 1.352703939464108,
+          "coverage_90_model": 0.9408305503121823,
+          "coverage_90_kalman": 0.9654905377280867
+        },
+        "1-3s": {
+          "n_cells": 230508,
+          "model_median_m": 0.1949876618803396,
+          "model_mean_m": 0.30857231491614456,
+          "kalman_median_m": 0.18309035403812496,
+          "kalman_mean_m": 0.2960599137356918,
+          "spline_median_m": 0.066787432103106,
+          "spline_mean_m": 0.1365078031661627,
+          "model_over_kalman_median": 1.0649805278094404,
+          "coverage_90_model": 0.885917191594218,
+          "coverage_90_kalman": 0.8964634633071303
+        },
+        "3-6s": {
+          "n_cells": 388257,
+          "model_median_m": 0.49787089435498516,
+          "model_mean_m": 0.8009760683705213,
+          "kalman_median_m": 0.48145829922423505,
+          "kalman_mean_m": 0.7968505577247935,
+          "spline_median_m": 0.27729449559256647,
+          "spline_mean_m": 0.5157521038805009,
+          "model_over_kalman_median": 1.0340893389047305,
+          "coverage_90_model": 0.8838372521293886,
+          "coverage_90_kalman": 0.8446338378960327
+        },
+        "6-9.6s": {
+          "n_cells": 468376,
+          "model_median_m": 1.0880219863901792,
+          "model_mean_m": 1.6364673858809948,
+          "kalman_median_m": 1.1098149160900892,
+          "kalman_mean_m": 1.717914150053429,
+          "spline_median_m": 0.7909208680585197,
+          "spline_mean_m": 1.4078833317914095,
+          "model_over_kalman_median": 0.9803634557582924,
+          "coverage_90_model": 0.8923343638444327,
+          "coverage_90_kalman": 0.7977095325123406
+        },
+        ">=9.6s": {
+          "n_cells": 5128552,
+          "model_median_m": 5.11843405257838,
+          "model_mean_m": 7.865984108823488,
+          "kalman_median_m": 8.277953741445451,
+          "kalman_mean_m": 16.431378213596528,
+          "spline_median_m": 7.699855486830534,
+          "spline_mean_m": 16.14745651990035,
+          "model_over_kalman_median": 0.6183211712034316,
+          "coverage_90_model": 0.8955691587021054,
+          "coverage_90_kalman": 0.8939359491723979
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 663432,
+          "model_median_m": 3.908936512778474,
+          "model_mean_m": 6.76253185971045,
+          "kalman_median_m": 9.88632428238964,
+          "kalman_mean_m": 16.330571514266992,
+          "spline_median_m": 8.959302320954002,
+          "spline_mean_m": 15.347013063502827,
+          "model_over_kalman_median": 0.39538825564738994,
+          "coverage_90_model": 0.9017337119704808,
+          "coverage_90_kalman": 0.9640264563662893
+        },
+        "defender": {
+          "n_cells": 1880129,
+          "model_median_m": 4.236511026488862,
+          "model_mean_m": 7.334189341642578,
+          "kalman_median_m": 6.078979339240042,
+          "kalman_mean_m": 15.773713805294152,
+          "spline_median_m": 5.590392665864583,
+          "spline_mean_m": 15.766160847799203,
+          "model_over_kalman_median": 0.6969115685493489,
+          "coverage_90_model": 0.8924855688093742,
+          "coverage_90_kalman": 0.8972006708050352
+        },
+        "midfielder": {
+          "n_cells": 2088408,
+          "model_median_m": 3.7492416222199774,
+          "model_mean_m": 6.498607505335037,
+          "kalman_median_m": 5.14986303941977,
+          "kalman_mean_m": 13.704865446302577,
+          "spline_median_m": 4.581077246896736,
+          "spline_mean_m": 13.441503849774021,
+          "model_over_kalman_median": 0.7280274433555423,
+          "coverage_90_model": 0.8958776254448364,
+          "coverage_90_kalman": 0.8741668294701035
+        },
+        "forward": {
+          "n_cells": 889160,
+          "model_median_m": 3.23510045168568,
+          "model_mean_m": 5.701665369859473,
+          "kalman_median_m": 4.120696220124505,
+          "kalman_mean_m": 10.66578558067581,
+          "spline_median_m": 3.6508694425056345,
+          "spline_mean_m": 10.380762428408344,
+          "model_over_kalman_median": 0.7850858881288592,
+          "coverage_90_model": 0.9032153943047371,
+          "coverage_90_kalman": 0.8559213189977057
+        },
+        "unknown": {
+          "n_cells": 735886,
+          "model_median_m": 3.3318766087075313,
+          "model_mean_m": 6.219942466676819,
+          "kalman_median_m": 4.253252512366307,
+          "kalman_mean_m": 9.3214807011469,
+          "spline_median_m": 3.7402242154023075,
+          "spline_mean_m": 8.940841481650653,
+          "model_over_kalman_median": 0.7833714549089477,
+          "coverage_90_model": 0.8790451238371161,
+          "coverage_90_kalman": 0.8419931891624518
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.006604107549686232,
+        "1-3s": 0.036839930861600936,
+        "3-6s": 0.062051473426226404,
+        "6-9.6s": 0.07485614146681764,
+        ">=9.6s": 0.8196483466956688
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.10603011180251286,
+        "defender": 0.3004833774571421,
+        "midfielder": 0.3337706558159122,
+        "forward": 0.1421061001132329,
+        "unknown": 0.11760975481119991
+      }
+    },
+    "zoom_0.85": {
+      "hidden_share": 0.5708879751320042,
+      "pooled": {
+        "n_cells": 5324286,
+        "model_median_m": 2.9291345597798166,
+        "model_mean_m": 5.336494581977543,
+        "kalman_median_m": 4.1325358718916805,
+        "kalman_mean_m": 10.984404831017928,
+        "spline_median_m": 3.6549344343125862,
+        "spline_mean_m": 10.714404205244323,
+        "model_over_kalman_median": 0.7087983384979055,
+        "coverage_90_model": 0.9102940751116676,
+        "coverage_90_kalman": 0.8834568616336538
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 42817,
+          "model_median_m": 0.07815330126085675,
+          "model_mean_m": 0.10611896849974668,
+          "kalman_median_m": 0.059376628441454644,
+          "kalman_mean_m": 0.08838442160068212,
+          "spline_median_m": 0.012171646655831326,
+          "spline_mean_m": 0.01709805716443822,
+          "model_over_kalman_median": 1.316230027070599,
+          "coverage_90_model": 0.943690590186141,
+          "coverage_90_kalman": 0.9701053319943014
+        },
+        "1-3s": {
+          "n_cells": 231120,
+          "model_median_m": 0.1810892040427412,
+          "model_mean_m": 0.2804335961767584,
+          "kalman_median_m": 0.16872893832309846,
+          "kalman_mean_m": 0.2694018012468291,
+          "spline_median_m": 0.0628859783971283,
+          "spline_mean_m": 0.13035918238673094,
+          "model_over_kalman_median": 1.0732551620515391,
+          "coverage_90_model": 0.9036474558670821,
+          "coverage_90_kalman": 0.9246538594669436
+        },
+        "3-6s": {
+          "n_cells": 422500,
+          "model_median_m": 0.46572208837362283,
+          "model_mean_m": 0.7454883868232391,
+          "kalman_median_m": 0.45665898594642684,
+          "kalman_mean_m": 0.7445461019114369,
+          "spline_median_m": 0.26269842872062044,
+          "spline_mean_m": 0.4894211128037059,
+          "model_over_kalman_median": 1.0198465434954984,
+          "coverage_90_model": 0.9008142011834319,
+          "coverage_90_kalman": 0.8663526627218935
+        },
+        "6-9.6s": {
+          "n_cells": 456661,
+          "model_median_m": 1.053125962132682,
+          "model_mean_m": 1.5547286377119878,
+          "kalman_median_m": 1.0808739396445293,
+          "kalman_mean_m": 1.640898233151776,
+          "spline_median_m": 0.7702413278591315,
+          "spline_mean_m": 1.2824500586090772,
+          "model_over_kalman_median": 0.9743282019353962,
+          "coverage_90_model": 0.9038104852395978,
+          "coverage_90_kalman": 0.8181057721154205
+        },
+        ">=9.6s": {
+          "n_cells": 4171188,
+          "model_median_m": 4.223521975204912,
+          "model_mean_m": 6.549384277433011,
+          "kalman_median_m": 6.732372899865007,
+          "kalman_mean_m": 13.750077772550739,
+          "spline_median_m": 6.247271287861105,
+          "spline_mean_m": 13.478957615960391,
+          "model_over_kalman_median": 0.627345222557354,
+          "coverage_90_model": 0.9119895818649267,
+          "coverage_90_kalman": 0.8891718618292918
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 623172,
+          "model_median_m": 3.193940311544953,
+          "model_mean_m": 5.015084705462416,
+          "kalman_median_m": 8.393470976552871,
+          "kalman_mean_m": 14.362949452956977,
+          "spline_median_m": 8.337853811448847,
+          "spline_mean_m": 12.677441872924105,
+          "model_over_kalman_median": 0.3805267594857018,
+          "coverage_90_model": 0.9122842489713915,
+          "coverage_90_kalman": 0.966386487197756
+        },
+        "defender": {
+          "n_cells": 1589486,
+          "model_median_m": 3.236787358043134,
+          "model_mean_m": 5.822143646541959,
+          "kalman_median_m": 4.531186923076715,
+          "kalman_mean_m": 12.50792786726319,
+          "spline_median_m": 4.044978440383132,
+          "spline_mean_m": 13.185717521094212,
+          "model_over_kalman_median": 0.7143354297653489,
+          "coverage_90_model": 0.9145107286254802,
+          "coverage_90_kalman": 0.8916039524726861
+        },
+        "midfielder": {
+          "n_cells": 1745906,
+          "model_median_m": 2.8645296639419913,
+          "model_mean_m": 5.282219066354565,
+          "kalman_median_m": 3.5825622342210712,
+          "kalman_mean_m": 10.54680145218721,
+          "spline_median_m": 3.0711107414312657,
+          "spline_mean_m": 10.177982504371144,
+          "model_over_kalman_median": 0.7995756881987016,
+          "coverage_90_model": 0.912372716515093,
+          "coverage_90_kalman": 0.8727514539728943
+        },
+        "forward": {
+          "n_cells": 757761,
+          "model_median_m": 2.6720787580100485,
+          "model_mean_m": 5.222448275944436,
+          "kalman_median_m": 3.2411535887306244,
+          "kalman_mean_m": 9.132057774042691,
+          "spline_median_m": 2.759828771436727,
+          "spline_mean_m": 8.214044376689746,
+          "model_over_kalman_median": 0.8244221339281085,
+          "coverage_90_model": 0.9052669641219329,
+          "coverage_90_kalman": 0.8583854275952444
+        },
+        "unknown": {
+          "n_cells": 607961,
+          "model_median_m": 2.371435567306119,
+          "model_mean_m": 4.694251145004857,
+          "kalman_median_m": 2.8949097106397423,
+          "kalman_mean_m": 7.103593030637791,
+          "spline_median_m": 2.44551419313474,
+          "spline_mean_m": 6.8980228971171735,
+          "model_over_kalman_median": 0.8191742763480034,
+          "coverage_90_model": 0.8975263215897072,
+          "coverage_90_kalman": 0.8391442872157918
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.008041829458447574,
+        "1-3s": 0.04340863732714584,
+        "3-6s": 0.07935336306126305,
+        "6-9.6s": 0.08576943462466141,
+        ">=9.6s": 0.7834267355284821
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.11704329932689567,
+        "defender": 0.2985350523995142,
+        "midfielder": 0.3279136395002072,
+        "forward": 0.14232161833530355,
+        "unknown": 0.11418639043807939
+      }
+    },
+    "zoom_1.15": {
+      "hidden_share": 0.4151570656145429,
+      "pooled": {
+        "n_cells": 3881945,
+        "model_median_m": 2.108074476578483,
+        "model_mean_m": 3.996592452492099,
+        "kalman_median_m": 2.740772913548286,
+        "kalman_mean_m": 8.765880323153525,
+        "spline_median_m": 2.2976197185407723,
+        "spline_mean_m": 8.325116258648368,
+        "model_over_kalman_median": 0.7691532801414427,
+        "coverage_90_model": 0.9324768898065274,
+        "coverage_90_kalman": 0.8996093453152995
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 41969,
+          "model_median_m": 0.07719323716801475,
+          "model_mean_m": 0.10591996962490433,
+          "kalman_median_m": 0.056028066164511114,
+          "kalman_mean_m": 0.08542135583289802,
+          "spline_median_m": 0.012515764387275854,
+          "spline_mean_m": 0.017652170869787553,
+          "model_over_kalman_median": 1.37776015580045,
+          "coverage_90_model": 0.9558483642688651,
+          "coverage_90_kalman": 0.9701684576711382
+        },
+        "1-3s": {
+          "n_cells": 216307,
+          "model_median_m": 0.16583027565196923,
+          "model_mean_m": 0.26934861056947695,
+          "kalman_median_m": 0.1538602707360503,
+          "kalman_mean_m": 0.25797771828092575,
+          "spline_median_m": 0.05970830110475094,
+          "spline_mean_m": 0.1234454201741562,
+          "model_over_kalman_median": 1.0777978932355687,
+          "coverage_90_model": 0.9245840402760891,
+          "coverage_90_kalman": 0.9343340714817366
+        },
+        "3-6s": {
+          "n_cells": 376274,
+          "model_median_m": 0.4327290237257638,
+          "model_mean_m": 0.6994619897771231,
+          "kalman_median_m": 0.42212246731944353,
+          "kalman_mean_m": 0.6973401654418132,
+          "spline_median_m": 0.24554842311467368,
+          "spline_mean_m": 0.4572673666547293,
+          "model_over_kalman_median": 1.0251267279699037,
+          "coverage_90_model": 0.9177487681848866,
+          "coverage_90_kalman": 0.8817298032816512
+        },
+        "6-9.6s": {
+          "n_cells": 441647,
+          "model_median_m": 0.8960795050081203,
+          "model_mean_m": 1.3452580248410235,
+          "kalman_median_m": 0.9249264417525221,
+          "kalman_mean_m": 1.4312446713743217,
+          "spline_median_m": 0.6571394208931771,
+          "spline_mean_m": 1.0986287084074284,
+          "model_over_kalman_median": 0.9688116422644988,
+          "coverage_90_model": 0.9357246850991855,
+          "coverage_90_kalman": 0.8630127681157124
+        },
+        ">=9.6s": {
+          "n_cells": 2805748,
+          "model_median_m": 3.35974585280621,
+          "model_mean_m": 5.20165254015665,
+          "kalman_median_m": 5.339304565584929,
+          "kalman_mean_m": 11.788222594147141,
+          "spline_median_m": 4.767331254529504,
+          "spline_mean_m": 11.27433275829306,
+          "model_over_kalman_median": 0.6292478377168852,
+          "coverage_90_model": 0.9341997214290093,
+          "coverage_90_kalman": 0.9040352162774419
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 549061,
+          "model_median_m": 2.663603697236455,
+          "model_mean_m": 4.008753284855903,
+          "kalman_median_m": 6.627710681735378,
+          "kalman_mean_m": 13.071081979560105,
+          "spline_median_m": 5.985124023038414,
+          "spline_mean_m": 10.48862613028828,
+          "model_over_kalman_median": 0.40188895157671933,
+          "coverage_90_model": 0.9270463573264173,
+          "coverage_90_kalman": 0.9719211526588121
+        },
+        "defender": {
+          "n_cells": 1163868,
+          "model_median_m": 2.260467224378008,
+          "model_mean_m": 4.195575094609646,
+          "kalman_median_m": 2.901866274919092,
+          "kalman_mean_m": 8.691294243179495,
+          "spline_median_m": 2.4606413971466408,
+          "spline_mean_m": 9.417319276464868,
+          "model_over_kalman_median": 0.7789701558322266,
+          "coverage_90_model": 0.9388470170156753,
+          "coverage_90_kalman": 0.8979489082954425
+        },
+        "midfielder": {
+          "n_cells": 1225641,
+          "model_median_m": 1.9938249420644971,
+          "model_mean_m": 4.08861402228074,
+          "kalman_median_m": 2.25191652035924,
+          "kalman_mean_m": 8.7740557246495,
+          "spline_median_m": 1.839478781803326,
+          "spline_mean_m": 8.081925161614924,
+          "model_over_kalman_median": 0.8853902549400141,
+          "coverage_90_model": 0.9356679484449362,
+          "coverage_90_kalman": 0.8927956881338011
+        },
+        "forward": {
+          "n_cells": 537119,
+          "model_median_m": 1.8491334127922514,
+          "model_mean_m": 3.91177860405641,
+          "kalman_median_m": 2.1392834373741545,
+          "kalman_mean_m": 7.441586778937571,
+          "spline_median_m": 1.7138225940975136,
+          "spline_mean_m": 7.18213585272036,
+          "model_over_kalman_median": 0.8643704618505132,
+          "coverage_90_model": 0.9305554262649431,
+          "coverage_90_kalman": 0.8842807645977894
+        },
+        "unknown": {
+          "n_cells": 406256,
+          "model_median_m": 1.5110543763605102,
+          "model_mean_m": 3.244611317803741,
+          "kalman_median_m": 1.642326737424056,
+          "kalman_mean_m": 4.887225341983419,
+          "spline_median_m": 1.2796223228154382,
+          "spline_mean_m": 4.516932346135758,
+          "model_over_kalman_median": 0.9200692784984779,
+          "coverage_90_model": 0.9144800322949076,
+          "coverage_90_kalman": 0.8474582529242645
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.01081133297870011,
+        "1-3s": 0.05572129435115644,
+        "3-6s": 0.09692924551996486,
+        "6-9.6s": 0.11376951502404078,
+        ">=9.6s": 0.7227686121261379
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.14143966491024473,
+        "defender": 0.29981568517843504,
+        "midfielder": 0.3157285845111149,
+        "forward": 0.13836337196946377,
+        "unknown": 0.10465269343074154
+      }
+    },
+    "zoom_1.3": {
+      "hidden_share": 0.3517922615641411,
+      "pooled": {
+        "n_cells": 3291015,
+        "model_median_m": 1.900236846385398,
+        "model_mean_m": 3.6257209453372776,
+        "kalman_median_m": 2.390717455927563,
+        "kalman_mean_m": 7.978367951287993,
+        "spline_median_m": 1.9571156358534325,
+        "spline_mean_m": 7.548267453912475,
+        "model_over_kalman_median": 0.7948395749041512,
+        "coverage_90_model": 0.9406262201782732,
+        "coverage_90_kalman": 0.9136606791521764
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 38251,
+          "model_median_m": 0.07535263382310521,
+          "model_mean_m": 0.1086381023537432,
+          "kalman_median_m": 0.054237770467836025,
+          "kalman_mean_m": 0.08746168036228531,
+          "spline_median_m": 0.011786316353220382,
+          "spline_mean_m": 0.022626869276100758,
+          "model_over_kalman_median": 1.3893018310513092,
+          "coverage_90_model": 0.9621447805286136,
+          "coverage_90_kalman": 0.9762097722935348
+        },
+        "1-3s": {
+          "n_cells": 193672,
+          "model_median_m": 0.16129372805265874,
+          "model_mean_m": 0.2686501768724586,
+          "kalman_median_m": 0.15012239850849107,
+          "kalman_mean_m": 0.25822185614649174,
+          "spline_median_m": 0.05683335836975699,
+          "spline_mean_m": 0.12128087328884994,
+          "model_over_kalman_median": 1.0744148085506096,
+          "coverage_90_model": 0.9291534140195795,
+          "coverage_90_kalman": 0.9336300549382461
+        },
+        "3-6s": {
+          "n_cells": 347117,
+          "model_median_m": 0.4222884131299522,
+          "model_mean_m": 0.6778538704682947,
+          "kalman_median_m": 0.41035751145160715,
+          "kalman_mean_m": 0.6743242071245752,
+          "spline_median_m": 0.23874937105730495,
+          "spline_mean_m": 0.44933630067609476,
+          "model_over_kalman_median": 1.0290744079135787,
+          "coverage_90_model": 0.9308302387955646,
+          "coverage_90_kalman": 0.8999098286744815
+        },
+        "6-9.6s": {
+          "n_cells": 390772,
+          "model_median_m": 0.848617889984835,
+          "model_mean_m": 1.2680934667985004,
+          "kalman_median_m": 0.8530896401006185,
+          "kalman_mean_m": 1.3433630858655259,
+          "spline_median_m": 0.6095017729320823,
+          "spline_mean_m": 1.034412293525617,
+          "model_over_kalman_median": 0.9947581708819532,
+          "coverage_90_model": 0.9413980530846632,
+          "coverage_90_kalman": 0.8816035949351541
+        },
+        ">=9.6s": {
+          "n_cells": 2321203,
+          "model_median_m": 3.1115226751713907,
+          "model_mean_m": 4.801513035114834,
+          "kalman_median_m": 4.799665773800344,
+          "kalman_mean_m": 10.961796399347497,
+          "spline_median_m": 4.227298309662107,
+          "spline_mean_m": 10.450148296259357,
+          "model_over_kalman_median": 0.6482790306266903,
+          "coverage_90_model": 0.9425638343565815,
+          "coverage_90_kalman": 0.9184168726302697
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 514532,
+          "model_median_m": 2.4404136115018176,
+          "model_mean_m": 3.8291309517000047,
+          "kalman_median_m": 5.7860013078325006,
+          "kalman_mean_m": 11.089582229775804,
+          "spline_median_m": 5.344871520488198,
+          "spline_mean_m": 10.027296013851537,
+          "model_over_kalman_median": 0.4217789595377785,
+          "coverage_90_model": 0.9314386665941088,
+          "coverage_90_kalman": 0.9727966384986745
+        },
+        "defender": {
+          "n_cells": 987949,
+          "model_median_m": 2.0200582748112956,
+          "model_mean_m": 3.889131271618356,
+          "kalman_median_m": 2.5125884741746494,
+          "kalman_mean_m": 8.355803889786545,
+          "spline_median_m": 2.0885360726438993,
+          "spline_mean_m": 8.74512920891754,
+          "model_over_kalman_median": 0.8039749826022969,
+          "coverage_90_model": 0.9441185729222865,
+          "coverage_90_kalman": 0.9064607586019117
+        },
+        "midfielder": {
+          "n_cells": 1018427,
+          "model_median_m": 1.7838276811852845,
+          "model_mean_m": 3.615918656640021,
+          "kalman_median_m": 1.9135620234292188,
+          "kalman_mean_m": 7.86442658829892,
+          "spline_median_m": 1.5368870359772118,
+          "spline_mean_m": 6.987106383037101,
+          "model_over_kalman_median": 0.9322026980805971,
+          "coverage_90_model": 0.946708993379005,
+          "coverage_90_kalman": 0.9132809715374789
+        },
+        "forward": {
+          "n_cells": 443834,
+          "model_median_m": 1.6505379032785479,
+          "model_mean_m": 3.4255712338050004,
+          "kalman_median_m": 1.8368245866880872,
+          "kalman_mean_m": 6.7238810489897185,
+          "spline_median_m": 1.4490219145374745,
+          "spline_mean_m": 6.3117059779687565,
+          "model_over_kalman_median": 0.8985822136966132,
+          "coverage_90_model": 0.9371634439903207,
+          "coverage_90_kalman": 0.8968217847213147
+        },
+        "unknown": {
+          "n_cells": 326273,
+          "model_median_m": 1.3028252600605392,
+          "model_mean_m": 2.8102052168105693,
+          "kalman_median_m": 1.3746150509814332,
+          "kalman_mean_m": 3.991271676502552,
+          "spline_median_m": 1.0270308852143748,
+          "spline_mean_m": 3.448485109202167,
+          "model_over_kalman_median": 0.9477746217971073,
+          "coverage_90_model": 0.9302639200914572,
+          "coverage_90_kalman": 0.8662960159130544
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.011622857993658491,
+        "1-3s": 0.05884871384664002,
+        "3-6s": 0.10547414703366591,
+        "6-9.6s": 0.11873905162996826,
+        ">=9.6s": 0.7053152294960673
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.15634447123455833,
+        "defender": 0.3001958362389719,
+        "midfielder": 0.30945680891761357,
+        "forward": 0.1348623448996738,
+        "unknown": 0.09914053870918242
+      }
+    },
+    "lag_0.5s": {
+      "hidden_share": 0.4871827895969096,
+      "pooled": {
+        "n_cells": 4546561,
+        "model_median_m": 2.4821761623038454,
+        "model_mean_m": 4.597900167047478,
+        "kalman_median_m": 3.3351965713588294,
+        "kalman_mean_m": 9.48411463977214,
+        "spline_median_m": 2.8739316482785355,
+        "spline_mean_m": 9.22915610448169,
+        "model_over_kalman_median": 0.7442368415761936,
+        "coverage_90_model": 0.9192849276629083,
+        "coverage_90_kalman": 0.8867284525600778
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 41334,
+          "model_median_m": 0.07769150376928322,
+          "model_mean_m": 0.10702161188944732,
+          "kalman_median_m": 0.0575206979429062,
+          "kalman_mean_m": 0.08934748719576252,
+          "spline_median_m": 0.012150190977544092,
+          "spline_mean_m": 0.017967076622087585,
+          "model_over_kalman_median": 1.350670394270913,
+          "coverage_90_model": 0.9494121062563508,
+          "coverage_90_kalman": 0.9654279769681134
+        },
+        "1-3s": {
+          "n_cells": 226428,
+          "model_median_m": 0.16972337642607083,
+          "model_mean_m": 0.2703407229109524,
+          "kalman_median_m": 0.15511408742987307,
+          "kalman_mean_m": 0.2581882152365922,
+          "spline_median_m": 0.060585289669352047,
+          "spline_mean_m": 0.12759000684380314,
+          "model_over_kalman_median": 1.0941841533432777,
+          "coverage_90_model": 0.9082313141484268,
+          "coverage_90_kalman": 0.9206105252000636
+        },
+        "3-6s": {
+          "n_cells": 396944,
+          "model_median_m": 0.4446208483499947,
+          "model_mean_m": 0.7399325911422101,
+          "kalman_median_m": 0.43489791120126103,
+          "kalman_mean_m": 0.7373977192275516,
+          "spline_median_m": 0.25711739462600236,
+          "spline_mean_m": 0.4836056056727162,
+          "model_over_kalman_median": 1.022356826506426,
+          "coverage_90_model": 0.906571203998549,
+          "coverage_90_kalman": 0.8697322544237979
+        },
+        "6-9.6s": {
+          "n_cells": 438679,
+          "model_median_m": 0.9596896956485288,
+          "model_mean_m": 1.4965963735618826,
+          "kalman_median_m": 0.9878874019775206,
+          "kalman_mean_m": 1.6099656621480307,
+          "spline_median_m": 0.7086602669900673,
+          "spline_mean_m": 1.2415014116079717,
+          "model_over_kalman_median": 0.9714565584371797,
+          "coverage_90_model": 0.9137820593190009,
+          "coverage_90_kalman": 0.8254577948796272
+        },
+        ">=9.6s": {
+          "n_cells": 3443176,
+          "model_median_m": 3.715634802907657,
+          "model_mean_m": 5.776283302933781,
+          "kalman_median_m": 5.837730624884139,
+          "kalman_mean_m": 12.215172237351567,
+          "spline_median_m": 5.329679956607922,
+          "spline_mean_m": 11.964158574831124,
+          "model_over_kalman_median": 0.6364861693119663,
+          "coverage_90_model": 0.9218169503969591,
+          "coverage_90_kalman": 0.8933211662720697
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 585641,
+          "model_median_m": 2.7866440224044613,
+          "model_mean_m": 4.266168464179119,
+          "kalman_median_m": 7.221610036884312,
+          "kalman_mean_m": 12.68034463029604,
+          "spline_median_m": 6.8584942808670775,
+          "spline_mean_m": 11.339564392211525,
+          "model_over_kalman_median": 0.38587572690462385,
+          "coverage_90_model": 0.9269176850664486,
+          "coverage_90_kalman": 0.9717574418457724
+        },
+        "defender": {
+          "n_cells": 1364948,
+          "model_median_m": 2.731120505284414,
+          "model_mean_m": 4.944686931128591,
+          "kalman_median_m": 3.5854098226701456,
+          "kalman_mean_m": 10.185763308439297,
+          "spline_median_m": 3.152175189738224,
+          "spline_mean_m": 10.849078586249163,
+          "model_over_kalman_median": 0.761731751839314,
+          "coverage_90_model": 0.9243480337712499,
+          "coverage_90_kalman": 0.8918603492587264
+        },
+        "midfielder": {
+          "n_cells": 1457787,
+          "model_median_m": 2.41870575500959,
+          "model_mean_m": 4.713875715015449,
+          "kalman_median_m": 2.8985825070754836,
+          "kalman_mean_m": 9.414959462190993,
+          "spline_median_m": 2.415637001848315,
+          "spline_mean_m": 8.827459134405844,
+          "model_over_kalman_median": 0.8344443358453634,
+          "coverage_90_model": 0.9201289351599377,
+          "coverage_90_kalman": 0.8759956015522158
+        },
+        "forward": {
+          "n_cells": 640816,
+          "model_median_m": 2.217979103051128,
+          "model_mean_m": 4.488526436651785,
+          "kalman_median_m": 2.5975181412504162,
+          "kalman_mean_m": 7.992577901087426,
+          "spline_median_m": 2.1533607717423027,
+          "spline_mean_m": 7.734605257597835,
+          "model_over_kalman_median": 0.853883970174475,
+          "coverage_90_model": 0.9103127886944147,
+          "coverage_90_kalman": 0.8653420014481537
+        },
+        "unknown": {
+          "n_cells": 497369,
+          "model_median_m": 1.9155363430898744,
+          "model_mean_m": 3.837801681641681,
+          "kalman_median_m": 2.1279101355889924,
+          "kalman_mean_m": 5.919471187359871,
+          "spline_median_m": 1.7380505292038582,
+          "spline_mean_m": 5.401553549305848,
+          "model_over_kalman_median": 0.9001960708080681,
+          "coverage_90_model": 0.9054886814417464,
+          "coverage_90_kalman": 0.8315375505912109
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.009091267003785939,
+        "1-3s": 0.04980203718810767,
+        "3-6s": 0.08730642786932805,
+        "6-9.6s": 0.09648589340382764,
+        ">=9.6s": 0.7573143745349507
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.12880966515130887,
+        "defender": 0.30021548154748173,
+        "midfielder": 0.3206350910061473,
+        "forward": 0.14094521111670996,
+        "unknown": 0.10939455117835216
+      }
+    },
+    "lag_1s": {
+      "hidden_share": 0.4871693157338262,
+      "pooled": {
+        "n_cells": 4545582,
+        "model_median_m": 2.5252198627702755,
+        "model_mean_m": 4.648510318792372,
+        "kalman_median_m": 3.3547174525229417,
+        "kalman_mean_m": 9.457370738716778,
+        "spline_median_m": 2.883131199591469,
+        "spline_mean_m": 9.215981186096114,
+        "model_over_kalman_median": 0.7527369736819904,
+        "coverage_90_model": 0.9148962663086927,
+        "coverage_90_kalman": 0.8888225974143685
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 42876,
+          "model_median_m": 0.07901289913308163,
+          "model_mean_m": 0.10745909809693574,
+          "kalman_median_m": 0.05859345736694927,
+          "kalman_mean_m": 0.0901883513203922,
+          "spline_median_m": 0.012022256620467619,
+          "spline_mean_m": 0.016959068807407687,
+          "model_over_kalman_median": 1.3484935466131125,
+          "coverage_90_model": 0.9537270267748857,
+          "coverage_90_kalman": 0.9652952700811643
+        },
+        "1-3s": {
+          "n_cells": 226173,
+          "model_median_m": 0.17218073254078925,
+          "model_mean_m": 0.2703103684980465,
+          "kalman_median_m": 0.16042882976941858,
+          "kalman_mean_m": 0.25901067854345694,
+          "spline_median_m": 0.061784681248665076,
+          "spline_mean_m": 0.12196908724910846,
+          "model_over_kalman_median": 1.0732530604895734,
+          "coverage_90_model": 0.9080305783625808,
+          "coverage_90_kalman": 0.9220640836881502
+        },
+        "3-6s": {
+          "n_cells": 390152,
+          "model_median_m": 0.4646503447850133,
+          "model_mean_m": 0.7731751883795821,
+          "kalman_median_m": 0.4554788091422056,
+          "kalman_mean_m": 0.7677756979352662,
+          "spline_median_m": 0.2642319629960175,
+          "spline_mean_m": 0.5052871304514241,
+          "model_over_kalman_median": 1.0201360314875687,
+          "coverage_90_model": 0.8934774139309808,
+          "coverage_90_kalman": 0.8537082983042507
+        },
+        "6-9.6s": {
+          "n_cells": 433782,
+          "model_median_m": 0.9455491578906448,
+          "model_mean_m": 1.5201931006183436,
+          "kalman_median_m": 0.9652118708501833,
+          "kalman_mean_m": 1.605705502318989,
+          "spline_median_m": 0.7102964502507363,
+          "spline_mean_m": 1.2698908904102222,
+          "model_over_kalman_median": 0.9796286042957396,
+          "coverage_90_model": 0.9057153132218487,
+          "coverage_90_kalman": 0.8246123628919596
+        },
+        ">=9.6s": {
+          "n_cells": 3452599,
+          "model_median_m": 3.749821511666763,
+          "model_mean_m": 5.822672212725388,
+          "kalman_median_m": 5.70680576801078,
+          "kalman_mean_m": 12.14468598611669,
+          "spline_median_m": 5.266604153936795,
+          "spline_mean_m": 11.908620243969471,
+          "model_over_kalman_median": 0.657078874610768,
+          "coverage_90_model": 0.9184376755018466,
+          "coverage_90_kalman": 0.8977306660866206
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 585940,
+          "model_median_m": 2.761612252415531,
+          "model_mean_m": 4.217436039642875,
+          "kalman_median_m": 6.872129195932061,
+          "kalman_mean_m": 12.34660458708875,
+          "spline_median_m": 6.324092847242311,
+          "spline_mean_m": 10.871531454330816,
+          "model_over_kalman_median": 0.40185685886846545,
+          "coverage_90_model": 0.9330665255828242,
+          "coverage_90_kalman": 0.9731167013687408
+        },
+        "defender": {
+          "n_cells": 1366085,
+          "model_median_m": 2.79430540841119,
+          "model_mean_m": 5.055861781621705,
+          "kalman_median_m": 3.604658308941678,
+          "kalman_mean_m": 10.131418924158458,
+          "spline_median_m": 3.1475232459367457,
+          "spline_mean_m": 10.910364936376396,
+          "model_over_kalman_median": 0.7751928668189338,
+          "coverage_90_model": 0.918224707832968,
+          "coverage_90_kalman": 0.8963468598220462
+        },
+        "midfielder": {
+          "n_cells": 1458208,
+          "model_median_m": 2.4413246075555293,
+          "model_mean_m": 4.730921163560295,
+          "kalman_median_m": 2.9144095221431274,
+          "kalman_mean_m": 9.545426767076089,
+          "spline_median_m": 2.4224193874384494,
+          "spline_mean_m": 8.896222654262399,
+          "model_over_kalman_median": 0.8376738371895956,
+          "coverage_90_model": 0.9124884790098532,
+          "coverage_90_kalman": 0.8754670115648796
+        },
+        "forward": {
+          "n_cells": 639931,
+          "model_median_m": 2.3289110343703396,
+          "model_mean_m": 4.581895523558256,
+          "kalman_median_m": 2.6984246233521696,
+          "kalman_mean_m": 8.03014102358022,
+          "spline_median_m": 2.2213717603885788,
+          "spline_mean_m": 7.8443506811696455,
+          "model_over_kalman_median": 0.8630632162988512,
+          "coverage_90_model": 0.9032380053474515,
+          "coverage_90_kalman": 0.8630633615186637
+        },
+        "unknown": {
+          "n_cells": 495418,
+          "model_median_m": 1.9566702508431648,
+          "model_mean_m": 3.878582014667914,
+          "kalman_median_m": 2.1739113336262994,
+          "kalman_mean_m": 5.765941960010926,
+          "spline_median_m": 1.8362600887328904,
+          "spline_mean_m": 5.298678989093153,
+          "model_over_kalman_median": 0.9000690233208569,
+          "coverage_90_model": 0.9063740114408438,
+          "coverage_90_kalman": 0.8409625810931375
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.00943245551394739,
+        "1-3s": 0.04975666482311836,
+        "3-6s": 0.08583103329782633,
+        "6-9.6s": 0.09542936416062893,
+        ">=9.6s": 0.759550482204479
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.12890318555467706,
+        "defender": 0.3005302731311414,
+        "midfielder": 0.32079676485871333,
+        "forward": 0.140780872504335,
+        "unknown": 0.10898890395113321
+      }
+    },
+    "lag_2s": {
+      "hidden_share": 0.4906059434002641,
+      "pooled": {
+        "n_cells": 4575980,
+        "model_median_m": 2.5424844987125486,
+        "model_mean_m": 4.645981396203416,
+        "kalman_median_m": 3.315931093550169,
+        "kalman_mean_m": 9.617172046401338,
+        "spline_median_m": 2.8983717888318044,
+        "spline_mean_m": 9.632802743324577,
+        "model_over_kalman_median": 0.7667482908972221,
+        "coverage_90_model": 0.9089611405644256,
+        "coverage_90_kalman": 0.8899702358838981
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 45449,
+          "model_median_m": 0.07739502522237733,
+          "model_mean_m": 0.109564257306406,
+          "kalman_median_m": 0.05705893968271222,
+          "kalman_mean_m": 0.09152419245239543,
+          "spline_median_m": 0.012426406804208721,
+          "spline_mean_m": 0.019501612057001544,
+          "model_over_kalman_median": 1.356404897335072,
+          "coverage_90_model": 0.9439591630178882,
+          "coverage_90_kalman": 0.9614292943739137
+        },
+        "1-3s": {
+          "n_cells": 226590,
+          "model_median_m": 0.18001550330705285,
+          "model_mean_m": 0.28639677943603453,
+          "kalman_median_m": 0.16682515375757329,
+          "kalman_mean_m": 0.27366344557163336,
+          "spline_median_m": 0.061767062752930896,
+          "spline_mean_m": 0.12369157713145389,
+          "model_over_kalman_median": 1.07906691078881,
+          "coverage_90_model": 0.8991085220000883,
+          "coverage_90_kalman": 0.907639348603204
+        },
+        "3-6s": {
+          "n_cells": 388868,
+          "model_median_m": 0.4916870730252315,
+          "model_mean_m": 0.813119635822302,
+          "kalman_median_m": 0.4799180310585943,
+          "kalman_mean_m": 0.803429899433766,
+          "spline_median_m": 0.2808491473275765,
+          "spline_mean_m": 0.531513078025556,
+          "model_over_kalman_median": 1.024523025193859,
+          "coverage_90_model": 0.8829345690568522,
+          "coverage_90_kalman": 0.8415169157657612
+        },
+        "6-9.6s": {
+          "n_cells": 443945,
+          "model_median_m": 0.9988517238156076,
+          "model_mean_m": 1.6064094847720192,
+          "kalman_median_m": 0.9953777367552222,
+          "kalman_mean_m": 1.679794576315898,
+          "spline_median_m": 0.7352763623932612,
+          "spline_mean_m": 1.3300381809819606,
+          "model_over_kalman_median": 1.0034901193105947,
+          "coverage_90_model": 0.8980459291128405,
+          "coverage_90_kalman": 0.8141121084819065
+        },
+        ">=9.6s": {
+          "n_cells": 3471128,
+          "model_median_m": 3.75521282148841,
+          "model_mean_m": 5.808109079226151,
+          "kalman_median_m": 5.698545106851244,
+          "kalman_mean_m": 12.35438545522412,
+          "spline_median_m": 5.260829449546483,
+          "spline_mean_m": 12.460919581844323,
+          "model_over_kalman_median": 0.6589774672439803,
+          "coverage_90_model": 0.9134578154421271,
+          "coverage_90_kalman": 0.9030113553864911
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 585840,
+          "model_median_m": 2.6896009143202027,
+          "model_mean_m": 3.9593909598230446,
+          "kalman_median_m": 7.008736985355362,
+          "kalman_mean_m": 13.70996360060653,
+          "spline_median_m": 6.773229977931264,
+          "spline_mean_m": 11.610182604233472,
+          "model_over_kalman_median": 0.38374972836619187,
+          "coverage_90_model": 0.937395876007101,
+          "coverage_90_kalman": 0.972786084937867
+        },
+        "defender": {
+          "n_cells": 1376334,
+          "model_median_m": 2.835870052723118,
+          "model_mean_m": 5.173112740593378,
+          "kalman_median_m": 3.6032938587188656,
+          "kalman_mean_m": 9.947867830098287,
+          "spline_median_m": 3.204242224721302,
+          "spline_mean_m": 10.805610814417745,
+          "model_over_kalman_median": 0.7870215874459372,
+          "coverage_90_model": 0.9073698680698145,
+          "coverage_90_kalman": 0.8960593867476935
+        },
+        "midfielder": {
+          "n_cells": 1474433,
+          "model_median_m": 2.4852611912917912,
+          "model_mean_m": 4.751122618049148,
+          "kalman_median_m": 2.8641377293258015,
+          "kalman_mean_m": 9.942806329570155,
+          "spline_median_m": 2.4159581161518755,
+          "spline_mean_m": 9.363760551306594,
+          "model_over_kalman_median": 0.8677170674598825,
+          "coverage_90_model": 0.9064291154633679,
+          "coverage_90_kalman": 0.8753710748470768
+        },
+        "forward": {
+          "n_cells": 643075,
+          "model_median_m": 2.337083511415783,
+          "model_mean_m": 4.3810588219504565,
+          "kalman_median_m": 2.5703717513190325,
+          "kalman_mean_m": 7.316139353701578,
+          "spline_median_m": 2.2028662011473625,
+          "spline_mean_m": 7.165564546429204,
+          "model_over_kalman_median": 0.9092394943324702,
+          "coverage_90_model": 0.8984193134548847,
+          "coverage_90_kalman": 0.873454884733507
+        },
+        "unknown": {
+          "n_cells": 496298,
+          "model_median_m": 2.006697271307777,
+          "model_mean_m": 4.025516971175536,
+          "kalman_median_m": 2.201147701429634,
+          "kalman_mean_m": 5.883007917084121,
+          "spline_median_m": 1.7639745198867198,
+          "spline_mean_m": 8.042427703202154,
+          "model_over_kalman_median": 0.9116595265299269,
+          "coverage_90_model": 0.9009909368967838,
+          "coverage_90_kalman": 0.8400980862304502
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.00993208012272781,
+        "1-3s": 0.04951726187614457,
+        "3-6s": 0.0849802665221439,
+        "6-9.6s": 0.09701637681982876,
+        ">=9.6s": 0.758554014659155
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.128025035074454,
+        "defender": 0.3007736047797412,
+        "midfielder": 0.3222114170079415,
+        "forward": 0.14053273834238786,
+        "unknown": 0.1084572047954755
+      }
+    },
+    "cut_2s": {
+      "hidden_share": 0.5030446967667485,
+      "pooled": {
+        "n_cells": 4692399,
+        "model_median_m": 2.3305150109918213,
+        "model_mean_m": 4.53560526341911,
+        "kalman_median_m": 3.098005325594886,
+        "kalman_mean_m": 9.738408624269242,
+        "spline_median_m": 2.637447878445674,
+        "spline_mean_m": 10.953279960285228,
+        "model_over_kalman_median": 0.7522630744814199,
+        "coverage_90_model": 0.9207469356293018,
+        "coverage_90_kalman": 0.8879183121469423
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 39378,
+          "model_median_m": 0.07949050459133705,
+          "model_mean_m": 0.11341230625552165,
+          "kalman_median_m": 0.05990913630267589,
+          "kalman_mean_m": 0.0947423027698826,
+          "spline_median_m": 0.012343471749938408,
+          "spline_mean_m": 0.02600238542606357,
+          "model_over_kalman_median": 1.3268511198313928,
+          "coverage_90_model": 0.9537559043120524,
+          "coverage_90_kalman": 0.9711006145563512
+        },
+        "1-3s": {
+          "n_cells": 337328,
+          "model_median_m": 0.17166566554787516,
+          "model_mean_m": 0.26886406012693526,
+          "kalman_median_m": 0.15923629302926534,
+          "kalman_mean_m": 0.25709373456948886,
+          "spline_median_m": 0.06385633213179738,
+          "spline_mean_m": 0.11633466467401883,
+          "model_over_kalman_median": 1.0780561534192803,
+          "coverage_90_model": 0.9095687283593417,
+          "coverage_90_kalman": 0.9199354930512735
+        },
+        "3-6s": {
+          "n_cells": 407282,
+          "model_median_m": 0.4557362155021394,
+          "model_mean_m": 0.7281902584605882,
+          "kalman_median_m": 0.4479732078976778,
+          "kalman_mean_m": 0.7232298331517084,
+          "spline_median_m": 0.258805638103055,
+          "spline_mean_m": 0.47122556241026764,
+          "model_over_kalman_median": 1.0173291783249563,
+          "coverage_90_model": 0.9073860371929032,
+          "coverage_90_kalman": 0.8751749402134148
+        },
+        "6-9.6s": {
+          "n_cells": 448237,
+          "model_median_m": 0.9505701313688186,
+          "model_mean_m": 1.4556984058168247,
+          "kalman_median_m": 0.9818073569799625,
+          "kalman_mean_m": 1.5550823576163963,
+          "spline_median_m": 0.7070607043798749,
+          "spline_mean_m": 1.1982032073948268,
+          "model_over_kalman_median": 0.968183956466542,
+          "coverage_90_model": 0.9236073773472515,
+          "coverage_90_kalman": 0.8413205514047256
+        },
+        ">=9.6s": {
+          "n_cells": 3460174,
+          "model_median_m": 3.6800282374532074,
+          "model_mean_m": 5.849021351474774,
+          "kalman_median_m": 5.804671209735574,
+          "kalman_mean_m": 12.893698198062424,
+          "spline_median_m": 5.280997728862565,
+          "spline_mean_m": 14.631603026345315,
+          "model_over_kalman_median": 0.6339770340964493,
+          "coverage_90_model": 0.9226631377497201,
+          "coverage_90_kalman": 0.89138667593017
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 592496,
+          "model_median_m": 2.7878290100269085,
+          "model_mean_m": 4.701925380701651,
+          "kalman_median_m": 7.23020657441934,
+          "kalman_mean_m": 15.718303558035029,
+          "spline_median_m": 6.919959477695312,
+          "spline_mean_m": 11.102354432154206,
+          "model_over_kalman_median": 0.3855808241897708,
+          "coverage_90_model": 0.9202357484269936,
+          "coverage_90_kalman": 0.9674731981312954
+        },
+        "defender": {
+          "n_cells": 1405884,
+          "model_median_m": 2.5404275134814105,
+          "model_mean_m": 4.86531740105171,
+          "kalman_median_m": 3.347254340126227,
+          "kalman_mean_m": 9.971529501431942,
+          "spline_median_m": 2.903564618028272,
+          "spline_mean_m": 10.211570998074686,
+          "model_over_kalman_median": 0.7589586136396224,
+          "coverage_90_model": 0.9287210040088656,
+          "coverage_90_kalman": 0.8924612556939264
+        },
+        "midfielder": {
+          "n_cells": 1514109,
+          "model_median_m": 2.234436835769353,
+          "model_mean_m": 4.469235946192842,
+          "kalman_median_m": 2.618501986873533,
+          "kalman_mean_m": 9.089873513529403,
+          "spline_median_m": 2.1651048481529203,
+          "spline_mean_m": 14.86275403169663,
+          "model_over_kalman_median": 0.8533263854564609,
+          "coverage_90_model": 0.9218821102047475,
+          "coverage_90_kalman": 0.8774876841759741
+        },
+        "forward": {
+          "n_cells": 664141,
+          "model_median_m": 2.0835064969233352,
+          "model_mean_m": 4.445807539066437,
+          "kalman_median_m": 2.432407076427992,
+          "kalman_mean_m": 8.497088318132239,
+          "spline_median_m": 1.9428806698087657,
+          "spline_mean_m": 7.844532699830299,
+          "model_over_kalman_median": 0.8565615998712601,
+          "coverage_90_model": 0.9120442797538475,
+          "coverage_90_kalman": 0.8690639487699148
+        },
+        "unknown": {
+          "n_cells": 515769,
+          "model_median_m": 1.7789755394445332,
+          "model_mean_m": 3.7562790686934617,
+          "kalman_median_m": 1.9710152082861843,
+          "kalman_mean_m": 5.735763675619423,
+          "spline_median_m": 1.5777743642444222,
+          "spline_mean_m": 5.33004043223892,
+          "model_over_kalman_median": 0.9025681445610807,
+          "coverage_90_model": 0.9074721435371261,
+          "coverage_90_kalman": 0.8390442232860059
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.00839186948935928,
+        "1-3s": 0.07188817489731798,
+        "3-6s": 0.08679611431167725,
+        "6-9.6s": 0.0955240592285524,
+        ">=9.6s": 0.7373997820730931
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.12626718230909179,
+        "defender": 0.2996087928584078,
+        "midfielder": 0.322672688319983,
+        "forward": 0.14153549176018493,
+        "unknown": 0.10991584475233245
+      }
+    },
+    "cut_4s": {
+      "hidden_share": 0.5181639563066398,
+      "pooled": {
+        "n_cells": 4830827,
+        "model_median_m": 2.337891284183703,
+        "model_mean_m": 4.527580039862984,
+        "kalman_median_m": 3.059509168368974,
+        "kalman_mean_m": 9.601586341857155,
+        "spline_median_m": 2.5990509451081287,
+        "spline_mean_m": 10.755978355803403,
+        "model_over_kalman_median": 0.7641393293912023,
+        "coverage_90_model": 0.9180159007971099,
+        "coverage_90_kalman": 0.8837149415617657
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 38287,
+          "model_median_m": 0.07956865779821978,
+          "model_mean_m": 0.11386064519601583,
+          "kalman_median_m": 0.05997587030739724,
+          "kalman_mean_m": 0.09495890204194699,
+          "spline_median_m": 0.012352150346672763,
+          "spline_mean_m": 0.0263929626500366,
+          "model_over_kalman_median": 1.3266778354428652,
+          "coverage_90_model": 0.9539791574163554,
+          "coverage_90_kalman": 0.9710084362838561
+        },
+        "1-3s": {
+          "n_cells": 212690,
+          "model_median_m": 0.16810264099285305,
+          "model_mean_m": 0.2659098598561218,
+          "kalman_median_m": 0.1565238502451453,
+          "kalman_mean_m": 0.25464626063273665,
+          "spline_median_m": 0.06079880377921462,
+          "spline_mean_m": 0.11342532584623063,
+          "model_over_kalman_median": 1.0739746098091327,
+          "coverage_90_model": 0.9143448211011331,
+          "coverage_90_kalman": 0.9240020687385396
+        },
+        "3-6s": {
+          "n_cells": 589311,
+          "model_median_m": 0.4609705684289029,
+          "model_mean_m": 0.7322705971886078,
+          "kalman_median_m": 0.4492072663512575,
+          "kalman_mean_m": 0.7214521360333592,
+          "spline_median_m": 0.2533579786352452,
+          "spline_mean_m": 0.4664751684187624,
+          "model_over_kalman_median": 1.02618680274964,
+          "coverage_90_model": 0.8985595042346062,
+          "coverage_90_kalman": 0.864585931706688
+        },
+        "6-9.6s": {
+          "n_cells": 466345,
+          "model_median_m": 0.967463734421945,
+          "model_mean_m": 1.474000626196655,
+          "kalman_median_m": 0.9963695811471969,
+          "kalman_mean_m": 1.5659626996487994,
+          "spline_median_m": 0.7219384078375575,
+          "spline_mean_m": 1.2077711268321714,
+          "model_over_kalman_median": 0.9709888305783378,
+          "coverage_90_model": 0.920970526112642,
+          "coverage_90_kalman": 0.8373586078975865
+        },
+        ">=9.6s": {
+          "n_cells": 3524194,
+          "model_median_m": 3.7410458591754194,
+          "model_mean_m": 5.871445275343032,
+          "kalman_median_m": 5.8495693984957455,
+          "kalman_mean_m": 12.817219365197442,
+          "spline_median_m": 5.3096111013905665,
+          "spline_mean_m": 14.498917692555207,
+          "model_over_kalman_median": 0.639542093497934,
+          "coverage_90_model": 0.9207092458587695,
+          "coverage_90_kalman": 0.8896681056718218
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 599744,
+          "model_median_m": 2.7890406095855043,
+          "model_mean_m": 4.675099784696273,
+          "kalman_median_m": 7.115926914345463,
+          "kalman_mean_m": 15.618517559900745,
+          "spline_median_m": 6.891191118940442,
+          "spline_mean_m": 11.104756607153625,
+          "model_over_kalman_median": 0.39194340289848884,
+          "coverage_90_model": 0.9204577286308825,
+          "coverage_90_kalman": 0.9675344813787216
+        },
+        "defender": {
+          "n_cells": 1446728,
+          "model_median_m": 2.538041761372698,
+          "model_mean_m": 4.8622322731954455,
+          "kalman_median_m": 3.3042048934574915,
+          "kalman_mean_m": 9.915794772906409,
+          "spline_median_m": 2.838764775000966,
+          "spline_mean_m": 10.131059104211444,
+          "model_over_kalman_median": 0.7681248116296181,
+          "coverage_90_model": 0.9256743492902605,
+          "coverage_90_kalman": 0.8866234703413496
+        },
+        "midfielder": {
+          "n_cells": 1566662,
+          "model_median_m": 2.243726525113992,
+          "model_mean_m": 4.457289611627415,
+          "kalman_median_m": 2.5909758151092874,
+          "kalman_mean_m": 8.854392990345477,
+          "spline_median_m": 2.1315551386729346,
+          "spline_mean_m": 14.36236609113621,
+          "model_over_kalman_median": 0.865977409758011,
+          "coverage_90_model": 0.9190820993934875,
+          "coverage_90_kalman": 0.8737889857544257
+        },
+        "forward": {
+          "n_cells": 685769,
+          "model_median_m": 2.095278846323396,
+          "model_mean_m": 4.424936403310102,
+          "kalman_median_m": 2.4058507451420312,
+          "kalman_mean_m": 8.339748440912848,
+          "spline_median_m": 1.9302989850432506,
+          "spline_mean_m": 7.716738352641173,
+          "model_over_kalman_median": 0.8709097397476747,
+          "coverage_90_model": 0.9076102885957225,
+          "coverage_90_kalman": 0.8654430281917088
+        },
+        "unknown": {
+          "n_cells": 531924,
+          "model_median_m": 1.8236102939921186,
+          "model_mean_m": 3.7904189582154664,
+          "kalman_median_m": 2.035205791416641,
+          "kalman_mean_m": 5.790395672681292,
+          "spline_median_m": 1.6343301625067557,
+          "spline_mean_m": 5.358847320083908,
+          "model_over_kalman_median": 0.8960323824170933,
+          "coverage_90_model": 0.9047081913957633,
+          "coverage_90_kalman": 0.8340890803949437
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.007925558087673187,
+        "1-3s": 0.04402765820427848,
+        "3-6s": 0.12198967174771524,
+        "6-9.6s": 0.09653523092422892,
+        ">=9.6s": 0.7295218810361042
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.1241493433732982,
+        "defender": 0.299478329486856,
+        "midfielder": 0.32430513450388515,
+        "forward": 0.14195685335036837,
+        "unknown": 0.1101103392855923
+      }
+    },
+    "cut_8s": {
+      "hidden_share": 0.5481349795752087,
+      "pooled": {
+        "n_cells": 5109420,
+        "model_median_m": 2.6184495467685815,
+        "model_mean_m": 4.769239500660235,
+        "kalman_median_m": 3.3911585037014804,
+        "kalman_mean_m": 9.757016855017506,
+        "spline_median_m": 2.9184288677984367,
+        "spline_mean_m": 10.838515558590684,
+        "model_over_kalman_median": 0.7721401237690659,
+        "coverage_90_model": 0.912965855224272,
+        "coverage_90_kalman": 0.8768676288110979
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 36428,
+          "model_median_m": 0.0788265077713686,
+          "model_mean_m": 0.113220278285621,
+          "kalman_median_m": 0.05959284926318371,
+          "kalman_mean_m": 0.09430820719662521,
+          "spline_median_m": 0.012379256835041035,
+          "spline_mean_m": 0.024441234438890888,
+          "model_over_kalman_median": 1.3227511143701496,
+          "coverage_90_model": 0.952097287800593,
+          "coverage_90_kalman": 0.9719172065444164
+        },
+        "1-3s": {
+          "n_cells": 198699,
+          "model_median_m": 0.16872278123646628,
+          "model_mean_m": 0.26719452055215076,
+          "kalman_median_m": 0.1570059849676871,
+          "kalman_mean_m": 0.2555043063554685,
+          "spline_median_m": 0.06088380922897077,
+          "spline_mean_m": 0.11321487546617234,
+          "model_over_kalman_median": 1.0746264307770852,
+          "coverage_90_model": 0.9120327731895983,
+          "coverage_90_kalman": 0.9243579484546978
+        },
+        "3-6s": {
+          "n_cells": 324922,
+          "model_median_m": 0.4567333937021748,
+          "model_mean_m": 0.7277744872540516,
+          "kalman_median_m": 0.4476523387640476,
+          "kalman_mean_m": 0.722496942765565,
+          "spline_median_m": 0.2574770384091072,
+          "spline_mean_m": 0.46980885436208314,
+          "model_over_kalman_median": 1.0202859544154281,
+          "coverage_90_model": 0.9052049414936508,
+          "coverage_90_kalman": 0.8763241639531949
+        },
+        "6-9.6s": {
+          "n_cells": 721993,
+          "model_median_m": 1.0526697575124113,
+          "model_mean_m": 1.6287129239958416,
+          "kalman_median_m": 1.0533712463789764,
+          "kalman_mean_m": 1.6687400264842465,
+          "spline_median_m": 0.7626504986921261,
+          "spline_mean_m": 1.3196235006912291,
+          "model_over_kalman_median": 0.9993340535267348,
+          "coverage_90_model": 0.8998757605683158,
+          "coverage_90_kalman": 0.8208902302376893
+        },
+        ">=9.6s": {
+          "n_cells": 3827378,
+          "model_median_m": 3.871763361838996,
+          "model_mean_m": 5.982801475329783,
+          "kalman_median_m": 5.829472132992687,
+          "kalman_mean_m": 12.63499956895936,
+          "spline_median_m": 5.290603256856751,
+          "spline_mean_m": 14.174124420121144,
+          "model_over_kalman_median": 0.6641704897989351,
+          "coverage_90_model": 0.9157700127868217,
+          "coverage_90_kalman": 0.8841031640982416
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 613963,
+          "model_median_m": 2.9279339226718277,
+          "model_mean_m": 4.8720489290410445,
+          "kalman_median_m": 7.060289665316061,
+          "kalman_mean_m": 15.682318380359044,
+          "spline_median_m": 6.792959003460529,
+          "spline_mean_m": 11.044536857366513,
+          "model_over_kalman_median": 0.41470450384711743,
+          "coverage_90_model": 0.9194446570884565,
+          "coverage_90_kalman": 0.9675680782066671
+        },
+        "defender": {
+          "n_cells": 1527503,
+          "model_median_m": 2.815043651894002,
+          "model_mean_m": 5.119745360377648,
+          "kalman_median_m": 3.6244199165199413,
+          "kalman_mean_m": 10.117252809775353,
+          "spline_median_m": 3.161408937299727,
+          "spline_mean_m": 10.355874114378977,
+          "model_over_kalman_median": 0.7766880540147021,
+          "coverage_90_model": 0.9199019576393631,
+          "coverage_90_kalman": 0.8830450742158935
+        },
+        "midfielder": {
+          "n_cells": 1674732,
+          "model_median_m": 2.575316841699782,
+          "model_mean_m": 4.683423846542073,
+          "kalman_median_m": 2.969939274769571,
+          "kalman_mean_m": 9.040060660185604,
+          "spline_median_m": 2.511727357097068,
+          "spline_mean_m": 14.174902379913597,
+          "model_over_kalman_median": 0.8671277771831187,
+          "coverage_90_model": 0.9121901295252016,
+          "coverage_90_kalman": 0.8633500763107171
+        },
+        "forward": {
+          "n_cells": 727367,
+          "model_median_m": 2.4535133737931107,
+          "model_mean_m": 4.682664581879739,
+          "kalman_median_m": 2.845620508318815,
+          "kalman_mean_m": 8.422921489171827,
+          "spline_median_m": 2.3123225706119626,
+          "spline_mean_m": 7.934136913770004,
+          "model_over_kalman_median": 0.8622068074855983,
+          "coverage_90_model": 0.9061381668401234,
+          "coverage_90_kalman": 0.8579520379670785
+        },
+        "unknown": {
+          "n_cells": 565855,
+          "model_median_m": 2.083769786456592,
+          "model_mean_m": 4.076782994467552,
+          "kalman_median_m": 2.3527061965835823,
+          "kalman_mean_m": 6.192338667228315,
+          "spline_median_m": 1.9380717979432676,
+          "spline_mean_m": 5.7766926657947035,
+          "model_over_kalman_median": 0.8856906100228245,
+          "coverage_90_model": 0.8982848963073579,
+          "coverage_90_kalman": 0.8261020932924512
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.007129576351131831,
+        "1-3s": 0.038888758410935094,
+        "3-6s": 0.06359273655326828,
+        "6-9.6s": 0.14130625393880322,
+        ">=9.6s": 0.7490826747458615
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.1201629539164915,
+        "defender": 0.2989581987779435,
+        "midfielder": 0.3277734067663257,
+        "forward": 0.14235803672432487,
+        "unknown": 0.11074740381491441
+      }
+    },
+    "cut_4s_ball": {
+      "hidden_share": 0.5181639563066398,
+      "pooled": {
+        "n_cells": 4830827,
+        "model_median_m": 2.3477984254566797,
+        "model_mean_m": 4.541931964932096,
+        "kalman_median_m": 3.059509168368974,
+        "kalman_mean_m": 9.601586341857155,
+        "spline_median_m": 2.5990509451081287,
+        "spline_mean_m": 10.755978355803403,
+        "model_over_kalman_median": 0.7673774766650862,
+        "coverage_90_model": 0.9149801886923294,
+        "coverage_90_kalman": 0.8837149415617657
+      },
+      "by_gap": {
+        "<1s": {
+          "n_cells": 38287,
+          "model_median_m": 0.07962476709596171,
+          "model_mean_m": 0.11411279764641884,
+          "kalman_median_m": 0.05997587030739724,
+          "kalman_mean_m": 0.09495890204194699,
+          "spline_median_m": 0.012352150346672763,
+          "spline_mean_m": 0.0263929626500366,
+          "model_over_kalman_median": 1.3276133666399008,
+          "coverage_90_model": 0.953169483114373,
+          "coverage_90_kalman": 0.9710084362838561
+        },
+        "1-3s": {
+          "n_cells": 212690,
+          "model_median_m": 0.16823823949314187,
+          "model_mean_m": 0.2662200989481271,
+          "kalman_median_m": 0.1565238502451453,
+          "kalman_mean_m": 0.25464626063273665,
+          "spline_median_m": 0.06079880377921462,
+          "spline_mean_m": 0.11342532584623063,
+          "model_over_kalman_median": 1.0748409218764403,
+          "coverage_90_model": 0.9138229347877193,
+          "coverage_90_kalman": 0.9240020687385396
+        },
+        "3-6s": {
+          "n_cells": 589311,
+          "model_median_m": 0.4650229382790394,
+          "model_mean_m": 0.738328741442798,
+          "kalman_median_m": 0.4492072663512575,
+          "kalman_mean_m": 0.7214521360333592,
+          "spline_median_m": 0.2533579786352452,
+          "spline_mean_m": 0.4664751684187624,
+          "model_over_kalman_median": 1.0352079610293188,
+          "coverage_90_model": 0.8931633721413651,
+          "coverage_90_kalman": 0.864585931706688
+        },
+        "6-9.6s": {
+          "n_cells": 466345,
+          "model_median_m": 0.9707621577306802,
+          "model_mean_m": 1.47839347042249,
+          "kalman_median_m": 0.9963695811471969,
+          "kalman_mean_m": 1.5659626996487994,
+          "spline_median_m": 0.7219384078375575,
+          "spline_mean_m": 1.2077711268321714,
+          "model_over_kalman_median": 0.9742992721766627,
+          "coverage_90_model": 0.9170463926921056,
+          "coverage_90_kalman": 0.8373586078975865
+        },
+        ">=9.6s": {
+          "n_cells": 3524194,
+          "model_median_m": 3.7557053987077857,
+          "model_mean_m": 5.889502543536391,
+          "kalman_median_m": 5.8495693984957455,
+          "kalman_mean_m": 12.817219365197442,
+          "spline_median_m": 5.3096111013905665,
+          "spline_mean_m": 14.498917692555207,
+          "model_over_kalman_median": 0.6420481821574062,
+          "coverage_90_model": 0.918009905243582,
+          "coverage_90_kalman": 0.8896681056718218
+        }
+      },
+      "by_role": {
+        "goalkeeper": {
+          "n_cells": 599744,
+          "model_median_m": 2.7952850612885354,
+          "model_mean_m": 4.685650077234659,
+          "kalman_median_m": 7.115926914345463,
+          "kalman_mean_m": 15.618517559900745,
+          "spline_median_m": 6.891191118940442,
+          "spline_mean_m": 11.104756607153625,
+          "model_over_kalman_median": 0.3928209346351404,
+          "coverage_90_model": 0.9185952673140539,
+          "coverage_90_kalman": 0.9675344813787216
+        },
+        "defender": {
+          "n_cells": 1446728,
+          "model_median_m": 2.5467200422997665,
+          "model_mean_m": 4.875397378135458,
+          "kalman_median_m": 3.3042048934574915,
+          "kalman_mean_m": 9.915794772906409,
+          "spline_median_m": 2.838764775000966,
+          "spline_mean_m": 10.131059104211444,
+          "model_over_kalman_median": 0.7707512470980274,
+          "coverage_90_model": 0.92244361068563,
+          "coverage_90_kalman": 0.8866234703413496
+        },
+        "midfielder": {
+          "n_cells": 1566662,
+          "model_median_m": 2.25647575746032,
+          "model_mean_m": 4.472592377651153,
+          "kalman_median_m": 2.5909758151092874,
+          "kalman_mean_m": 8.854392990345477,
+          "spline_median_m": 2.1315551386729346,
+          "spline_mean_m": 14.36236609113621,
+          "model_over_kalman_median": 0.8708980393802486,
+          "coverage_90_model": 0.9158554940376418,
+          "coverage_90_kalman": 0.8737889857544257
+        },
+        "forward": {
+          "n_cells": 685769,
+          "model_median_m": 2.1032219586956695,
+          "model_mean_m": 4.444557839077484,
+          "kalman_median_m": 2.4058507451420312,
+          "kalman_mean_m": 8.339748440912848,
+          "spline_median_m": 1.9302989850432506,
+          "spline_mean_m": 7.716738352641173,
+          "model_over_kalman_median": 0.8742113212727601,
+          "coverage_90_model": 0.904047864514144,
+          "coverage_90_kalman": 0.8654430281917088
+        },
+        "unknown": {
+          "n_cells": 531924,
+          "model_median_m": 1.8370156607016368,
+          "model_mean_m": 3.8026910725194045,
+          "kalman_median_m": 2.035205791416641,
+          "kalman_mean_m": 5.790395672681292,
+          "spline_median_m": 1.6343301625067557,
+          "spline_mean_m": 5.358847320083908,
+          "model_over_kalman_median": 0.9026191201150964,
+          "coverage_90_model": 0.9021213556823907,
+          "coverage_90_kalman": 0.8340890803949437
+        }
+      },
+      "by_gap_cell_share": {
+        "<1s": 0.007925558087673187,
+        "1-3s": 0.04402765820427848,
+        "3-6s": 0.12198967174771524,
+        "6-9.6s": 0.09653523092422892,
+        ">=9.6s": 0.7295218810361042
+      },
+      "by_role_cell_share": {
+        "goalkeeper": 0.1241493433732982,
+        "defender": 0.299478329486856,
+        "midfielder": 0.32430513450388515,
+        "forward": 0.14195685335036837,
+        "unknown": 0.1101103392855923
+      }
+    }
+  }
+}

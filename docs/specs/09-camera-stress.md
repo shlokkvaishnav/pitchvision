@@ -50,3 +50,57 @@ one league: the numbers describe these matches, not broadcasts in general. No in
 ## 6. Compute and output
 CPU. One match and condition takes about one minute (model about 45 s for 1,778 windows), so all 12 conditions on both
 matches fit on a laptop; no subset. `scripts/camera_stress.py` writes `results/09-camera-stress.json` with the git commit.
+
+## Result (2026-11-21, laptop CPU, commit 8abfdaa)
+`results/09-camera-stress.json`. Exploratory: no rule, no new claim. The `none` row reproduces spec 05 exactly
+(2.43 m, Kalman 3.27 m, spline 2.82 m, coverage 92.1%, anchor 88.8%), so the script matches the spec 05 evaluation.
+
+| Condition | Hidden | Hidden cells | Model median | Kalman median | Spline median | Model / Kalman | Mean, model / Kalman | Coverage, model | Coverage, Kalman |
+|---|---|---|---|---|---|---|---|---|---|
+| `none` | 48.8% | 4,554,291 | **2.43 m** | 3.27 m | 2.82 m | 0.74 | 4.58 / 9.66 m | 92.1% | 88.8% |
+| `zoom_0.7` | 67.0% | 6,257,015 | **3.77 m** | 5.53 m | 5.00 m | 0.68 | 6.63 / 13.66 m | 89.5% | 88.4% |
+| `zoom_0.85` | 57.1% | 5,324,286 | **2.93 m** | 4.13 m | 3.65 m | 0.71 | 5.34 / 10.98 m | 91.0% | 88.3% |
+| `zoom_1.15` | 41.5% | 3,881,945 | **2.11 m** | 2.74 m | 2.30 m | 0.77 | 4.00 / 8.77 m | 93.2% | 90.0% |
+| `zoom_1.3` | 35.2% | 3,291,015 | **1.90 m** | 2.39 m | 1.96 m | 0.79 | 3.63 / 7.98 m | 94.1% | 91.4% |
+| `lag_0.5s` | 48.7% | 4,546,561 | **2.48 m** | 3.34 m | 2.87 m | 0.74 | 4.60 / 9.48 m | 91.9% | 88.7% |
+| `lag_1s` | 48.7% | 4,545,582 | **2.53 m** | 3.35 m | 2.88 m | 0.75 | 4.65 / 9.46 m | 91.5% | 88.9% |
+| `lag_2s` | 49.1% | 4,575,980 | **2.54 m** | 3.32 m | 2.90 m | 0.77 | 4.65 / 9.62 m | 90.9% | 89.0% |
+| `cut_2s` | 50.3% | 4,692,399 | **2.33 m** | 3.10 m | 2.64 m | 0.75 | 4.54 / 9.74 m | 92.1% | 88.8% |
+| `cut_4s` | 51.8% | 4,830,827 | **2.34 m** | 3.06 m | 2.60 m | 0.76 | 4.53 / 9.60 m | 91.8% | 88.4% |
+| `cut_8s` | 54.8% | 5,109,420 | **2.62 m** | 3.39 m | 2.92 m | 0.77 | 4.77 / 9.76 m | 91.3% | 87.7% |
+| `cut_4s_ball` | 51.8% | 4,830,827 | **2.35 m** | 3.06 m | 2.60 m | 0.77 | 4.54 / 9.60 m | 91.5% | 88.4% |
+
+**By gap length and role, `none` (the spec 05 setting).** Coverage was only reported pooled before.
+
+| Group | Share of cells | Model median | Kalman median | Coverage, model | Coverage, Kalman |
+|---|---|---|---|---|---|
+| < 1 s | 0.9% | 0.08 m | 0.06 m | 94.9% | 96.9% |
+| 1–3 s | 5.2% | 0.17 m | 0.16 m | 91.5% | 92.5% |
+| 3–6 s | 8.7% | 0.46 m | 0.45 m | 90.8% | 87.7% |
+| 6–9.6 s | 9.8% | 0.94 m | 0.97 m | 92.4% | 84.4% |
+| ≥ 9.6 s | 75.4% | 3.68 m | 5.80 m | 92.2% | 89.2% |
+| Goalkeeper | 12.8% | 2.82 m | 7.36 m | 91.7% | 96.9% |
+| Defender | 30.0% | 2.67 m | 3.54 m | 92.9% | 89.2% |
+| Midfielder | 32.1% | 2.36 m | 2.81 m | 92.3% | 87.8% |
+| Forward | 14.1% | 2.19 m | 2.56 m | 91.3% | 86.9% |
+| Unknown | 11.0% | 1.84 m | 2.06 m | 90.8% | 83.9% |
+
+The same tables for every condition are in the JSON.
+
+**What we see (descriptive, two matches).**
+- **Zoom matters most.** A tighter view (0.7) hides 67% of positions instead of 49%; the model error rises to 3.77 m and
+  coverage falls to 89.5%, still inside the 85–95% band of spec 05. The model's lead over the Kalman smoother and the
+  spline grows as the view gets tighter (ratio 0.68 at 0.7) and shrinks as it gets wider (0.79 at 1.3, where it is
+  close to the spline: 1.90 vs 1.96 m).
+- **Pan lag up to 2 s changes little:** +0.11 m median, coverage 90.9%.
+- **Replay cuts** of 2 or 4 s lower the median. They add many short, easy hidden cells next to visible ones, so the
+  pooled cells change; this is not a real improvement. 8 s cuts raise the median to 2.62 m. Hiding the ball as well
+  during 4 s cuts (`cut_4s_ball`) changes almost nothing (2.35 vs 2.34 m, coverage 91.5%).
+- **Calibration by group.** The model's coverage stays between 90.8% and 94.9% in every gap bin and role, while the
+  Kalman smoother's ranges from 83.9% to 96.9%. The model gains almost nothing over the Kalman smoother in gaps under
+  9.6 s; nearly all of its gain is in the long gaps (75% of the cells).
+- **Goalkeepers** are where the Kalman smoother is worst (7.36 m) and the model gains most (2.82 m).
+- `unknown` is 11% of cells: players whose starting position kloppy does not give (mostly substitutes).
+
+**Limits.** Two development matches from one league, synthetic perturbations of transplanted camera views, no intervals.
+The perturbations are simple: real zoom changes over time, and real replays also repeat earlier footage.
