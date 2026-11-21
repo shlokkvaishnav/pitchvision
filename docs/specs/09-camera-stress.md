@@ -104,3 +104,21 @@ The same tables for every condition are in the JSON.
 
 **Limits.** Two development matches from one league, synthetic perturbations of transplanted camera views, no intervals.
 The perturbations are simple: real zoom changes over time, and real replays also repeat earlier footage.
+
+## Note: smaller ONNX files (2026-11-21, exploratory)
+Added after the camera run; not part of the plan above, no rule. `scripts/onnx_variants.py` converts the site model to
+fp16 (onnxconverter-common, inputs and outputs kept fp32, Cast nodes kept) and int8 (onnxruntime dynamic quantisation of
+the weights), scores each on the spec 05 test windows (4,679 windows, 4,554,291 hidden cells, match-level anchors,
+onnxruntime 1.32 CPU), and times onnxruntime-web 1.31.1 (wasm, Node) on the 3 demo clips.
+`results/09-onnx-variants.json` (its commit field is the parent commit; the script is unchanged since).
+
+| Variant | Size | Median error | Mean error | Coverage | Max mean change vs fp32 | Web (wasm) per clip |
+|---|---|---|---|---|---|---|
+| fp32 (site) | 4.40 MB | 2.433 m | 4.582 m | 92.08% | — | 93 ms |
+| fp16 | 2.30 MB | 2.433 m | 4.581 m | 92.08% | 0.16 m | 94 ms |
+| int8 | 1.32 MB | 2.441 m | 4.591 m | 91.45% | 2.49 m | 76 ms |
+
+- fp16 halves the file with no change in accuracy, but is not faster on wasm (the CPU kernels compute in fp32).
+- int8 is 3.3x smaller and about 20% faster, at +0.008 m median and −0.6 points coverage, with some single cells moving
+  by up to 2.5 m. The site keeps fp32; fp16 is the safe choice if the download size matters.
+- Timings are medians of 60 runs on one laptop, rough; WebGPU was not tested.
