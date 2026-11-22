@@ -11,10 +11,12 @@
   :root { --pitch-a: #e4eee1; --pitch-b: #dce8d8; --pitch-line: #f8fbf6; --shade: rgba(23, 25, 31, .30); }
   @media (prefers-color-scheme: dark) { :root { --pitch-a: #1a2a1f; --pitch-b: #182619; --pitch-line: #3a5643; --shade: rgba(0, 0, 0, .45); } }
   .stage { position: relative; border-radius: 18px; overflow: hidden; border: 1px solid var(--rule); background: var(--pitch-a); }
+  .stage canvas.drag { touch-action: none; }
   .stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 105 / 68; }
   .hud { position: absolute; left: 14px; top: 12px; display: flex; gap: 8px; flex-wrap: wrap; pointer-events: none; }
   .pill { font: 600 .78rem/1 var(--sans); padding: .45rem .7rem; border-radius: 99px; background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(6px); box-shadow: 0 1px 4px rgba(0,0,0,.12); color: var(--ink); font-variant-numeric: tabular-nums; }
   .pill b { color: var(--accent); }
+  #ctrl b { color: var(--cool); }
   .bar { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem; margin: 1rem 0 .4rem; }
   .bar .grow { flex: 1; }
   .switch { display: inline-flex; align-items: center; gap: .55rem; font: 600 .88rem/1 var(--sans); cursor: pointer; user-select: none; }
@@ -47,12 +49,13 @@
   <section>
     <div class="stage">
       <canvas id="pitch" role="img" aria-label="A football pitch: visible players, the camera view, and estimates for hidden players"></canvas>
-      <div class="hud"><span class="pill"><b id="nHidden">–</b> of 22 players off-camera</span><span class="pill" id="clock">0.0 s</span></div>
+      <div class="hud"><span class="pill"><b id="nHidden">–</b> of 22 players off-camera</span><span class="pill" id="clock">0.0 s</span><span class="pill" id="ctrl" hidden></span></div>
     </div>
     <div class="bar">
       <button class="btn primary" id="play" aria-label="Play or pause">Pause</button>
       <div class="seg" id="clips" role="group" aria-label="Clip"></div>
       <span class="grow"></span>
+      <label class="switch"><input type="checkbox" id="control"> Who controls the space</label>
       <label class="switch"><input type="checkbox" id="truth"> Reveal where they really were</label>
     </div>
     <div class="legend">
@@ -60,6 +63,7 @@
       <span><svg width="22" height="14"><ellipse cx="11" cy="7" rx="10" ry="6" fill="var(--accent)" opacity=".2"/><circle cx="11" cy="7" r="4.5" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>Hidden: estimate and 90% region</span>
       <span><svg width="14" height="14"><circle cx="7" cy="7" r="3" fill="var(--ink)"/></svg>Ball</span>
     </div>
+    <p class="cap" id="whatif">What if: pause and drag any player, seen or estimated, to see who would win the space. <button class="btn" id="reset">Reset</button></p>
     <div class="status" id="status">Loading the model…</div>
   </section>
 
