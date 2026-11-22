@@ -11,13 +11,14 @@ from torch import nn
 from .tracking import Tracking
 
 VEL_LAG = 5
+SNAP = 10  # frames (1.0 s)
 LANE_M = 2.0
 
 
 @dataclass
 class Passes:
     """P passes. x: (P, 22, 8) player features; ball: (P, 2); team: (P, 22) 1 = passer's team;
-    passer, label: (P,) indices into the 22; block: (P,) str."""
+    passer, label: (P,) indices into the 22; block: (P,) str; passer_near_ball: snapped passer-ball distance (m)."""
 
     x: np.ndarray
     ball: np.ndarray
@@ -55,7 +56,7 @@ def match_passes(tr: Tracking, events, match_id: str) -> Passes:
         rows = tr.period == p
         for g in ("home", "away"):
             attack[(p, g)] = 1.0 if np.nanmean(tr.players[rows][:, teams == g, 0]) < 0 else -1.0
-    out: dict[str, list] = {k: [] for k in ("x", "ball", "team", "passer", "label", "block", "near")}
+    out: dict[str, list] = {k: [] for k in ("x", "ball", "team", "passer", "label", "block", "near", "seen")}
     for e in events:
         if e.event_type.name != "PASS" or e.result is None or e.result.name != "COMPLETE" or e.receiver_player is None:
             continue
@@ -63,10 +64,17 @@ def match_passes(tr: Tracking, events, match_id: str) -> Passes:
         k = round(e.timestamp.total_seconds() * tr.fps)
         if p not in starts or not (VEL_LAG <= k < lengths[p]):
             continue
-        t = starts[p] + k
         a, r = index.get(str(e.player.player_id)), index.get(str(e.receiver_player.player_id))
         if a is None or r is None:
             continue
+        # amendment 1: snap to the frame within +-1 s where the passer is closest to the ball; drop if still > 3 m
+        cand = [j for j in range(k - SNAP, k + SNAP + 1) if VEL_LAG <= j < lengths[p]]
+        dist = np.array([np.linalg.norm(tr.players[starts[p] + j, a] - tr.ball[starts[p] + j]) for j in cand])
+        out["seen"].append(1)
+        if not np.isfinite(dist).any() or np.nanmin(dist) > 3.0:
+            continue
+        k = cand[int(np.nanargmin(dist))]
+        t = starts[p] + k
         on = ~np.isnan(tr.players[t]).any(-1) & ~np.isnan(tr.players[t - VEL_LAG]).any(-1)
         idx = np.flatnonzero(on)
         if len(idx) != 22 or a not in idx or r not in idx or np.isnan(tr.ball[t]).any():
@@ -89,7 +97,8 @@ def match_passes(tr: Tracking, events, match_id: str) -> Passes:
         out["passer"].append(ia)
         out["label"].append(ir)
         out["block"].append(f"{match_id}-{p}-{int(k / tr.fps // 300)}")
-        out["near"].append(float(np.linalg.norm(tr.players[t, a] - tr.ball[t]) <= 3.0))
+        out["near"].append(float(np.linalg.norm(tr.players[t, a] - tr.ball[t])))
+    print(f"{match_id}: {len(out['label'])} of {len(out['seen'])} completed passes kept", flush=True)
     return Passes(*(np.asarray(out[k]) for k in ("x", "ball", "team", "passer", "label", "block", "near")))
 
 

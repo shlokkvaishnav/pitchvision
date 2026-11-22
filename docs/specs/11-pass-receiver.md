@@ -36,3 +36,9 @@ Top-1 and top-3 accuracy, log loss. Block bootstrap over 5-minute stretches (10,
 
 ## 6. Output
 `src/pitchvision/passes.py`, `scripts/pass_receiver.py`, `results/11-pass-receiver.json`. Site: arrows with chances.
+
+## Amendment 1 (2026-11-22, after the data check, before any model was scored)
+The data check of section 2 failed: at the nearest frame to the event time the passer was within 3 m of the ball in
+only 37% to 62% of passes per match, and no constant time shift fixed it (best about 60%). So the frame is now: within
+±1.0 s of the event time, the frame where the passer is closest to the ball. Passes where that distance is still more
+than 3 m (headers, throw-ins, high balls, tracking gaps) are left out. The share kept per match is reported.

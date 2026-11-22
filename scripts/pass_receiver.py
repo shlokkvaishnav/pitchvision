@@ -52,7 +52,11 @@ def main() -> None:
     data = {m: load(m) for m in IDSSE_DEV}
     for m, p in data.items():
         print(
-            m, len(p), "passes, passer within 3 m of the ball:", round(float(p.passer_near_ball.mean()), 3), flush=True
+            m,
+            len(p),
+            "passes kept, median passer-ball distance (m):",
+            round(float(np.median(p.passer_near_ball)), 2),
+            flush=True,
         )
     res: dict[str, list] = {k: [] for k in ("nearest", "logit", "gnn")}
     labels, blocks = [], []
@@ -101,12 +105,12 @@ def main() -> None:
         "commit": sha,
         "exploratory": "leave-one-match-out over 5 IDSSE development matches; holdout not loaded",
         "passes": len(y),
-        "passer_within_3m_of_ball": float(np.mean(np.concatenate([p.passer_near_ball for p in data.values()]))),
+        "passes_by_match": {m: len(p) for m, p in data.items()},
         "models": summary,
         "rules": rules,
     }
     (ROOT / "results" / "11-pass-receiver.json").write_text(json.dumps(out, indent=2))
-    print(json.dumps({k: out[k] for k in ("passes", "passer_within_3m_of_ball", "models", "rules")}, indent=2))
+    print(json.dumps({k: out[k] for k in ("passes", "passes_by_match", "models", "rules")}, indent=2))
     allp = Passes.concat(list(data.values()))
     final = fit_scorer("gnn", gnn_inputs(allp), allp.ball, candidate_mask(allp), allp.label)
     (ROOT / "data" / "models").mkdir(parents=True, exist_ok=True)
