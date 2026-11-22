@@ -207,7 +207,7 @@ def main() -> None:
     out["C_ghost"] = {
         "samples": len(cb),
         **{f"mean_error_{v}_m": float(np.mean(x)) for v, x in C.items()},
-        **{f"gap_to_truth_{v}_ci": boot_mean(cb, np.array(x) - np.array(C["truth"])) for v in ("kalman", "model")},
+        **{f"gap_to_truth_{v}_ci": boot_mean(cb, np.array(C[v]) - np.array(C["truth"])) for v in ("kalman", "model")},
     }
     out["commit"] = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True
