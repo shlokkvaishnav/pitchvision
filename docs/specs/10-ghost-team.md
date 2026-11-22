@@ -29,19 +29,22 @@ The SSAC 2017 "Data-Driven Ghosting" paper by the same group could not be opened
 
 ## 4. Data and splits
 - Development: Metrica games 1 to 3 and IDSSE `J03WMX J03WOY J03WPY J03WQQ J03WR9` (8 matches).
-  Model and settings chosen by leave-one-match-out over these 8 (mean error).
-- Test, run once: IDSSE `J03WOH` and `J03WN1`, the spec 07 matches. They were the imputation test, but no model has been
-  trained or tuned on them for this task. They are loaded with `allow_holdout=True` only by `scripts/ghost.py --test`.
+- The spec 07 holdout matches are used up and are **not loaded** (repo rule). So the result below is
+  **exploratory**: leave-one-match-out over the 8 matches. The model settings of section 3 are fixed now and not tuned
+  on these folds. A confirmatory test needs new matches (for example the PFF World Cup 2022 data), in a later spec.
 
-## 5. Metrics and rules (test matches, all frames that qualify, both teams ghosted)
+## 5. Metrics and rules (pooled over the 8 left-out matches, both teams ghosted)
 - Mean and median distance between the ghost and the real player (m); coverage of the 90% ellipse.
 - Interval: block bootstrap over 5-minute stretches (10,000 samples, seed 0), as spec 07.
+- Training: AdamW, learning rate 3e-4, batch 512 frames, 8 epochs, seed 0; the same for every fold.
 
 | Rule | Pass condition |
 |---|---|
 | G1 | Mean error of `ghost` ≤ 0.90 × mean error of `linear_shift`, and the 95% interval of the ratio is below 1. |
 | G2 | 90% ellipse coverage of `ghost` between 85% and 95%. |
 
+Note (2026-11-22, before any data): the first version of this spec tested on the spec 07 matches. That breaks the repo
+rule that they are not loaded again, so it was changed to the above before anything ran.
+
 ## 6. Output
-`src/pitchvision/ghost.py` (features, baselines, model), `scripts/ghost.py` (development and `--test`),
-`results/10-ghost-dev.json`, `results/10-ghost-test.json`. Site: ghost rings for the chosen team, with the gap per player.
+`src/pitchvision/ghost.py` (features, baselines, model), `scripts/ghost.py`, `results/10-ghost.json`. Site: ghost rings for the chosen team, with the gap per player.
