@@ -44,7 +44,21 @@ def _seg_dist(p: np.ndarray, a: np.ndarray, b: np.ndarray) -> np.ndarray:
     return np.linalg.norm(p - (a + t[..., None] * ab), axis=-1)
 
 
-def match_passes(tr: Tracking, events, match_id: str) -> Passes:
+def pass_features(pos: np.ndarray, prev: np.ndarray, same: np.ndarray, ia: int, fps: float) -> np.ndarray:
+    """(22, 8) features of spec 11, section 3, from positions already flipped so the passer's team attacks +x.
+
+    pos, prev: (22, 2) now and VEL_LAG frames earlier; same: (22,) 1 = passer's team; ia: passer index.
+    """
+    vel = (pos - prev) / (VEL_LAG / fps)
+    d_pass = np.linalg.norm(pos - pos[ia], axis=-1)
+    opp = pos[same == 0]
+    d_opp = np.linalg.norm(pos[:, None] - opp[None], axis=-1).min(1)
+    is_passer = np.zeros(22)
+    is_passer[ia] = 1
+    return np.column_stack([pos, vel, same, is_passer, d_pass, d_opp])
+
+
+def match_passes(tr: Tracking, events, match_id: str, with_frames: bool = False):
     """Completed passes with a receiver, at the nearest tracking frame (spec 11, section 2)."""
     index = {pid: i for i, pid in enumerate(tr.player_ids)}
     starts = {int(p): int(np.flatnonzero(tr.period == p)[0]) for p in np.unique(tr.period)}
@@ -56,7 +70,9 @@ def match_passes(tr: Tracking, events, match_id: str) -> Passes:
         rows = tr.period == p
         for g in ("home", "away"):
             attack[(p, g)] = 1.0 if np.nanmean(tr.players[rows][:, teams == g, 0]) < 0 else -1.0
-    out: dict[str, list] = {k: [] for k in ("x", "ball", "team", "passer", "label", "block", "near", "seen")}
+    out: dict[str, list] = {
+        k: [] for k in ("x", "ball", "team", "passer", "label", "block", "near", "seen", "frame", "players")
+    }
     for e in events:
         if e.event_type.name != "PASS" or e.result is None or e.result.name != "COMPLETE" or e.receiver_player is None:
             continue
@@ -81,17 +97,14 @@ def match_passes(tr: Tracking, events, match_id: str) -> Passes:
             continue
         g = teams[a]
         s = attack[(p, g)]
-        pos = tr.players[t, idx] * np.array([s, s])  # flip so the passer's team attacks +x
-        vel = (tr.players[t, idx] - tr.players[t - VEL_LAG, idx]) * s / (VEL_LAG / tr.fps)
+        pos = tr.players[t, idx] * s  # flip so the passer's team attacks +x
+        prev = tr.players[t - VEL_LAG, idx] * s
         ball = tr.ball[t] * s
         same = (teams[idx] == g).astype(float)
         ia, ir = int(np.flatnonzero(idx == a)[0]), int(np.flatnonzero(idx == r)[0])
-        d_pass = np.linalg.norm(pos - pos[ia], axis=-1)
-        opp = pos[same == 0]
-        d_opp = np.linalg.norm(pos[:, None] - opp[None], axis=-1).min(1)
-        is_passer = np.zeros(22)
-        is_passer[ia] = 1
-        out["x"].append(np.column_stack([pos, vel, same, is_passer, d_pass, d_opp]))
+        out["x"].append(pass_features(pos, prev, same, ia, tr.fps))
+        out["frame"].append(t)
+        out["players"].append((a, r))
         out["ball"].append(ball)
         out["team"].append(same)
         out["passer"].append(ia)
@@ -99,7 +112,9 @@ def match_passes(tr: Tracking, events, match_id: str) -> Passes:
         out["block"].append(f"{match_id}-{p}-{int(k / tr.fps // 300)}")
         out["near"].append(float(np.linalg.norm(tr.players[t, a] - tr.ball[t])))
     print(f"{match_id}: {len(out['label'])} of {len(out['seen'])} completed passes kept", flush=True)
-    return Passes(*(np.asarray(out[k]) for k in ("x", "ball", "team", "passer", "label", "block", "near")))
+    passes = Passes(*(np.asarray(out[k]) for k in ("x", "ball", "team", "passer", "label", "block", "near")))
+    # with_frames: also the tracking frame and the (passer, receiver) tracking columns of each pass
+    return (passes, out["frame"], out["players"], attack) if with_frames else passes
 
 
 def candidate_mask(p: Passes) -> np.ndarray:
