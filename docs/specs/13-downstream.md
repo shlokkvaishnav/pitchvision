@@ -42,3 +42,39 @@ gap to `truth`, with the same bootstrap. A result where filling in recovers litt
 
 ## 6. Output
 `scripts/downstream.py`, `results/13-downstream.json`. README: the main results table of the project.
+
+## Result (2026-11-22, commit df6e5b4; exploratory, J03WQQ and J03WR9)
+Raw numbers: `results/13-downstream.json`. Intervals: block bootstrap over 5-minute stretches.
+
+**A. Pitch control** (4,660 frames with a hidden player; agreement with `truth` over the grid)
+
+| Version | Agreement | Recovered share of what was lost |
+|---|---|---|
+| visible only | 72.6% | 0 (reference) |
+| kalman | 91.6% | 69% (64% to 74%) |
+| model | **93.8%** | **78% (72% to 81%)** |
+
+**B. Pass receiver** (1,062 passes)
+
+| Version | Top-1 |
+|---|---|
+| truth | 44.8% (41.9% to 47.7%) |
+| kalman | 40.5% (37.9% to 43.0%) |
+| model | 40.0% (37.2% to 42.7%) |
+
+The true receiver was off-camera in 33% of these passes, so with visible players only those passes cannot be named at
+all. Filling in keeps most of the accuracy (40% against 45% with full truth), but the model is no better than the
+Kalman anchor here.
+
+**C. Ghost team** (9,320 team-frames; mean distance from the ghost position to the real one)
+
+| Other team's input | Mean error | Gap to truth |
+|---|---|---|
+| truth | 8.38 m | — |
+| kalman | 9.09 m | +0.71 m (+0.47 to +0.93) |
+| model | **8.66 m** | **+0.28 m (+0.22 to +0.35)** |
+
+Summary: with half the players hidden, pitch control is wrong on about a quarter of the pitch; filling them in with
+the model gives back about three quarters of that. For the ghost team the model brings the error to within 0.3 m of
+full tracking. For passes, filling in makes the off-camera third of passes answerable, but the model adds nothing over
+the Kalman anchor.

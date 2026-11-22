@@ -1,0 +1,59 @@
+{
+  "matches": [
+    "J03WQQ",
+    "J03WR9"
+  ],
+  "model": "data/models/05-more-data.pt",
+  "exploratory": true,
+  "A_pitch_control": {
+    "units": 4660,
+    "agreement_truth": 1.0,
+    "agreement_visible": 0.7263938917841815,
+    "agreement_kalman": 0.9156304286736154,
+    "agreement_model": 0.9384554465563051,
+    "recovered_share_kalman": 0.6916385680255556,
+    "recovered_share_model": 0.775061478542909,
+    "recovered_share_kalman_ci": [
+      0.6386173249265412,
+      0.7394223246900516
+    ],
+    "recovered_share_model_ci": [
+      0.7213910099710834,
+      0.8139963218456695
+    ]
+  },
+  "B_pass_receiver": {
+    "passes": 1062,
+    "top1_truth": 0.448210922787194,
+    "top1_kalman": 0.4048964218455744,
+    "top1_model": 0.4001883239171375,
+    "top1_truth_ci": [
+      0.418628429365605,
+      0.4766894542705577
+    ],
+    "top1_kalman_ci": [
+      0.37887596899224807,
+      0.43002416476602917
+    ],
+    "top1_model_ci": [
+      0.37189093326736344,
+      0.42658042123576795
+    ],
+    "receiver_off_camera_share": 0.3342749529190207
+  },
+  "C_ghost": {
+    "samples": 9320,
+    "mean_error_truth_m": 8.379679989366558,
+    "mean_error_kalman_m": 9.092102745552038,
+    "mean_error_model_m": 8.659253099704763,
+    "gap_to_truth_kalman_ci": [
+      0.4735438837237663,
+      0.9320452745464441
+    ],
+    "gap_to_truth_model_ci": [
+      0.2157858140830592,
+      0.34683207763666585
+    ]
+  },
+  "commit": "df6e5b4e7c54d27e6e6b0d44b6718c241227a95b"
+}
