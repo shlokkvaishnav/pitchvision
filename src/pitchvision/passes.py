@@ -27,6 +27,9 @@ class Passes:
     block: np.ndarray
     passer_near_ball: np.ndarray
 
+    def __len__(self) -> int:
+        return len(self.label)
+
     @staticmethod
     def concat(items: list[Passes]) -> Passes:
         f = ("x", "ball", "team", "passer", "label", "block", "passer_near_ball")
