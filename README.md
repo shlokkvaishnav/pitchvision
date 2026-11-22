@@ -53,9 +53,9 @@ What does not work:
 - **Red cards.** The model needs 11 v 11. One locked match had a red card, so only 7% of it could be scored, and there
   the model only tied the spline.
 - **Small data.** 5 training matches. With 2, the model was worse than the Kalman smoother.
-- **"What if" is only a picture.** The page shows who controls the space (pitch control) and lets you drag any player
-  to see it change, but there is no model of how the other players would react, and no study of how much the imputed
-  positions change team metrics beyond the demo clips.
+- **"What if" is a toy.** On the page you can drag any player and the model forecasts how the others move over the
+  next 4 s. It only ever saw real play, never a player who jumps 20 m, so the reaction is out of distribution and
+  untested. A Node test checks only that it cannot see the real future (`tests/js/react.test.mjs`).
 
 **How it was tested, every experiment (including the failures), related work and limitations: [docs/method.md](docs/method.md).**
 
