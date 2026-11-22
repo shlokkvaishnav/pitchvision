@@ -7,6 +7,9 @@ and it predicts where all 22 players will be 4 seconds later.
 
 It works on player-tracking data (x, y positions), not on video pixels.
 
+The question behind the project: **broadcast tracking misses about half the players. How much football analysis does
+that break, and how much does filling them in bring back?**
+
 **Live:** <https://shlokkvaishnav.github.io/pitchvision/>: the model runs in your browser on real Bundesliga clips.
 
 [![The pitchvision site](docs/site.png)](https://shlokkvaishnav.github.io/pitchvision/)
@@ -33,7 +36,35 @@ flowchart LR
   C --> O[ONNX export] --> W[site/<br/>onnxruntime-web]
 ```
 
-## Results
+## What filling in gives back
+Three analyses that need all 22 players, each run three ways on the same moments: with the true positions, with only
+the players the camera sees, and with the hidden players filled in. Two Bundesliga matches the released model never
+trained on, real broadcast camera views. Exploratory: these were the model's earlier test matches, so this is not a
+fresh test ([spec 13](docs/specs/13-downstream.md), `results/13-downstream.json`).
+
+| Analysis | Visible players only | Filled in (Kalman) | Filled in (pitchvision) | Full truth |
+|---|---|---|---|---|
+| Pitch control: same team controls the cell as with full truth | 72.6% | 91.6% | **93.8%** | 100% |
+| Pass receiver: top-1 accuracy | the receiver is off-camera in 33% of passes | 40.5% | 40.0% | 44.8% |
+| Ghost team: mean error of the "expected" defence | — | 9.09 m | **8.66 m** | 8.38 m |
+
+- **Pitch control:** filling in gives back 78% of the agreement that hiding players loses (95% interval 72% to 81%),
+  against 69% for the Kalman smoother alone.
+- **Ghost team:** with the model's positions the ghost defence is within 0.28 m of what it is with full tracking
+  (0.22 to 0.35 m), against 0.71 m with Kalman.
+- **Passes:** filling in makes the off-camera third of passes answerable and keeps most of the accuracy, but the
+  model adds nothing over Kalman here.
+
+The two models used above, trained on full tracking (leave-one-match-out over the development matches, exploratory):
+- **Ghost team** ([spec 10](docs/specs/10-ghost-team.md)): a transformer that places one team where it "should" be,
+  given the other team and the ball. Error 8.36 m against 11.36 m for a baseline where the team slides with the ball (26% lower; 95% interval of the
+  ratio 0.725 to 0.749). Its
+  90% regions cover only 59%, so they are not shown as calibrated.
+- **Pass receiver** ([spec 11](docs/specs/11-pass-receiver.md)): a transformer over the 22 players and the ball picks
+  the receiver first 47.1% of the time, against 36.6% for a conditional logit and 27.4% for the nearest teammate. Its
+  log loss is worse than the logit's (2.21 against 1.76): it is overconfident when wrong.
+
+## Imputation results (the foundation)
 Final test on 2 Bundesliga matches that were locked in code until the end (IDSSE, 2.9 million hidden player positions).
 The model, its settings and the pass/fail rules were committed before the run, and it was run once.
 The pooled numbers are mostly one match: J03WOH gives 2.76 million of the 2.93 million scored positions (94%), because a
