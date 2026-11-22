@@ -23,7 +23,7 @@ towards +x.
 | Name | Score of a teammate | Role |
 |---|---|---|
 | `nearest` | − distance to the passer. | Baseline. |
-| `logit` | Conditional logit (softmax over teammates) on distance to passer, distance to nearest opponent, x gain (receiver x − passer x), and whether the passer→receiver line passes within 2 m of an opponent. | Baseline. |
+| `logit` | Conditional logit (softmax over teammates) on distance to passer, distance to nearest opponent, x gain (receiver x − passer x), and whether the passer→receiver line passes within 2 m of an opponent. Fitted to convergence (full-batch L-BFGS). | Baseline. |
 | `gnn` | Transformer encoder over the 22 players + the ball (3 layers, width 64, 4 heads), a score per teammate, softmax. AdamW, learning rate 1e-3, 30 epochs, batch 64, seed 0, cross-entropy. | Candidate. |
 
 ## 5. Metrics and rules (pooled over the 5 left-out matches)
