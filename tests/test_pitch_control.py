@@ -34,3 +34,9 @@ def test_map_shape():
     pos = np.array([[-10.0, 0.0], [10.0, 0.0]])
     m = control_map(pos, np.zeros((2, 2)), np.array([0, 1]), np.array([0.0, 0.0]), nx=16)
     assert m.shape == grid(16).shape[:2] and np.all((m >= 0) & (m <= 1))
+
+
+def test_a_team_with_no_players_controls_nothing():
+    pos, vel, ball = np.array([[0.0, 0.0]]), np.zeros((1, 2)), np.array([0.0, 0.0])
+    assert home_control(np.array([30.0, 0.0]), pos, vel, np.array([0]), ball) == 1.0
+    assert home_control(np.array([30.0, 0.0]), pos, vel, np.array([1]), ball) == 0.0

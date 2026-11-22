@@ -45,6 +45,8 @@ def home_control(
     ball_t = float(np.linalg.norm(cell - ball)) / p.ball_speed if np.all(np.isfinite(ball)) else 0.0
     tau = p.reaction_time + np.linalg.norm(cell - (pos + vel * p.reaction_time), axis=1) / p.vmax
     home, away = team == 0, team == 1
+    if not away.any() or not home.any():  # a team with no players on the pitch controls nothing
+        return float(home.any())
     th, ta = tau[home].min(), tau[away].min()
     if th - max(ball_t, ta) >= p.time_to_control:
         return 0.0

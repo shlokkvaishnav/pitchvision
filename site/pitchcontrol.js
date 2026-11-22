@@ -20,6 +20,7 @@ export function homeControl(cell, pos, vel, team, ball, p = PARAMS) {
     tau[i] = p.reactionTime + Math.hypot(cell[0] - rx, cell[1] - ry) / p.vmax;
     if (team[i] === 0) th = Math.min(th, tau[i]); else ta = Math.min(ta, tau[i]);
   }
+  if (!Number.isFinite(th) || !Number.isFinite(ta)) return Number.isFinite(th) ? 1 : 0; // a team with no players controls nothing
   if (th - Math.max(ballT, ta) >= ttc) return 0;
   if (ta - Math.max(ballT, th) >= ttc) return 1;
   const keepTau = [], keepSide = [];
