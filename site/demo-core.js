@@ -18,11 +18,20 @@ export function decodeContext(clip) {
 }
 
 // Kalman smoother over the context, cut to the window frames: position mean (m) and variance (m^2), (L, 23, 2).
-export function smoothWindow(meta, clip) {
+// react = { frame, moved: Map(track -> [x, y]) }: forget every observation after window frame `frame` (players and
+// ball), and observe each moved track at its new spot from `frame` to the end of the window.
+export function smoothWindow(meta, clip, react = null) {
   const { obs, T, N } = decodeContext(clip);
+  const L = clip.visible.length, before = clip.context.before;
+  if (react) {
+    for (let tc = before + react.frame + 1; tc < T; tc++) for (let n = 0; n < N; n++) { obs[(tc * N + n) * 2] = NaN; obs[(tc * N + n) * 2 + 1] = NaN; }
+    for (const [n, [x, y]] of react.moved) {
+      for (let tc = before + react.frame; tc < before + L; tc++) { obs[(tc * N + n) * 2] = x; obs[(tc * N + n) * 2 + 1] = y; }
+    }
+  }
   const k = meta.kalman;
   const { mean, variance } = kalmanSmooth(obs, T, N, meta.fps, k.accel_std, k.obs_std);
-  const L = clip.visible.length, from = clip.context.before * N * 2, to = from + L * N * 2;
+  const from = before * N * 2, to = from + L * N * 2;
   return { mean: mean.subarray(from, to), variance: variance.subarray(from, to) };
 }
 
@@ -38,18 +47,23 @@ export function anchorFromKalman(meta, sm) {
   return { mean, logStd };
 }
 
-export function buildInputs(meta, clip) {
+// react (optional): see smoothWindow. Frames after react.frame are hidden for every track except the moved ones.
+export function buildInputs(meta, clip, react = null) {
   const L = clip.truth_m.length, A = clip.truth_m[0].length;
   const pos = new Float32Array(L * A * 2), obs = new Float32Array(L * A);
   for (let t = 0; t < L; t++) for (let a = 0; a < A; a++) {
-    const k = t * A + a, seen = clip.visible[t][a];
+    const k = t * A + a, moved = react && t >= react.frame && react.moved.has(a);
+    let seen = clip.visible[t][a];
+    if (react && t > react.frame) seen = 0;
+    let xy = clip.truth_m[t][a];
+    if (moved) { seen = 1; xy = react.moved.get(a); }
     obs[k] = seen;
     if (seen) {
-      pos[2 * k] = clip.truth_m[t][a][0] / meta.scale_m[0];
-      pos[2 * k + 1] = clip.truth_m[t][a][1] / meta.scale_m[1];
+      pos[2 * k] = xy[0] / meta.scale_m[0];
+      pos[2 * k + 1] = xy[1] / meta.scale_m[1];
     }
   }
-  const anchor = anchorFromKalman(meta, smoothWindow(meta, clip));
+  const anchor = anchorFromKalman(meta, smoothWindow(meta, clip, react));
   return {
     L, A,
     feeds: {

@@ -8,11 +8,11 @@ const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let meta, session, clip, pred, frame = 0, playing = !still, last = 0;
-let est = null, moved = new Map(), dragging = -1, ctrlCv = null; // est: per-frame positions the page knows (seen or estimated)
+let est = null, moved = new Map(), dragging = -1, ctrlCv = null, react = null, reactRun = 0; // est: per-frame positions the page knows (seen or estimated)
 
 // ---------- model ----------
-async function run(c) {
-  const { L, A, feeds } = buildInputs(meta, c);
+async function run(c, r = null) {
+  const { L, A, feeds } = buildInputs(meta, c, r);
   const out = await session.run(toTensors(ort, feeds));
   return { mean: out.mean.data, logStd: out.log_std.data, L, A };
 }
@@ -66,6 +66,41 @@ function drawControl(X, Y, s) {
     text = `Blue controls <b>${Math.round(away * 100)}%</b>`;
   }
   $("ctrl").innerHTML = text; $("ctrl").hidden = false;
+}
+
+
+// ---------- what if: the others react ----------
+// After a drag, the model reruns with the future hidden except the dragged players (demo-core.js, react mode).
+async function runReact() {
+  const id = ++reactRun, f = frame, m = new Map(moved);
+  const out = await run(clip, { frame: f, moved: m });
+  if (id === reactRun) { react = { ...out, frame: f }; draw(); }
+}
+const REACT_S = 4; // the forecast horizon the model was trained on (dataset.HORIZON = 40 frames)
+function drawReact(X, Y, k) {
+  if (!react || react.frame !== frame) return;
+  const A = react.A, last = Math.min(react.L - 1, frame + REACT_S * meta.fps), now = positionsAt(frame);
+  const team = (a) => (meta.agent_type[a] === 0 ? css("--accent") : meta.agent_type[a] === 1 ? css("--cool") : css("--ink"));
+  const raw = (t, a) => [react.mean[(t * A + a) * 2] * meta.scale_m[0], react.mean[(t * A + a) * 2 + 1] * meta.scale_m[1]];
+  for (let a = 0; a < 23; a++) {
+    if (moved.has(a)) continue;
+    // 5-frame moving average (the README's fix for the jerky forecast), starting from where the player is drawn now
+    const at = (t) => {
+      let sx = 0, sy = 0, n = 0;
+      for (let u = Math.max(frame, t - 2); u <= Math.min(last, t + 2); u++) { const [x, y] = raw(u, a); sx += x; sy += y; n++; }
+      return [sx / n, sy / n];
+    };
+    const start = a < 22 ? now[a] : clip.truth_m[frame][22], off0 = at(frame);
+    const pt = (t) => { const [x, y] = at(t), w = 1 - (t - frame) / (last - frame || 1); return [x + (start[0] - off0[0]) * w, y + (start[1] - off0[1]) * w]; };
+    g.strokeStyle = team(a); g.lineWidth = 2.4 * k; g.globalAlpha = 0.85; g.setLineDash([3 * k, 4 * k]);
+    g.beginPath();
+    for (let t = frame; t <= last; t++) { const [x, y] = pt(t); if (t === frame) g.moveTo(X(x), Y(y)); else g.lineTo(X(x), Y(y)); }
+    g.stroke(); g.setLineDash([]);
+    const [ex, ey] = pt(last);
+    g.fillStyle = team(a); g.beginPath(); g.arc(X(ex), Y(ey), 4.5 * k, 0, 2 * Math.PI); g.fill(); g.globalAlpha = 1;
+  }
+  $("ctrl").hidden = false;
+  $("ctrl").innerHTML = `The next <b>${((last - frame) / meta.fps).toFixed(1)} s</b> after your move`;
 }
 
 function draw() {
@@ -125,12 +160,13 @@ function draw() {
     g.fillStyle = team(a); g.strokeStyle = css("--card"); g.lineWidth = 2.5 * k;
     g.beginPath(); g.arc(X(x), Y(y), 9 * k, 0, 2 * Math.PI); g.fill(); g.stroke();
   }
+  drawReact(X, Y, k);
   $("nHidden").textContent = hiddenCount;
   $("clock").textContent = `${(frame / meta.fps).toFixed(1)} s`;
 }
 
 function tick(t) {
-  if (playing && pred && t - last >= 1000 / meta.fps) { frame = (frame + 1) % pred.L; last = t; moved.clear(); draw(); }
+  if (playing && pred && t - last >= 1000 / meta.fps) { frame = (frame + 1) % pred.L; last = t; moved.clear(); react = null; draw(); }
   requestAnimationFrame(tick);
 }
 
@@ -138,7 +174,7 @@ async function pick(k) {
   clip = meta.clips[k];
   for (const b of $("clips").children) b.setAttribute("aria-pressed", String(Number(b.dataset.k) === k));
   pred = await run(clip);
-  est = estSeries(); moved.clear();
+  est = estSeries(); moved.clear(); react = null;
   frame = 0; draw();
 }
 
@@ -232,7 +268,7 @@ cv.addEventListener("pointermove", (ev) => {
   const [x, y] = pitchXY(ev);
   moved.set(dragging, [Math.max(-52.5, Math.min(52.5, x)), Math.max(-34, Math.min(34, y))]); draw();
 });
-const endDrag = () => { dragging = -1; };
+const endDrag = () => { if (dragging >= 0 && $("react").checked) runReact(); dragging = -1; };
 cv.addEventListener("pointerup", endDrag); cv.addEventListener("pointercancel", endDrag);
 
 // ---------- start ----------
@@ -252,9 +288,10 @@ async function main() {
       $("clips").appendChild(b);
     });
     setPlaying(playing);
-    $("play").addEventListener("click", () => { moved.clear(); setPlaying(!playing); });
+    $("play").addEventListener("click", () => { moved.clear(); react = null; setPlaying(!playing); });
     $("control").addEventListener("change", draw);
-    $("reset").addEventListener("click", () => { moved.clear(); draw(); });
+    $("reset").addEventListener("click", () => { moved.clear(); react = null; draw(); });
+    $("react").addEventListener("change", () => { if ($("react").checked && moved.size) runReact(); else { react = null; draw(); } });
     $("truth").addEventListener("change", draw);
     drawFlow(); drawGaps();
     await pick(0);
