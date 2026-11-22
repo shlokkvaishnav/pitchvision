@@ -132,13 +132,14 @@ def train_ghost(s: Samples, device, epochs: int = 8, batch: int = 512, lr: float
     rng = np.random.default_rng(seed)
     model = GhostModel().to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=lr)
-    other, ball, role, target = to_tensors(s, device)
+    other, ball, role, target = to_tensors(s, "cpu")  # batches go to the device one at a time
     for _ in range(epochs):
-        order = torch.tensor(rng.permutation(len(s)), device=device)
+        order = torch.from_numpy(rng.permutation(len(s)))
         for i in range(0, len(s), batch):
             b = order[i : i + batch]
-            mean, log_std = model(other[b], ball[b], role[b])
-            loss = (log_std + 0.5 * ((target[b] - mean) / log_std.exp()) ** 2).mean()
+            o, bl, r, y = (x[b].to(device) for x in (other, ball, role, target))
+            mean, log_std = model(o, bl, r)
+            loss = (log_std + 0.5 * ((y - mean) / log_std.exp()) ** 2).mean()
             opt.zero_grad()
             loss.backward()
             opt.step()
@@ -149,10 +150,11 @@ def train_ghost(s: Samples, device, epochs: int = 8, batch: int = 512, lr: float
 def predict_ghost(model: GhostModel, s: Samples, device, batch: int = 4096) -> tuple[np.ndarray, np.ndarray]:
     """Mean (S, 11, 2) in metres and std (S, 11, 2) in metres."""
     model.eval()
-    other, ball, role, _ = to_tensors(s, device)
+    other, ball, role, _ = to_tensors(s, "cpu")
     means, stds = [], []
     for i in range(0, len(s), batch):
-        m, ls = model(other[i : i + batch], ball[i : i + batch], role[i : i + batch])
+        sl = slice(i, i + batch)
+        m, ls = model(other[sl].to(device), ball[sl].to(device), role[sl].to(device))
         means.append(m.cpu().numpy() * SCALE)
         stds.append(ls.exp().cpu().numpy() * SCALE)
     return np.concatenate(means), np.concatenate(stds)
