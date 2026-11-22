@@ -73,7 +73,8 @@ We did not run Graph Imputer, so we make no claim about which is more accurate. 
 - **Pitch control in the page.** Spearman's pitch-control model, ported from Laurie Shaw's open implementation (MIT),
   runs in plain JavaScript on a 48 × 31 grid in about 2 ms per frame. A Node test checks it against the Python version
   (`src/pitchvision/pitch_control.py`, max difference < 1e-6). With the hidden players filled in, it gives the same team
-  control as the true positions on about 99% of the pitch in the demo clips (one frame shown on the page; not a study).
+  control as the true positions on 95% to 99% of the pitch, averaged over every frame of the 3 demo clips (95% in the clip
+  where 54% of players are hidden; `scripts/pitch_control_demo.py`, `results/pitch_control_demo.json`). Demo clips only, not a study.
 - **Reproducible.** `make reproduce` downloads the released weights (pinned SHA-256), rebuilds every evaluation result and the demo
   on CPU, and compares them with the committed files. Dependencies are pinned in `requirements.lock`.
 - **Locked test set in code.** The loaders refuse the held-out matches unless the final spec asks for them.

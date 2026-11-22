@@ -1,4 +1,4 @@
-# State (2026-11-21)
+# State (2026-11-22)
 
 ## Branches
 - main: Kalman smoother runs in the page (JS port, parity tests), onnxruntime-web 1.31.1 with SRI,
@@ -6,6 +6,9 @@
   mostly one match (J03WOH, 2.76M of 2.93M positions).
 
 ## Next
+- Pitch control + drag (what if) is in the page (site/pitchcontrol.js, Python reference, Node parity test).
+- PFF World Cup 2022 data (owner fills the form) for a second locked test (spec 10); then variable player count
+  (red cards) and in-model smoothing, each with a spec first.
 - New data is needed for any new claim (the holdout is used up), e.g. more IDSSE or other open
   tracking matches; register a spec first.
 
