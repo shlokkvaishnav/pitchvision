@@ -1,5 +1,6 @@
 /* global ort */
 import { buildInputs, toTensors } from "./demo-core.js";
+import { controlMap, velocities } from "./pitchcontrol.js";
 
 const CHI2_90 = 4.605170185988091;
 const NS = "http://www.w3.org/2000/svg";
@@ -7,6 +8,7 @@ const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let meta, session, clip, pred, frame = 0, playing = !still, last = 0;
+let est = null, moved = new Map(), dragging = -1, ctrlCv = null; // est: per-frame positions the page knows (seen or estimated)
 
 // ---------- model ----------
 async function run(c) {
@@ -20,6 +22,50 @@ const cv = $("pitch"), g = cv.getContext("2d");
 function sizeCanvas() {
   const r = cv.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
   cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.width * (68 / 105) * dpr);
+}
+
+
+// ---------- pitch control ----------
+// Positions the page uses at frame f: the camera position if seen, else the model's estimate; dragged players moved.
+function estSeries() {
+  const A = pred.A;
+  return clip.truth_m.map((fr, t) => fr.slice(0, 22).map((xy, a) => {
+    if (clip.visible[t][a]) return xy;
+    const i = (t * A + a) * 2;
+    return [pred.mean[i] * meta.scale_m[0], pred.mean[i + 1] * meta.scale_m[1]];
+  }));
+}
+function positionsAt(f) { return est[f].map((xy, a) => (f === frame && moved.has(a) ? moved.get(a) : xy)); }
+function controlNow(series, pos) {
+  const vel = velocities(series, frame, meta.fps).map((v, a) => (moved.has(a) ? [0, 0] : v));
+  return controlMap(pos, vel, meta.agent_type.slice(0, 22), clip.truth_m[frame][22], 48);
+}
+function drawControl(X, Y, s) {
+  const m = controlNow(est, positionsAt(frame));
+  // one pixel per cell in a small image, scaled up with smoothing (no seams between cells)
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const home = rgb(css("--accent")), away = rgb(css("--cool"));
+  if (!ctrlCv || ctrlCv.width !== m.nx) { ctrlCv = document.createElement("canvas"); ctrlCv.width = m.nx; ctrlCv.height = m.ny; }
+  const cg = ctrlCv.getContext("2d"), img = cg.createImageData(m.nx, m.ny);
+  for (let j = 0; j < m.ny; j++) for (let i = 0; i < m.nx; i++) {
+    const p = m.home[j * m.nx + i], c = p >= 0.5 ? home : away, o = ((m.ny - 1 - j) * m.nx + i) * 4; // row 0 = top (y = +34)
+    img.data.set([c[0], c[1], c[2], Math.round(Math.min(1, Math.abs(p - 0.5) * 2) * 0.42 * 255)], o);
+  }
+  cg.putImageData(img, 0, 0);
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
+  g.drawImage(ctrlCv, X(-52.5), Y(34), 105 * s, 68 * s);
+  g.globalAlpha = 1;
+  let text;
+  if ($("truth").checked && !moved.size) {
+    const t = controlNow(clip.truth_m.map((fr) => fr.slice(0, 22)), clip.truth_m[frame].slice(0, 22));
+    let same = 0;
+    for (let i = 0; i < m.home.length; i++) same += (m.home[i] >= 0.5) === (t.home[i] >= 0.5);
+    text = `Control matches the true positions on <b>${Math.round((100 * same) / m.home.length)}%</b>`;
+  } else {
+    const away = 1 - m.home.reduce((a, p) => a + p, 0) / m.home.length;
+    text = `Blue controls <b>${Math.round(away * 100)}%</b>`;
+  }
+  $("ctrl").innerHTML = text; $("ctrl").hidden = false;
 }
 
 function draw() {
@@ -44,6 +90,7 @@ function draw() {
     g.strokeRect(X(x0), Y(20.16), 16.5 * s, 40.32 * s);
     g.strokeRect(X(e < 0 ? -52.5 : 52.5 - 5.5), Y(9.16), 5.5 * s, 18.32 * s);
   }
+  if ($("control").checked) drawControl(X, Y, s); else $("ctrl").hidden = true;
   // camera outline
   g.beginPath(); cam.forEach(([x, y], i) => (i ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)))); g.closePath();
   g.strokeStyle = css("--pitch-line"); g.setLineDash([8 * k, 6 * k]); g.lineWidth = 2 * k; g.stroke(); g.setLineDash([]);
@@ -56,7 +103,7 @@ function draw() {
     if (clip.visible[frame][a]) continue;
     hiddenCount++;
     const i = (frame * A + a) * 2;
-    const mx = pred.mean[i] * meta.scale_m[0], my = pred.mean[i + 1] * meta.scale_m[1];
+    const [mx, my] = moved.has(a) ? moved.get(a) : [pred.mean[i] * meta.scale_m[0], pred.mean[i + 1] * meta.scale_m[1]];
     const rx = Math.sqrt(CHI2_90) * (meta.std_scale ?? 1) * Math.exp(pred.logStd[i]) * meta.scale_m[0];
     const ry = Math.sqrt(CHI2_90) * (meta.std_scale ?? 1) * Math.exp(pred.logStd[i + 1]) * meta.scale_m[1];
     const c = team(a);
@@ -73,7 +120,7 @@ function draw() {
   }
   for (let a = 0; a < 23; a++) {
     if (a < 22 && !clip.visible[frame][a]) continue;
-    const [x, y] = clip.truth_m[frame][a];
+    const [x, y] = a < 22 && moved.has(a) ? moved.get(a) : clip.truth_m[frame][a];
     if (a === 22) { g.fillStyle = css("--ink"); g.beginPath(); g.arc(X(x), Y(y), 5 * k, 0, 2 * Math.PI); g.fill(); continue; }
     g.fillStyle = team(a); g.strokeStyle = css("--card"); g.lineWidth = 2.5 * k;
     g.beginPath(); g.arc(X(x), Y(y), 9 * k, 0, 2 * Math.PI); g.fill(); g.stroke();
@@ -83,7 +130,7 @@ function draw() {
 }
 
 function tick(t) {
-  if (playing && pred && t - last >= 1000 / meta.fps) { frame = (frame + 1) % pred.L; last = t; draw(); }
+  if (playing && pred && t - last >= 1000 / meta.fps) { frame = (frame + 1) % pred.L; last = t; moved.clear(); draw(); }
   requestAnimationFrame(tick);
 }
 
@@ -91,6 +138,7 @@ async function pick(k) {
   clip = meta.clips[k];
   for (const b of $("clips").children) b.setAttribute("aria-pressed", String(Number(b.dataset.k) === k));
   pred = await run(clip);
+  est = estSeries(); moved.clear();
   frame = 0; draw();
 }
 
@@ -164,6 +212,29 @@ function drawGaps() {
   });
 }
 
+
+// ---------- what if: drag a player ----------
+function pitchXY(ev) {
+  const r = cv.getBoundingClientRect();
+  return [((ev.clientX - r.left) / r.width) * 105 - 52.5, 34 - ((ev.clientY - r.top) / r.height) * 68];
+}
+function setPlaying(v) { playing = v; $("play").textContent = playing ? "Pause" : "Play"; cv.classList.toggle("drag", !playing); }
+cv.addEventListener("pointerdown", (ev) => {
+  if (!pred) return;
+  const [x, y] = pitchXY(ev), pos = positionsAt(frame);
+  let best = -1, bd = 3.5;
+  pos.forEach(([px, py], a) => { const d = Math.hypot(px - x, py - y); if (d < bd) { bd = d; best = a; } });
+  if (best < 0) return;
+  setPlaying(false); dragging = best; cv.setPointerCapture(ev.pointerId); ev.preventDefault();
+});
+cv.addEventListener("pointermove", (ev) => {
+  if (dragging < 0) return;
+  const [x, y] = pitchXY(ev);
+  moved.set(dragging, [Math.max(-52.5, Math.min(52.5, x)), Math.max(-34, Math.min(34, y))]); draw();
+});
+const endDrag = () => { dragging = -1; };
+cv.addEventListener("pointerup", endDrag); cv.addEventListener("pointercancel", endDrag);
+
 // ---------- start ----------
 async function main() {
   sizeCanvas();
@@ -180,8 +251,10 @@ async function main() {
       b.addEventListener("click", () => pick(k));
       $("clips").appendChild(b);
     });
-    $("play").textContent = playing ? "Pause" : "Play";
-    $("play").addEventListener("click", () => { playing = !playing; $("play").textContent = playing ? "Pause" : "Play"; });
+    setPlaying(playing);
+    $("play").addEventListener("click", () => { moved.clear(); setPlaying(!playing); });
+    $("control").addEventListener("change", draw);
+    $("reset").addEventListener("click", () => { moved.clear(); draw(); });
     $("truth").addEventListener("change", draw);
     drawFlow(); drawGaps();
     await pick(0);

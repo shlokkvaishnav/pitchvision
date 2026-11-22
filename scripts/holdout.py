@@ -56,7 +56,7 @@ def parts(model, tr, vis, w) -> dict[str, np.ndarray]:
 
     # forecast: last 40 frames hidden
     obs_f = w.visible.copy()
-    obs_f[:, -HORIZON :, :] = False
+    obs_f[:, -HORIZON:, :] = False
     mu_f, _ = predict_windows(model, w.pos, obs_f, w.agent_type, w.fc_mean, w.fc_ls, "cpu")
     out.update({f"fc_{k}": v for k, v in forecast_baselines(w).items()})
     out["fc_model"] = np.linalg.norm((mu_f[:, -1, :22] - w.pos[:, -1, :22]) * SCALE, axis=-1).ravel()

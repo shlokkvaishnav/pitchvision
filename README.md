@@ -53,7 +53,9 @@ What does not work:
 - **Red cards.** The model needs 11 v 11. One locked match had a red card, so only 7% of it could be scored, and there
   the model only tied the spline.
 - **Small data.** 5 training matches. With 2, the model was worse than the Kalman smoother.
-- **The "what if" plays** in the original plan were not built.
+- **"What if" is only a picture.** The page shows who controls the space (pitch control) and lets you drag any player
+  to see it change, but there is no model of how the other players would react, and no study of how much the imputed
+  positions change team metrics beyond the demo clips.
 
 **How it was tested, every experiment (including the failures), related work and limitations: [docs/method.md](docs/method.md).**
 
@@ -68,6 +70,11 @@ We did not run Graph Imputer, so we make no claim about which is more accurate. 
 - **Python and the browser agree.** Two Node tests on the demo clips: the JavaScript Kalman smoother against the Python one
   (max difference < 1e-6 m on means and m² on variances, float64), and the whole page pipeline (JavaScript Kalman, then
   ONNX in onnxruntime-web) against Python Kalman and PyTorch (max difference < 1e-4).
+- **Pitch control in the page.** Spearman's pitch-control model, ported from Laurie Shaw's open implementation (MIT),
+  runs in plain JavaScript on a 48 × 31 grid in about 2 ms per frame. A Node test checks it against the Python version
+  (`src/pitchvision/pitch_control.py`, max difference < 1e-6). With the hidden players filled in, it gives the same team
+  control as the true positions on 95% to 99% of the pitch, averaged over every frame of the 3 demo clips (95% in the clip
+  where 54% of players are hidden; `scripts/pitch_control_demo.py`, `results/pitch_control_demo.json`). Demo clips only, not a study.
 - **Reproducible.** `make reproduce` downloads the released weights (pinned SHA-256), rebuilds every evaluation result and the demo
   on CPU, and compares them with the committed files. Dependencies are pinned in `requirements.lock`.
 - **Locked test set in code.** The loaders refuse the held-out matches unless the final spec asks for them.
@@ -100,4 +107,6 @@ Training: `PYTHONPATH=src python scripts/train_more.py --out results` (about 1 h
 - [Metrica Sports sample data](https://github.com/metrica-sports/sample-data).
 - [SkillCorner open data](https://github.com/SkillCorner/opendata): broadcast camera views for the masks.
 - [kloppy](https://github.com/PySport/kloppy) for data loading.
+- Pitch control: Spearman, "Beyond Expected Goals" (MIT Sloan SAC 2018), as implemented in Laurie Shaw's
+  [LaurieOnTracking](https://github.com/Friends-of-Tracking-Data-FoTD/LaurieOnTracking) (MIT); ported, without the goalkeeper and offside terms.
 - Fonts: Literata and Instrument Sans (SIL Open Font License), in `site/assets/licenses/`.

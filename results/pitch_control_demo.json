@@ -1,0 +1,32 @@
+{
+  "commit": "7c7bf06a3bd5eaccdf04dd4b68a450b38a0e6489",
+  "grid_cols": 32,
+  "note": "exploratory, demo clips only",
+  "clips": [
+    {
+      "clip": 0,
+      "frames": 90,
+      "hidden_share": 0.15656565656565657,
+      "same_team_share": 0.9912863756613757,
+      "worst_frame_same_team_share": 0.9821428571428571,
+      "mean_abs_diff": 0.009525053273098279
+    },
+    {
+      "clip": 1,
+      "frames": 90,
+      "hidden_share": 0.543939393939394,
+      "same_team_share": 0.9538359788359789,
+      "worst_frame_same_team_share": 0.8809523809523809,
+      "mean_abs_diff": 0.045858366006056944
+    },
+    {
+      "clip": 2,
+      "frames": 90,
+      "hidden_share": 0.3656565656565657,
+      "same_team_share": 0.9905257936507936,
+      "worst_frame_same_team_share": 0.9821428571428571,
+      "mean_abs_diff": 0.015584170684946276
+    }
+  ],
+  "same_team_share_mean": 0.9785493827160495
+}
