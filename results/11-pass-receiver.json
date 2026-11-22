@@ -1,0 +1,39 @@
+{
+  "spec": "11-pass-receiver",
+  "commit": "c49fcda31ad503ad554efc5a98d2e9558ca7865f",
+  "exploratory": "leave-one-match-out over 5 IDSSE development matches; holdout not loaded",
+  "passes": 2758,
+  "passes_by_match": {
+    "J03WMX": 596,
+    "J03WOY": 560,
+    "J03WPY": 537,
+    "J03WQQ": 482,
+    "J03WR9": 583
+  },
+  "models": {
+    "nearest": {
+      "top1": 0.2737490935460479,
+      "top3": 0.654459753444525,
+      "log_loss": 6.6919581175435345
+    },
+    "logit": {
+      "top1": 0.36620739666424945,
+      "top3": 0.7628716461203771,
+      "log_loss": 1.7626453638076782
+    },
+    "gnn": {
+      "top1": 0.4709934735315446,
+      "top3": 0.7846265409717187,
+      "log_loss": 2.2059247493743896
+    }
+  },
+  "rules": {
+    "P1_diff_gnn_minus_logit": 0.4432791769504547,
+    "P1_ci": [
+      0.33472695723229007,
+      0.5570121215254747
+    ],
+    "P1_pass": false,
+    "P2_pass": true
+  }
+}

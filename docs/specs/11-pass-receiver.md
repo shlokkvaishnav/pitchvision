@@ -42,3 +42,18 @@ The data check of section 2 failed: at the nearest frame to the event time the p
 only 37% to 62% of passes per match, and no constant time shift fixed it (best about 60%). So the frame is now: within
 ±1.0 s of the event time, the frame where the passer is closest to the ball. Passes where that distance is still more
 than 3 m (headers, throw-ins, high balls, tracking gaps) are left out. The share kept per match is reported.
+
+## Result (2026-11-22, commit c49fcda; exploratory, leave-one-match-out)
+2,758 passes kept of 3,611 completed passes with a receiver (65% to 88% per match, as printed by the script); after snapping, the median
+passer-to-ball distance is about 0.5 m. Raw numbers: `results/11-pass-receiver.json`.
+
+| Model | Top-1 | Top-3 | Log loss |
+|---|---|---|---|
+| nearest | 27.4% | 65.4% | 6.69 |
+| logit | 36.6% | 76.3% | **1.76** |
+| gnn | **47.1%** | **78.5%** | 2.21 |
+
+- **P1 fails.** The transformer picks the right receiver more often (better in all 5 matches), but its log loss is worse
+  than the logit's (difference +0.44, 95% interval +0.33 to +0.56): it is overconfident when wrong. Calibrating it
+  (for example a temperature fitted on a separate match) would be a new spec.
+- **P2 passes** (47.1% against 27.4% top-1 for the nearest teammate).
