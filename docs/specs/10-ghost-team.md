@@ -48,3 +48,17 @@ rule that they are not loaded again, so it was changed to the above before anyth
 
 ## 6. Output
 `src/pitchvision/ghost.py` (features, baselines, model), `scripts/ghost.py`, `results/10-ghost.json`. Site: ghost rings for the chosen team, with the gap per player.
+
+## Result (2026-11-22, commit 0b0ff32; exploratory, leave-one-match-out over 8 matches)
+Raw numbers: `results/10-ghost.json`.
+
+| Model | Mean error | Median error |
+|---|---|---|
+| role | 19.2 m | 17.3 m |
+| linear_shift | 11.4 m | 10.3 m |
+| **ghost** | **8.4 m** | **6.7 m** |
+
+- **G1 passes.** The ghost is 26% closer to the real players than the linear shift (ratio 0.736, 95% interval 0.725 to
+  0.749), and better in all 8 left-out matches.
+- **G2 fails.** Its 90% ellipses hold only 58.9% of the real positions (51% to 68% by match): the spread is too narrow.
+  A scale fitted on a separate match (as spec 05 did for the imputation model) would be a new spec.
