@@ -8,7 +8,7 @@ const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let meta, session, clip, pred, frame = 0, playing = !still, last = 0;
-let est = null, moved = new Map(), dragging = -1, ctrlCv = null, react = null, reactRun = 0; // est: per-frame positions the page knows (seen or estimated)
+let over = null, est = null, moved = new Map(), dragging = -1, ctrlCv = null, react = null, reactRun = 0; // est: per-frame positions the page knows (seen or estimated)
 
 // ---------- model ----------
 async function run(c, r = null) {
@@ -103,6 +103,42 @@ function drawReact(X, Y, k) {
   $("ctrl").innerHTML = `The next <b>${((last - frame) / meta.fps).toFixed(1)} s</b> after your move`;
 }
 
+// ---------- overlays: expected defensive shape (spec 10 ghost) and likely pass (spec 11), precomputed ----------
+// scripts/export_overlays.py runs both models on the positions this page draws; neither model saw this match.
+// They describe the real moment, so they are hidden while a player is dragged.
+function overlayAt() {
+  const c = over && over.clips.find((o) => Math.abs(o.start_s - clip.start_s) < 1e-6);
+  return c && !moved.size ? c.frames[frame] : null;
+}
+function drawGhost(X, Y, k, o) {
+  const now = est[frame], base = o.ghost_team === 0 ? 0 : 11, c = o.ghost_team === 0 ? css("--accent") : css("--cool");
+  o.ghost_m.forEach(([gx, gy], j) => {
+    const [px, py] = now[base + j];
+    g.strokeStyle = c; g.globalAlpha = 0.3; g.lineWidth = 1.2 * k;
+    g.beginPath(); g.moveTo(X(px), Y(py)); g.lineTo(X(gx), Y(gy)); g.stroke();
+    g.globalAlpha = 0.9; g.lineWidth = 2.2 * k; g.setLineDash([4 * k, 3 * k]);
+    g.beginPath(); g.arc(X(gx), Y(gy), 10 * k, 0, 2 * Math.PI); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+  });
+}
+function drawPass(X, Y, k, o) {
+  if (!o.pass) return;
+  const now = est[frame], [ax, ay] = now[o.pass.from];
+  const top = o.pass.p.map((p, j) => [p, j]).filter(([p]) => p >= 0.08).sort((a, b) => b[0] - a[0]).slice(0, 3);
+  g.font = `600 ${Math.max(11, 22 * k)}px ${css("--sans") || "sans-serif"}`;
+  for (const [p, j] of top) {
+    const [bx, by] = now[j], dx = X(bx) - X(ax), dy = Y(by) - Y(ay), d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d;
+    const ex = X(bx) - ux * 13 * k, ey = Y(by) - uy * 13 * k, w = (1.5 + 6 * p) * k;
+    g.strokeStyle = css("--ink"); g.fillStyle = css("--ink"); g.globalAlpha = 0.35 + 0.6 * p; g.lineWidth = w;
+    g.beginPath(); g.moveTo(X(ax) + ux * 12 * k, Y(ay) + uy * 12 * k); g.lineTo(ex - ux * 8 * k, ey - uy * 8 * k); g.stroke();
+    g.beginPath(); g.moveTo(ex, ey); g.lineTo(ex - ux * 12 * k - uy * 7 * k, ey - uy * 12 * k + ux * 7 * k); g.lineTo(ex - ux * 12 * k + uy * 7 * k, ey - uy * 12 * k - ux * 7 * k); g.closePath(); g.fill();
+    g.globalAlpha = 1;
+    const lx = (X(ax) + X(bx)) / 2 - uy * 14 * k, ly = (Y(ay) + Y(by)) / 2 + ux * 14 * k, s = `${Math.round(p * 100)}%`;
+    const tw = g.measureText(s).width + 10 * k, th = Math.max(16, 30 * k);
+    g.fillStyle = css("--card"); g.beginPath(); g.roundRect(lx - tw / 2, ly - th / 2, tw, th, th / 2); g.fill();
+    g.fillStyle = css("--ink"); g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(s, lx, ly);
+  }
+}
+
 function draw() {
   if (!pred) return;
   const W = cv.width, H = cv.height, s = W / 105;
@@ -160,6 +196,9 @@ function draw() {
     g.fillStyle = team(a); g.strokeStyle = css("--card"); g.lineWidth = 2.5 * k;
     g.beginPath(); g.arc(X(x), Y(y), 9 * k, 0, 2 * Math.PI); g.fill(); g.stroke();
   }
+  const o = overlayAt();
+  if (o && $("ghost").checked) drawGhost(X, Y, k, o);
+  if (o && $("pass").checked) drawPass(X, Y, k, o);
   drawReact(X, Y, k);
   $("nHidden").textContent = hiddenCount;
   $("clock").textContent = `${(frame / meta.fps).toFixed(1)} s`;
@@ -293,6 +332,9 @@ async function main() {
     $("reset").addEventListener("click", () => { moved.clear(); react = null; draw(); });
     $("react").addEventListener("change", () => { if ($("react").checked && moved.size) runReact(); else { react = null; draw(); } });
     $("truth").addEventListener("change", draw);
+    $("ghost").addEventListener("change", draw);
+    $("pass").addEventListener("change", draw);
+    fetch("demo/overlays.json").then((r) => r.json()).then((d) => { over = d; draw(); }).catch(() => {});
     drawFlow(); drawGaps();
     await pick(0);
     $("status").textContent = "";

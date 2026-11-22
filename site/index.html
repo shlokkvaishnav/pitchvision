@@ -56,6 +56,8 @@
       <div class="seg" id="clips" role="group" aria-label="Clip"></div>
       <span class="grow"></span>
       <label class="switch"><input type="checkbox" id="control"> Who controls the space</label>
+      <label class="switch"><input type="checkbox" id="pass"> Likely pass</label>
+      <label class="switch"><input type="checkbox" id="ghost"> Where the defence should be</label>
       <label class="switch"><input type="checkbox" id="react" checked> The others react</label>
       <label class="switch"><input type="checkbox" id="truth"> Reveal where they really were</label>
     </div>
@@ -63,6 +65,8 @@
       <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="var(--accent)"/></svg>On camera</span>
       <span><svg width="22" height="14"><ellipse cx="11" cy="7" rx="10" ry="6" fill="var(--accent)" opacity=".2"/><circle cx="11" cy="7" r="4.5" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>Hidden: estimate and 90% region</span>
       <span><svg width="14" height="14"><circle cx="7" cy="7" r="3" fill="var(--ink)"/></svg>Ball</span>
+      <span><svg width="22" height="14"><path d="M2 7h12" stroke="var(--ink)" stroke-width="2.5"/><path d="M20 7l-7-4v8z" fill="var(--ink)"/></svg>Likely pass, with its chance</span>
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="3 2"/></svg>Where a typical side would stand</span>
     </div>
     <p class="cap" id="whatif">What if: pause and drag any player, seen or estimated. With “The others react” on, the model forecasts how everyone else moves over the next 4 seconds. It never trained on a player who jumps, so treat it as a toy. <button class="btn" id="reset">Reset</button></p>
     <div class="status" id="status">Loading the model…</div>

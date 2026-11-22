@@ -106,6 +106,9 @@ We did not run Graph Imputer, so we make no claim about which is more accurate. 
   (`src/pitchvision/pitch_control.py`, max difference < 1e-6). With the hidden players filled in, it gives the same team
   control as the true positions on 95% to 99% of the pitch, averaged over every frame of the 3 demo clips (95% in the clip
   where 54% of players are hidden; `scripts/pitch_control_demo.py`, `results/pitch_control_demo.json`). Demo clips only, not a study.
+- **Likely pass and defensive shape in the page.** The spec 11 pass model and the spec 10 ghost team run on the
+  positions the page draws (seen players plus filled-in ones), precomputed per frame for the demo clips by
+  `scripts/export_overlays.py`. Neither model trained on the demo match.
 - **Reproducible.** `make reproduce` downloads the released weights (pinned SHA-256), rebuilds every evaluation result and the demo
   on CPU, and compares them with the committed files. Dependencies are pinned in `requirements.lock`.
 - **Locked test set in code.** The loaders refuse the held-out matches unless the final spec asks for them.
