@@ -1,0 +1,15 @@
+{
+  "id": "shlokkvaishnav/pitchvision-lomo-idsse-j03woh",
+  "title": "pitchvision lomo idsse j03woh",
+  "code_file": "run.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "shlokkvaishnav/pitchvision-src-lomo"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
