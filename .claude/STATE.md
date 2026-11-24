@@ -1,22 +1,22 @@
-# State (2026-11-22)
+# State (2026-11-24)
 
-The project question: broadcast tracking misses about half the players; how much analysis does that break, and how
-much does filling them in bring back? README leads with it (spec 13 table).
+v2: a diffusion model that samples K = 20 paths per hidden player, tested by leave-one-match-out over all 10 matches.
 
 ## Branches
-- main: pitch control + drag-and-react in the page (merged, pushed).
-- research/ghost-team (NOT merged, not pushed; owner must ask): specs 10 (ghost team), 11 (pass receiver),
-  13 (downstream study, recorded), README rewrite, site overlays (likely pass, expected defensive shape;
-  `scripts/export_overlays.py` -> `site/demo/overlays.json`). `make check` passes; checked in headless Chromium
-  at 1280 and 390 wide, light and dark, no console errors.
+- main: v1 (transformer, spec 13 downstream study, site overlays). research/ghost-team is already in main.
+- v2/diffusion-lomo (pushed, not merged): spec 14 (literature check: U2Diff family, Choi 2026 centroid voting as the
+  published baseline), spec 15 (pre-registered protocol, amendment A1: v-prediction), `diffusion.py`, `centroid_vote.py`,
+  `lomo.py`, `scripts/lomo_fold.py`, `scripts/lomo_summary.py`, `kaggle/lomo/` (10 fold kernels). `make check` passes.
 
 ## Next
-- Merge research/ghost-team to main and push when the owner says so; refresh `docs/site.png`.
-- Spec 12 sampled futures (flow-matching head, Kaggle GPU): register first; fits the "what happens next" row.
-- Pass model is overconfident (spec 11 P1 failed): a temperature fitted on a separate match would be a new spec.
-- PFF World Cup 2022 data (owner fills the form) for a second locked test.
+1. Push the fold kernels. On 2026-11-24 every push failed: "Maximum batch GPU session count of 2 reached" (two
+   ghostdesk kernels were queued). The dataset `pitchvision-src-lomo` holds commit 5cfdb08. When a slot is free:
+   `SKIP_DATASET=1 sh kaggle/lomo/push_all.sh x idsse-J03WMX idsse-J03WN1` (2 at a time; do not re-version the dataset).
+   About 3 GPU hours per fold, about 30 in all: more than one week of Kaggle quota.
+2. Download each kernel's `results/` into `results/15-lomo/`, then `scripts/lomo_summary.py` -> `results/15-lomo.json`.
+3. Append the result to spec 15; then the released models (spec 15 section 8), ONNX diffusion + browser timing, README/site.
 
 ## Open items
-- The spec 07 holdout is used up: never load it. New claims need new data.
-- clips.json is 1.27 MB (observation context for the in-page Kalman).
-- onnx_variants.py needs onnx, onnxruntime, onnxconverter-common (not project dependencies).
+- Spec 15 uses the spec 07 holdout matches on the owner's decision; CLAUDE.md still says never load them (owner to update).
+- Centroid voting is online (no future frames); the other methods are offline smoothers. Say so next to its numbers.
+- The spec 07 holdout is used up; v2 numbers are cross-validation, not a locked test.
