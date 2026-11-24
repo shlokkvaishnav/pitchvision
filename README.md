@@ -76,10 +76,15 @@ Intervals: block bootstrap over 5-minute stretches of play. Retraining with 2 ot
 |---|---|---|---|
 | Hidden players, median error | **2.70 m** | 3.28 m (cubic spline); Kalman smoother 3.81 m | 18% lower (95% CI 13 to 22%) |
 | Hidden players, mean error | **4.78 m** | 9.32 m (spline) | Far fewer large misses in long gaps |
-| 90% regions contain the truth | **92.4%** | — | Calibrated |
+| 90% regions contain the truth | **92.4%** | — | Inside the 85 to 95% rule. The scale was fitted on one tuning match, where coverage was 88.9% |
 | 4 s forecast, mean error | **5.18 m** | 6.97 m (constant velocity) | 1.8 m lower (95% CI 1.6 to 2.0 m), on the 66% of positions where constant velocity can guess |
 
 What does not work:
+- **The locked holdout is used up.** The spec 07 matches (J03WN1, J03WOH) were scored once and cannot be used again for
+  a fresh test. Any new confirmatory claim needs new data. The 2.70 m figure is pooled and mostly one match: on J03WN1
+  alone the model only tied the spline (2.27 m against 2.30 m).
+- **Plausible motion failed.** In the same run, 38.2% of forecast frames broke the speed or acceleration limit,
+  against 0.07% in the true positions (rule R3b of spec 07).
 - **Jerky forecasts.** The forecast wobbles frame to frame. A moving average fixes most of it at no cost in accuracy.
 - **Red cards.** The model needs 11 v 11. One locked match had a red card, so only 7% of it could be scored, and there
   the model only tied the spline.
@@ -100,9 +105,9 @@ We did not run Graph Imputer, so we make no claim about which is more accurate. 
 ## Engineering
 - **Python and the browser agree.** Two Node tests on the demo clips: the JavaScript Kalman smoother against the Python one
   (max difference < 1e-6 m on means and m² on variances, float64), and the whole page pipeline (JavaScript Kalman, then
-  ONNX in onnxruntime-web) against Python Kalman and PyTorch (max difference < 1e-4).
+  ONNX in onnxruntime-web) against Python Kalman and PyTorch (max difference < 1e-4 in normalised units, about 5 mm on the pitch).
 - **Pitch control in the page.** Spearman's pitch-control model, ported from Laurie Shaw's open implementation (MIT),
-  runs in plain JavaScript on a 48 × 31 grid in about 2 ms per frame. A Node test checks it against the Python version
+  runs in plain JavaScript on a 32 × 21 grid (no timing was measured). A Node test checks it against the Python version
   (`src/pitchvision/pitch_control.py`, max difference < 1e-6). With the hidden players filled in, it gives the same team
   control as the true positions on 95% to 99% of the pitch, averaged over every frame of the 3 demo clips (95% in the clip
   where 54% of players are hidden; `scripts/pitch_control_demo.py`, `results/pitch_control_demo.json`). Demo clips only, not a study.

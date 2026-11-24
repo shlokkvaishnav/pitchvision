@@ -6,7 +6,7 @@ This page is the one place to read how pitchvision was tested. The detailed plan
 - **A written plan before every experiment.** Each spec lists the data, the model and pass/fail rules with numbers.
   It was committed before the first run. Changes after that are dated amendments.
 - **A locked final test.** A fixed hash of the match ID put 20% of the matches in a holdout. The loaders refuse those
-  matches (`pitchvision.splits`) unless the final spec asks for them. They were used once, at the end ([spec 07](specs/07-holdout.md)).
+  matches (`pitchvision.splits`) unless the final spec asks for them. They were used once, at the end ([spec 07](specs/07-holdout.md)). That holdout is now used up: it cannot give a fresh test again.
 - **Failures stay in.** Failed rules, errata and corrections are kept in the specs.
 - **Every number has a source.** Each result is a JSON file in `results/` with the git commit that made it.
 
