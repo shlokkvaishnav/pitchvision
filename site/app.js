@@ -340,7 +340,7 @@ async function main() {
     $("status").textContent = "";
     requestAnimationFrame(tick);
   } catch (err) {
-    $("status").textContent = `The demo could not load: ${err.message}`;
+    $("status").textContent = `The demo could not load (${err.message}). Check your connection and reload the page.`;
   }
 }
 let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { sizeCanvas(); draw(); if (meta) { drawFlow(); drawGaps(); } }, 120); });
