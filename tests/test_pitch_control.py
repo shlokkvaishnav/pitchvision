@@ -40,3 +40,17 @@ def test_a_team_with_no_players_controls_nothing():
     pos, vel, ball = np.array([[0.0, 0.0]]), np.zeros((1, 2)), np.array([0.0, 0.0])
     assert home_control(np.array([30.0, 0.0]), pos, vel, np.array([0]), ball) == 1.0
     assert home_control(np.array([30.0, 0.0]), pos, vel, np.array([1]), ball) == 0.0
+
+
+def test_fast_map_matches_the_reference():
+    from pitchvision.pitch_control import control_map_fast
+
+    rng = np.random.default_rng(3)
+    for n_home, n_away in ((11, 11), (6, 9), (1, 3)):
+        pos = rng.uniform([-50, -32], [50, 32], (n_home + n_away, 2))
+        vel = rng.normal(0, 3, pos.shape)
+        team = np.array([0] * n_home + [1] * n_away)
+        ball = rng.uniform([-50, -32], [50, 32])
+        np.testing.assert_allclose(
+            control_map_fast(pos, vel, team, ball, nx=12), control_map(pos, vel, team, ball, nx=12), atol=1e-9
+        )

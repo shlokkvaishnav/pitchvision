@@ -71,3 +71,48 @@ def control_map(
     """Home-team control probability on the grid, (ny, nx)."""
     g = grid(nx)
     return np.array([[home_control(c, pos, vel, team, ball, p) for c in row] for row in g])
+
+
+def control_map_fast(
+    pos: np.ndarray, vel: np.ndarray, team: np.ndarray, ball: np.ndarray, nx: int = 32, p: Params = Params()
+) -> np.ndarray:
+    """The same as control_map, vectorised over the grid cells (used for the many frames of spec 15)."""
+    g = grid(nx)
+    shape = g.shape[:2]
+    cells = g.reshape(-1, 2)
+    home, away = team == 0, team == 1
+    if not away.any() or not home.any():
+        return np.full(shape, float(home.any()))
+    if np.all(np.isfinite(ball)):
+        ball_t = np.linalg.norm(cells - ball, axis=1) / p.ball_speed
+    else:
+        ball_t = np.zeros(len(cells))
+    tau = p.reaction_time + np.linalg.norm(cells[:, None] - (pos + vel * p.reaction_time)[None], axis=2) / p.vmax
+    th, ta = tau[:, home].min(1), tau[:, away].min(1)
+    out = np.full(len(cells), np.nan)
+    out[th - np.maximum(ball_t, ta) >= p.time_to_control] = 0.0
+    out[np.isnan(out) & (ta - np.maximum(ball_t, th) >= p.time_to_control)] = 1.0
+    rest = np.flatnonzero(np.isnan(out))
+    if rest.size:
+        tr = tau[rest]
+        keep = (home[None] & (tr - th[rest, None] < p.time_to_control)) | (
+            away[None] & (tr - ta[rest, None] < p.time_to_control)
+        )
+        bt = ball_t[rest]
+        n_iter = np.array([len(np.arange(b - p.dt, b + p.max_time, p.dt)) for b in bt])
+        ppcf = np.zeros(tr.shape)
+        k = np.pi / np.sqrt(3) / p.tti_sigma
+        active = np.ones(len(rest), bool)
+        for j in range(int(n_iter.max())):
+            total = ppcf.sum(1)
+            active &= (total < 1 - p.tol) & (j < n_iter)
+            if not active.any():
+                break
+            t = (bt - p.dt + j * p.dt)[:, None]
+            with np.errstate(over="ignore"):
+                f = 1 / (1 + np.exp(-k * (t - tr)))
+            step = (1 - total)[:, None] * f * p.lam * p.dt
+            ppcf += np.where(active[:, None] & keep, step, 0.0)
+        ppcf = np.where(keep, ppcf, 0.0)
+        out[rest] = ppcf[:, home].sum(1) / np.maximum(ppcf.sum(1), 1e-12)
+    return out.reshape(shape)
