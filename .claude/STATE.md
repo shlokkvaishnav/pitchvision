@@ -18,6 +18,14 @@ v2: a diffusion model that samples K = 20 paths per hidden player, tested by lea
 3. Download each kernel's `results/` into `results/15-lomo/`, run `scripts/lomo_summary.py` -> `results/15-lomo.json`,
    append the result to spec 15; then the released all-10-match models (separate job), ONNX + browser timing, README/site.
 
+## Running (2026-11-24)
+- Dataset shlokkvaishnav/pitchvision-src-lomo versioned from 8f82af3 (do not re-version).
+- Pushed: pitchvision-lomo-idsse-j03wmx (session 1). Push of idsse-J03WOH failed: 'Maximum batch GPU session count of 2' (owner's wa-cell-a was running).
+- Not yet pushed: idsse-J03WOH, idsse-J03WPY, idsse-J03WR9, metrica-2. Push each with
+  `~/.cache/kaggle-cli/bin/kaggle kernels push -p kaggle/lomo/<match>` (no dataset step); retry later on the batch-count error.
+- When all 5 are COMPLETE: `kaggle kernels output shlokkvaishnav/pitchvision-lomo-<match-lowercase> -p results/15-lomo/<match>`,
+  run scripts/lomo_summary.py, append to spec 15, make check, commit, push.
+
 ## Open items
 - Spec 15 uses the spec 07 holdout matches on the owner's decision (2026-11-24); the CLAUDE.md rule now allows only that use.
 - Centroid voting is online (no future frames); the other methods are offline smoothers. Say so next to its numbers.
