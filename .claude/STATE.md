@@ -17,6 +17,6 @@ v2: a diffusion model that samples K = 20 paths per hidden player, tested by lea
 3. Append the result to spec 15; then the released models (spec 15 section 8), ONNX diffusion + browser timing, README/site.
 
 ## Open items
-- Spec 15 uses the spec 07 holdout matches on the owner's decision; CLAUDE.md still says never load them (owner to update).
+- Spec 15 uses the spec 07 holdout matches on the owner's decision (2026-11-24); the CLAUDE.md rule now allows only that use.
 - Centroid voting is online (no future frames); the other methods are offline smoothers. Say so next to its numbers.
 - The spec 07 holdout is used up; v2 numbers are cross-validation, not a locked test.

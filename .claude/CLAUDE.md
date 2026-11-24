@@ -13,8 +13,10 @@ Kalman, ONNX via onnxruntime-web). Live: https://shlokkvaishnav.github.io/pitchv
 ## Hard rules
 - MUST register a spec in `docs/specs/` and commit it before any new evaluation; never edit a
   registered rule after its result exists.
-- The locked holdout (two IDSSE matches, spec 07) is used up: MUST NOT load it for anything new.
-  New claims need new data; analyses on other matches are labelled exploratory.
+- The locked holdout (two IDSSE matches, spec 07) is used up. The only new use allowed is spec 15
+  (leave-one-match-out over all 10 matches, owner's decision 2026-11-24): its numbers are
+  cross-validation, not a fresh locked test, and must be labelled so. Any other new use of those two matches
+  is exploratory and labelled so. New confirmatory claims need new data.
 - The browser Kalman (`site/kalman.js`) must match the Python one: keep `tests/js` parity tests green.
 - CDN scripts are pinned to an exact version with an SRI hash.
 - Git: work on a branch; merge and push only when the owner asks; `make check` before any push.
