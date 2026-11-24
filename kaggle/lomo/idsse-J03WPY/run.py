@@ -24,7 +24,16 @@ subprocess.run([sys.executable, "-m", "pip", "install", "-q", "kloppy"], check=T
 env = dict(os.environ, PYTHONPATH=os.path.join(src, "src"), PITCHVISION_COMMIT=commit)
 script = os.path.join(src, "scripts", "lomo_fold.py")
 subprocess.run(
-    [sys.executable, script, "--test", TEST, "--out", "/kaggle/working/results", "--raw", "/kaggle/working/skillcorner"],
+    [
+        sys.executable,
+        script,
+        "--test",
+        TEST,
+        "--out",
+        "/kaggle/working/results",
+        "--raw",
+        "/kaggle/working/skillcorner",
+    ],
     check=True,
     env=env,
 )

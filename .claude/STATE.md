@@ -9,12 +9,14 @@ v2: a diffusion model that samples K = 20 paths per hidden player, tested by lea
   `lomo.py`, `scripts/lomo_fold.py`, `scripts/lomo_summary.py`, `kaggle/lomo/` (10 fold kernels). `make check` passes.
 
 ## Next
-1. Push the fold kernels. On 2026-11-24 every push failed: "Maximum batch GPU session count of 2 reached" (two
-   ghostdesk kernels were queued). The dataset `pitchvision-src-lomo` holds commit 5cfdb08. When a slot is free:
-   `SKIP_DATASET=1 sh kaggle/lomo/push_all.sh x idsse-J03WMX idsse-J03WN1` (2 at a time; do not re-version the dataset).
-   About 3 GPU hours per fold, about 30 in all: more than one week of Kaggle quota.
-2. Download each kernel's `results/` into `results/15-lomo/`, then `scripts/lomo_summary.py` -> `results/15-lomo.json`.
-3. Append the result to spec 15; then the released models (spec 15 section 8), ONNX diffusion + browser timing, README/site.
+1. Spec 15 amendment A2: 5 folds (held out: idsse-J03WMX, idsse-J03WOH, idsse-J03WPY, idsse-J03WR9, metrica-2), each
+   using the other 9 matches. Headline = 5-fold leave-one-match-out CV over a 10-match pool. About 15 GPU hours.
+2. Owner's order: pitchvision runs last on Kaggle. When told, push two folds at a time (repo root, clean tree):
+   `sh kaggle/lomo/push_all.sh "spec 15 A2" idsse-J03WMX idsse-J03WOH` (uploads the code at HEAD), then when those
+   finish `SKIP_DATASET=1 sh kaggle/lomo/push_all.sh x idsse-J03WPY idsse-J03WR9`, then
+   `SKIP_DATASET=1 sh kaggle/lomo/push_all.sh x metrica-2`. Do not re-version the dataset between pushes.
+3. Download each kernel's `results/` into `results/15-lomo/`, run `scripts/lomo_summary.py` -> `results/15-lomo.json`,
+   append the result to spec 15; then the released all-10-match models (separate job), ONNX + browser timing, README/site.
 
 ## Open items
 - Spec 15 uses the spec 07 holdout matches on the owner's decision (2026-11-24); the CLAUDE.md rule now allows only that use.

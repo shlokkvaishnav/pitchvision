@@ -3,6 +3,10 @@
 Status: registered on 2026-11-24, before any fold was run and before the diffusion model was trained.
 Method choice: [spec 14](14-literature-check.md). Decisions approved by the owner on 2026-11-24.
 
+**Amended by A2 (2026-11-24, before any fold ran): 5 folds, not 10.** The headline is 5-fold leave-one-match-out
+cross-validation over a 10-match pool: 5 matches, chosen by a fixed rule, are each held out once; every fold trains on
+the other 9. Where this spec says 10 folds or 10 per-match values, read 5 (see A2 at the end).
+
 **This is cross-validation, not a fresh locked test.** All 10 matches have been looked at by earlier specs, including
 the two spec 07 holdout matches (J03WN1, J03WOH), which are used here on the owner's decision. The numbers below say
 how well each method does on a match it was not trained on, averaged over 10 such matches. They are not a final test
@@ -121,3 +125,17 @@ fold run:
 
 The same local check after the change: sample-mean median error 2.49 m (Kalman anchor on the same cells 1.98 m, after only
 4 epochs on one match), spread 3.6 m, coverage 81.5%, so the sampler is sound. These development numbers are not results.
+
+## Amendment A2 (2026-11-24, owner's decision, before any fold was run)
+GPU quota is shared with other projects, so the cross-validation runs **5 folds instead of 10** (about 15 GPU hours).
+- **Held-out matches, fixed by rule now (not by any result):** every other match of the sorted list of section 2,
+  starting with the first: `idsse-J03WMX`, `idsse-J03WOH`, `idsse-J03WPY`, `idsse-J03WR9`, `metrica-2`. That is 4 IDSSE
+  and 1 Metrica match, so both providers are tested. (`pitchvision.lomo.TEST_MATCHES`.)
+- **Each fold still uses the other 9 matches:** 8 for training and 1 for tuning, chosen as in section 2 (the next match
+  in the list, skipping J03WN1). All 10 matches stay in the training pool.
+- **Pooled numbers** are over the 5 held-out matches: match-weighted = mean of 5 per-match values; position-weighted =
+  all cells of the 5 folds; the stratified bootstrap has all 5 matches in every sample. C5 is reported as k of 5.
+- **Released models (section 8)** are a separate, final training job on all 10 matches, with the median best epoch,
+  median std scale and most frequent eta over the 5 folds.
+- Wherever these numbers are quoted (README, site, resume), they are called "5-fold leave-one-match-out
+  cross-validation over a 10-match pool", not 10 folds and not a locked test.

@@ -1,4 +1,4 @@
-"""Spec 15: pool the 10 leave-one-match-out folds into results/15-lomo.json (per match, pooled, intervals, claims).
+"""Spec 15: pool the 5 leave-one-match-out folds (amendment A2) into results/15-lomo.json (per match, pooled, intervals, claims).
 
 Usage: PYTHONPATH=src python scripts/lomo_summary.py [--dir results/15-lomo] [--allow-missing]
 Reads fold-<match>.json and fold-<match>.npz (downloaded from the Kaggle kernels). CPU, about a minute.
@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 from scipy.stats import spearmanr
 
-from pitchvision.lomo import GAP_BUCKETS_S, GAP_LABELS, MATCHES
+from pitchvision.lomo import GAP_BUCKETS_S, GAP_LABELS, TEST_MATCHES
 
 ROOT = Path(__file__).resolve().parents[1]
 POINT = ("spline", "kalman", "centroid_vote", "transformer", "diffusion")
@@ -80,9 +80,9 @@ def main() -> None:
     ap.add_argument("--allow-missing", action="store_true", help="summarise the folds that exist (not a result)")
     args = ap.parse_args()
     folder = Path(args.dir)
-    names = [m for m in MATCHES if (folder / f"fold-{m}.npz").exists()]
-    if len(names) < len(MATCHES) and not args.allow_missing:
-        raise SystemExit(f"missing folds: {sorted(set(MATCHES) - set(names))}")
+    names = [m for m in TEST_MATCHES if (folder / f"fold-{m}.npz").exists()]
+    if len(names) < len(TEST_MATCHES) and not args.allow_missing:
+        raise SystemExit(f"missing folds: {sorted(set(TEST_MATCHES) - set(names))}")
     js = {m: json.loads((folder / f"fold-{m}.json").read_text()) for m in names}
     zs = {m: dict(np.load(folder / f"fold-{m}.npz")) for m in names}
     commits = sorted({js[m]["commit"] for m in names})
@@ -199,8 +199,9 @@ def main() -> None:
     out = {
         "spec": "15-leave-one-match-out",
         "cross_validation_not_a_locked_test": True,
+        "design": "5-fold leave-one-match-out cross-validation over a 10-match pool (spec 15 amendment A2)",
         "folds": names,
-        "complete": len(names) == len(MATCHES),
+        "complete": len(names) == len(TEST_MATCHES),
         "fold_commits": commits,
         "commit": subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True

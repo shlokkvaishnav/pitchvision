@@ -1,6 +1,7 @@
 #!/bin/sh
 # Spec 15: pack the code at HEAD into the private dataset pitchvision-src-lomo once, then push every fold kernel.
-# Usage: sh kaggle/lomo/push_all.sh ["version message"] [match ...]   (no matches = all 10)
+# Usage: sh kaggle/lomo/push_all.sh ["version message"] [match ...]   (no matches = all 5 folds of amendment A2)
+# Kaggle allows 2 GPU sessions at a time: push two matches per call.
 # All folds must run from one commit: do not re-version the dataset while a fold kernel is queued or running.
 set -eu
 K="${KAGGLE:-$HOME/.cache/kaggle-cli/bin/kaggle}"

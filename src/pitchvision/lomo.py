@@ -6,6 +6,8 @@ MATCHES = (
     "idsse-J03WMX", "idsse-J03WN1", "idsse-J03WOH", "idsse-J03WOY", "idsse-J03WPY",
     "idsse-J03WQQ", "idsse-J03WR9", "metrica-1", "metrica-2", "metrica-3",
 )  # fmt: skip
+# Spec 15 amendment A2: 5 folds; every other match of MATCHES, starting with the first (4 IDSSE, 1 Metrica)
+TEST_MATCHES = MATCHES[::2]
 NO_TUNE = "idsse-J03WN1"  # 208 windows: too few to tune on
 SPEC07_DONORS = {"idsse-J03WN1": "1996435", "idsse-J03WOH": "1996436"}
 HOLDOUT = tuple(SPEC07_DONORS)  # the spec 07 matches, used here on the owner's decision (spec 15)

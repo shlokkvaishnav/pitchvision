@@ -1,15 +1,15 @@
-"""Write one Kaggle kernel folder per spec 15 fold (kaggle/lomo/<match>/). Run from the repo root."""
+"""Write one Kaggle kernel folder per spec 15 fold (kaggle/lomo/<match>/, the 5 folds of amendment A2). Run from the repo root."""
 
 import json
 import sys
 from pathlib import Path
 
 sys.path.insert(0, "src")
-from pitchvision.lomo import MATCHES  # noqa: E402
+from pitchvision.lomo import TEST_MATCHES  # noqa: E402
 
 here = Path(__file__).resolve().parent
 template = (here / "run_template.py").read_text()
-for m in MATCHES:
+for m in TEST_MATCHES:
     d = here / m
     d.mkdir(exist_ok=True)
     (d / "run.py").write_text(template.replace("__TEST__", m))
