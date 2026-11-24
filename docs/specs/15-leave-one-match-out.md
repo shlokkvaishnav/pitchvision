@@ -108,3 +108,16 @@ reported; if the diffusion model loses to the transformer, the docs say so.
   Runs on Kaggle GPU (`kaggle/lomo/`), all folds from one code commit.
 - A fold that fails for an infrastructure reason (time-out, download) is rerun with the same code. Any code change after
   the first fold result is a dated amendment below, with the reason, and applies to all folds (re-run all).
+
+## Amendment A1 (2026-11-24, before any fold was run)
+A local check before the GPU runs (diffusion model trained for 4 epochs on Metrica 1, sampled on 50 windows of Metrica 2;
+development only, not a result) showed that the noise-prediction model trained well (denoising loss 0.69 to 0.09) but its
+samples were far off (spread of about 50 m): with this schedule the last step has ᾱ = 3e-5, so the first DDIM steps
+divide the noise error by √ᾱ ≈ 0.006 and the later steps cannot undo it. Two changes, both standard and fixed before any
+fold run:
+- The denoiser predicts **v = √ᾱ·noise − √(1−ᾱ)·x₀** (Salimans and Ho 2022) instead of the noise, and the loss is the MSE
+  on v. The sampler gets x₀ = √ᾱ·x − √(1−ᾱ)·v, which stays bounded at every step. Schedule, steps, K and the rest unchanged.
+- The x₀ estimate inside the sampler is clipped to ±25 residual units (±125 m), more than the pitch, as a guard.
+
+The same local check after the change: sample-mean median error 2.49 m (Kalman anchor on the same cells 1.98 m, after only
+4 epochs on one match), spread 3.6 m, coverage 81.5%, so the sampler is sound. These development numbers are not results.
