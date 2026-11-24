@@ -27,7 +27,7 @@ def tune_error(model, tune, device) -> float:
     return float(np.median(np.concatenate(errs)))
 
 
-def _epoch(model, w, rng, opt, sched, types, device, batch: int) -> float:
+def _epoch(model, w, rng, opt, sched, types, device, batch: int, scaler=None) -> float:
     order = rng.permutation(len(w.pos))
     total, n = 0.0, 0
     model.train()
@@ -43,19 +43,28 @@ def _epoch(model, w, rng, opt, sched, types, device, batch: int) -> float:
         obs = w.visible[idx].copy()
         obs[fc, -HORIZON:, :] = False
         p, o = _t(pos, device), torch.as_tensor(obs, device=device)
-        mu, ls = model(p, o, types, _t(am, device), _t(al, device))
-        loss = gaussian_nll(mu, ls, p, ~o)
+        with torch.autocast("cuda", dtype=torch.float16, enabled=scaler is not None):
+            mu, ls = model(p, o, types, _t(am, device), _t(al, device))
+            loss = gaussian_nll(mu.float(), ls.float(), p, ~o)
         opt.zero_grad()
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        opt.step()
+        if scaler is None:
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            opt.step()
+        else:
+            scaler.scale(loss).backward()
+            scaler.unscale_(opt)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            scaler.step(opt)
+            scaler.update()
         sched.step()
         total, n = total + loss.item() * len(idx), n + len(idx)
     return total / n
 
 
-def fit(model, w, device, epochs: int, batch: int, lr: float, seed: int, tune=None):
+def fit(model, w, device, epochs: int, batch: int, lr: float, seed: int, tune=None, amp: bool = False):
     """AdamW + one-cycle schedule. With `tune`, keep the epoch (0 = the untrained anchor) with the lowest tune error.
+    With `amp` on a CUDA device, fp16 autocast with a gradient scaler (spec 15).
 
     Returns (log, best_epoch). Each log entry has the epoch, the train loss and, with `tune`, the tune error.
     """
@@ -64,6 +73,7 @@ def fit(model, w, device, epochs: int, batch: int, lr: float, seed: int, tune=No
     steps = epochs * int(np.ceil(len(w.pos) / batch))
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=lr, total_steps=steps, pct_start=0.05)
     types = torch.as_tensor(w.agent_type, device=device)
+    scaler = torch.amp.GradScaler("cuda") if amp and device == "cuda" else None
     log: list[dict] = []
     best = None
     if tune is not None:
@@ -71,7 +81,7 @@ def fit(model, w, device, epochs: int, batch: int, lr: float, seed: int, tune=No
         log.append({"epoch": 0, "train_loss": None, "tune_median_m": best[0]})
         print(f"epoch 0 tune {best[0]:.3f} m", flush=True)
     for epoch in range(1, epochs + 1):
-        loss = _epoch(model, w, rng, opt, sched, types, device, batch)
+        loss = _epoch(model, w, rng, opt, sched, types, device, batch, scaler)
         entry = {"epoch": epoch, "train_loss": loss}
         if tune is not None:
             entry["tune_median_m"] = err = tune_error(model, tune, device)
