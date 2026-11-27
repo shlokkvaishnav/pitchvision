@@ -8,7 +8,14 @@ v2: a diffusion model that samples K = 20 paths per hidden player, tested by lea
   published baseline), spec 15 (pre-registered protocol, amendment A1: v-prediction), `diffusion.py`, `centroid_vote.py`,
   `lomo.py`, `scripts/lomo_fold.py`, `scripts/lomo_summary.py`, `kaggle/lomo/` (10 fold kernels). `make check` passes.
 
-## Next
+## Status (2026-11-27, verified in the review)
+- Fold 1 (idsse-J03WMX) was pushed to Kaggle earlier. Its output is NOT in this repo and was not retrieved: the review
+  environment has no Kaggle credentials. Folds 2 to 5 were never launched and are deferred (owner decision: no more
+  optional folds). No LOMO result is claimed anywhere in the repo or on the resume.
+- To keep fold 1's output: `kaggle kernels output shlokkvaishnav/pitchvision-lomo-idsse-j03wmx -p results/15-lomo/idsse-J03WMX`
+  (run by the owner, with their own Kaggle login).
+
+## Next (deferred)
 1. Spec 15 amendment A2: 5 folds (held out: idsse-J03WMX, idsse-J03WOH, idsse-J03WPY, idsse-J03WR9, metrica-2), each
    using the other 9 matches. Headline = 5-fold leave-one-match-out CV over a 10-match pool. About 15 GPU hours.
 2. Owner's order: pitchvision runs last on Kaggle. When told, push two folds at a time (repo root, clean tree):
