@@ -27,7 +27,7 @@ the transformer here, so the v2 claim is not supported by this fold.
 ## Files
 
 - `fold-idsse-J03WMX.json`: full summary (training logs, metrics, per-gap coverage, timings).
-- Not in git, kept in the private archive (`private-archives/pitchvision-lomo/idsse-J03WMX/`): the prediction arrays
+- Not in git, kept in the private archive (`~/Documents/Archives/pitchvision-lomo/idsse-J03WMX/`, local only): the prediction arrays
   `fold-idsse-J03WMX.npz` (84 MB), the two model checkpoints (`*-transformer.pt`, `*-diffusion.pt`), and the SkillCorner
   inputs it read (raw tracking files; reproducible from the same public source).
 - Kernel script and metadata: `kaggle/lomo/idsse-J03WMX/`.
