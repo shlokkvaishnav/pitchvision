@@ -9,7 +9,7 @@ v2: a diffusion model that samples K = 20 paths per hidden player, tested by lea
   `lomo.py`, `scripts/lomo_fold.py`, `scripts/lomo_summary.py`, `kaggle/lomo/` (10 fold kernels). `make check` passes.
 
 ## Status (2026-11-27)
-- Fold 1 (idsse-J03WMX) is COMPLETE. Its output is in `results/15-lomo/idsse-J03WMX/` (summary and README); arrays, checkpoints and inputs are in `~/Documents/Archives/pitchvision-lomo/idsse-J03WMX/` (local only). Result: transformer median 2.60 m, diffusion 2.89 m, spline 3.03 m, Kalman 3.55 m; diffusion 90% coverage 0.81. Folds 2 to 5 were never launched and are deferred (owner decision: no more
+- Fold 1 (idsse-J03WMX) is COMPLETE. Its output is in `results/15-lomo/idsse-J03WMX/` (summary and README); arrays and checkpoints are in `data/15-lomo/idsse-J03WMX/` (gitignored, local only; also on Kaggle while the kernel output lasts). The raw SkillCorner inputs were deleted: they are public and re-downloadable.
   optional folds). No LOMO result is claimed anywhere in the repo or on the resume.
 - Retrieval command used (the project's CLI at ~/.cache/kaggle-cli/bin/kaggle authenticates itself): `kaggle kernels output shlokkvaishnav/pitchvision-lomo-idsse-j03wmx -p <scratch dir>`, then the files were inspected and copied.
 
