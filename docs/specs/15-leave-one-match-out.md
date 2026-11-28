@@ -139,3 +139,42 @@ GPU quota is shared with other projects, so the cross-validation runs **5 folds 
   median std scale and most frequent eta over the 5 folds.
 - Wherever these numbers are quoted (README, site, resume), they are called "5-fold leave-one-match-out
   cross-validation over a 10-match pool", not 10 folds and not a locked test.
+
+## Result (2026-11-28)
+
+All 5 folds of amendment A2 ran from one code commit (`8f82af3`). Pooled by `scripts/lomo_summary.py` into
+`results/15-lomo.json` (block bootstrap, 5-minute blocks, 2,000 resamples). Per-fold summaries: `results/15-lomo/<match>/`.
+**This is 5-fold leave-one-match-out cross-validation over a 10-match pool, not a fresh locked test.**
+
+| Method | Median error, m (position-weighted, 95% CI) | Mean error, m | Energy score, m | 90% coverage | Pitch-control agreement |
+|---|---|---|---|---|---|
+| Spline | 2.72 [2.50, 3.00] | 9.28 | n/a | n/a | 0.927 |
+| Kalman | 3.18 [2.94, 3.47] | 9.23 | 8.67 | 0.895 | 0.920 |
+| Centroid vote (online) | 8.77 [8.42, 9.19] | 12.05 | n/a | n/a | 0.862 |
+| Transformer (v1) | **2.38 [2.24, 2.55]** | **4.51** | **3.27** | 0.916 | **0.945** |
+| Diffusion (v2, sample mean) | 2.62 [2.47, 2.80] | 4.83 | 3.51 | 0.829 | 0.940 |
+
+Visible-only pitch-control agreement 0.724 (12,434 frames). Per fold, the transformer has the lowest median in 3 of 5
+and the spline in 2 of 5 (folds 3 and 5, the two matches with the shortest gaps); the transformer has the lowest
+mean error, energy score and agreement in all 5.
+
+Diffusion 90% coverage by gap: <1 s 0.915, 1–3 s 0.953, 3–6 s 0.927, 6–9.6 s 0.877, ≥9.6 s 0.799 (74% of scored
+cells are in the last bucket). Sample spread is positive and rises with the gap (0.16 m to 4.36 m), so the spread
+check passes; the spread is too small at long gaps.
+
+| Claim | Rule | Result |
+|---|---|---|
+| C1 beats the best classical method (spline) | ratio < 1, CI below 1 | **holds**: 0.963 [0.929, 0.996] |
+| C2 at least as accurate as the transformer | ratio ≤ 1.0 | **fails**: 1.101 [1.089, 1.108] (10% worse) |
+| C3 calibrated in every gap bucket | 85–95% in each | **fails**: 0.799 at ≥9.6 s, 0.953 at 1–3 s |
+| C4 more pitch control than the classical methods | above each, CI of difference > 0 | **holds** |
+| C5 per match beats the best classical method | k of 5 | 3 of 5 |
+
+Decision: the diffusion model beats the classical methods but **does not beat the transformer**, and its 90% regions
+are too narrow at long gaps. As section 7 states, the docs say so; the transformer stays the main model. Likely
+causes (not tested here): the point estimate is a mean of 20 samples rather than a direct regression, the sampler
+chose eta = 0 (the least spread), and the diffusion model has no fitted spread scale, while the transformer has one
+(pooled released setting 1.13).
+
+Section 8 (released all-10-match models, ONNX timing) has not been run yet. Until it is, the README headline stays
+spec 05's.
